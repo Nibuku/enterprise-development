@@ -1,5 +1,4 @@
-using System;
-namespace Library.Domain.Models;
+﻿namespace Library.Domain.Models;
 
 public class BookLoan
 {

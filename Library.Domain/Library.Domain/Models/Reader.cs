@@ -1,7 +1,4 @@
-using System;
-using System.Collections.Generic;
-
-namespace Library.Domain.Models;
+﻿namespace Library.Domain.Models;
 
 public class Reader
 {

@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using Library.Domain.Enums;
+﻿using Library.Domain.Enums;
 
 namespace Library.Domain.Models;
 
