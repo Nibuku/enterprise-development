@@ -1,6 +1,4 @@
-﻿
-
-namespace Library.Domain.Enums;
+﻿namespace Library.Domain.Enums;
 
 /// <summary>
 /// Издательство (справочник)

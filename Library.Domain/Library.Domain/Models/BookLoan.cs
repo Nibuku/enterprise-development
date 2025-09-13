@@ -2,7 +2,7 @@
 
 public class BookLoan
 {
-    public int Id { get; set; }
+    public required int Id { get; set; }
     public DateTime LoanDate { get; set; } = DateTime.UtcNow;
     public required int LoanDays { get; set; }
     public required int BookId { get; set; }
