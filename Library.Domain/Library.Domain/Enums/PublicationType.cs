@@ -1,33 +1,31 @@
 ﻿namespace Library.Domain.Enums;
 
 /// <summary>
-/// Вид издания (справочник)
+/// Defines the type of a publication
 /// </summary>
 public enum PublicationType
 {
-    /// <summary>Монография - научное издание по одной теме</summary>
+    /// <summary>A scholarly book on a single subject. </summary>
     Monograph,
 
-    /// <summary>Учебник - для обучения по образовательной программе</summary>
+    /// <summary>A book used for education. </summary>
     Textbook,
 
-    /// <summary>Сборник - произведения разных авторов</summary>
+    /// <summary>A book containing works from multiple authors. </summary>
     Collection,
 
-    /// <summary>Периодика - журналы, газеты</summary>
+    /// <summary>A publication released at regular intervals, like a magazine or newspaper.</summary>
     Periodical,
 
-    /// <summary>Справочник - справочная литература</summary>
+    /// <summary>A book containing factual information on various topics.</summary>
     ReferenceBook,
 
-    /// <summary>Пособие - учебное пособие</summary>
+    /// <summary>A book that teaches a particular skill or subject. </summary>
     Tutorial,
 
-    /// <summary>Диссертация - научная работа</summary>
+    /// <summary>A long research paper, often for a university degree.</summary>
     Dissertation,
 
-    /// <summary>Автореферат - краткое изложение диссертации</summary>
-    Abstract,
-
+    /// <summary> A fictional story of book length. </summary>
     Novel
 }

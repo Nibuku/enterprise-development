@@ -1,45 +1,41 @@
 ﻿namespace Library.Domain.Enums;
 
 /// <summary>
-/// Издательство (справочник)
+/// A list of publishers.
 /// </summary>
 public enum Publisher
 {
-    /// <summary>Издательство АСТ</summary>
+    /// <summary> AST publishing house. </summary>
+
     AST,
 
-    /// <summary>Издательство Эксмо</summary>
+    /// <summary> Eksmo publishing house. </summary>
     Eksmo,
 
-    /// <summary>Издательство Питер</summary>
+    /// <summary> Piter publishing house. </summary>
     Piter,
 
-    /// <summary>Издательство ДМК Пресс</summary>
+    /// <summary> DMK Press publishing house. </summary>
     DMKPress,
 
-    /// <summary>Издательство Манн, Иванов и Фербер</summary>
-    MannIvanovFerber,
-
-    /// <summary>Издательство Символ-Плюс</summary>
-    SymbolPlus,
-
-    /// <summary>Издательство Альпина Паблишер</summary>
-    AlpinaPublisher,
-
-    /// <summary>Издательство Corpus</summary>
+    /// <summary>Corpus publishing house.</summary>
     Corpus,
 
-    /// <summary>Издательство Лениздат</summary>
+    /// <summary>Lenizdat publishing house.</summary>
     Lenizdat,
 
+    /// <summary> Prosveshchenie publishing house. </summary>
     Prosveshchenie,
 
+    /// <summary> Nauka publishing house. </summary>
     Nauka,
 
+    /// <summary> MGU publishing house. </summary>
     MGU,
 
+    /// <summary> MIPT publishing house. </summary>
     MIPT,
 
-    /// <summary>Другое издательство</summary>
+    /// <summary> Any other publisher not listed. </summary>
     Other
 }

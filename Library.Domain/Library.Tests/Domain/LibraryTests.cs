@@ -1,28 +1,29 @@
 using Library.Domain.Enums;
 using Library.Domain.Models;
 
-namespace Library.Tests.Library.Tests;
+namespace Library.Tests.Domain;
 
-public class LibraryTests
+/// <summary>
+/// A collection of unit tests for the Library domain.
+/// </summary>
+public class LibraryTests : IClassFixture<DataSeed>
 {
-    private readonly List<Author> _authors;
     private readonly List<Book> _books;
     private readonly List<Reader> _readers;
     private readonly List<BookLoan> _loans;
 
-    public LibraryTests()
+    public LibraryTests(DataSeed seed)
     {
-        _authors = DataSeed.GetAuthors();
-        _books = DataSeed.GetBooks();
-        _readers = DataSeed.GetReaders();
-        _loans = DataSeed.GetBookLoans(_books, _readers);
-
-        DataSeed.LinkAuthorsAndBooks(_authors, _books);
-        DataSeed.LinkReadersWithLoans(_readers, _loans);
+        _books = seed.Books;
+        _readers = seed.Readers;
+        _loans = seed.Loans;
     }
 
+    /// <summary>
+    /// Tests that loaned books are correctly retrieved and ordered by their title.
+    /// </summary>
     [Fact]
-    public void Books_ShouldBeOrderedByTitle()
+    public void Books_OrderedByTitle()
     {
         var booksQuery =
             from loan in _loans
@@ -44,7 +45,7 @@ public class LibraryTests
             _books.First(b => b.Title == "Программирование на C#"),
             _books.First(b => b.Title == "Убийство в Восточном экспрессе"),
             _books.First(b => b.Title == "Физика для вузов"),
-            
+
         };
 
         var actualOrder = books.OrderBy(b => b.Title).ToList();
@@ -52,8 +53,11 @@ public class LibraryTests
         Assert.Equal(expectedOrder, actualOrder);
     }
 
+    /// <summary>
+    /// Test that outputs information about the top 5 readers who have read the most books in a given period.
+    /// </summary>
     [Fact]
-    public void Top5Readers_ByNumberOfLoans()
+    public void Top5Readers_ByNumberOfBooks()
     {
 
         var top5Readers = _readers
@@ -65,24 +69,27 @@ public class LibraryTests
 
         var expectedTop5Readers = new List<Reader>
             {
-                _readers.First(r => r.FullName == "Джон Леннон"),        // 3 книги
-                _readers.First(r => r.FullName == "Бейонсе Ноулз"),      // 2 книги
-                _readers.First(r => r.FullName == "Илон Маск"),          // 2 книги
-                _readers.First(r => r.FullName == "Леонардо ДиКаприо"), // 2 книги
-                _readers.First(r => r.FullName == "Ангела Меркель")      // 1 книга
+                _readers.First(r => r.FullName == "Джон Леннон"),       
+                _readers.First(r => r.FullName == "Бейонсе Ноулз"),     
+                _readers.First(r => r.FullName == "Илон Маск"),         
+                _readers.First(r => r.FullName == "Леонардо ДиКаприо"), 
+                _readers.First(r => r.FullName == "Ангела Меркель")      
             };
 
         Assert.Equal(expectedTop5Readers, top5Readers);
     }
 
+    /// <summary>
+    /// Test that outputs information about readers who have taken books for the longest period of time, sorted by full name.
+    /// </summary>
     [Fact]
-    public void Readers_Top5ByTotalLoanDays_ShouldBeOrderedByFullName()
+    public void Top5Readers_ByTotalLoanDays()
     {
         var loanDaysPerReader = _readers
             .Select(reader => new
             {
                 Reader = reader,
-                TotalLoanDays = reader.BookLoans.Sum(loan => loan.LoanDays) 
+                TotalLoanDays = reader.BookLoans.Sum(loan => loan.LoanDays)
             })
             .ToList();
 
@@ -110,11 +117,13 @@ public class LibraryTests
         Assert.Equal(expected.Select(e => e.Days), top5Readers.Select(r => r.TotalLoanDays));
     }
 
-
+    /// <summary>
+    /// Test that displays the top 5 most popular publishers over the past year.
+    /// </summary>
     [Fact]
     public void Top5PopularPublishers_LastYear()
     {
-        var oneYearAgo = new DateTime(2024, 9, 30);
+        var oneYearAgo = new DateOnly(2024, 9, 30);
 
         var topPublishers = _loans
             .Where(l => l.LoanDate >= oneYearAgo)
@@ -136,11 +145,13 @@ public class LibraryTests
         Assert.Equal(expected, topPublishers.Select(x => x.Publisher));
     }
 
-
+    /// <summary>
+    /// Test that outputs the top 5 least popular books over the past year.
+    /// </summary>
     [Fact]
-    public void Top5LeastPopularBooks_LastYear_ShouldMatchExpected()
+    public void Top5LeastPopularBooks_LastYear()
     {
-        var oneYearAgo = new DateTime(2024, 9, 30);
+        var oneYearAgo = new DateOnly(2024, 9, 30);
 
         var recentLoans = _loans
             .Where(l => l.LoanDate >= oneYearAgo)
@@ -149,9 +160,9 @@ public class LibraryTests
         var loansByBook = recentLoans
             .GroupBy(l => l.Book)
             .Select(g => new { Book = g.Key, Count = g.Count() })
-            .OrderBy(x => x.Count) 
-            .Take(5)               
-            .Select(x => x.Book)  
+            .OrderBy(x => x.Count)
+            .Take(5)
+            .Select(x => x.Book)
             .ToList();
 
         var expectedBooks = new List<Book>
