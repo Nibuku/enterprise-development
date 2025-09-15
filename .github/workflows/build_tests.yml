@@ -25,3 +25,4 @@ jobs:
 
     - name: Run tests
       run: dotnet test Library.Tests/Library.Tests.csproj --no-build
+      
