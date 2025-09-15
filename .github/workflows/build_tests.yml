@@ -1,4 +1,4 @@
-name: .NET TESTS
+name: .NET Teste
 
 on:
   push:
@@ -18,10 +18,10 @@ jobs:
         dotnet-version: '8.0.x' 
 
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore Library.sln
 
     - name: Build solution
-      run: dotnet build --no-restore
+      run: dotnet build Library.sln --no-restore
 
     - name: Run tests
       run: dotnet test Library.Tests/Library.Tests.csproj --no-build
