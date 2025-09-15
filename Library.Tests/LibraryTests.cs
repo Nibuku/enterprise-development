@@ -1,7 +1,7 @@
 using Library.Domain.Enums;
 using Library.Domain.Models;
 
-namespace Library.Tests.Domain;
+namespace Library.Tests;
 
 /// <summary>
 /// A collection of unit tests for the Library domain.
@@ -33,18 +33,18 @@ public class LibraryTests : IClassFixture<DataSeed>
 
         var expectedOrder = new List<Book>
         {
-            _books.First(b => b.Title == "Ангелы и демоны"),
-            _books.First(b => b.Title == "Большой энциклопедический словарь"),
-            _books.First(b => b.Title == "Война и мир"),
-            _books.First(b => b.Title == "Десять негритят"),
-            _books.First(b => b.Title == "Инферно"),
-            _books.First(b => b.Title == "Код да Винчи"),
-            _books.First(b => b.Title == "Мастер и Маргарита"),
-            _books.First(b => b.Title == "Норвежский лес"),
-            _books.First(b => b.Title == "Пикник на обочине"),
-            _books.First(b => b.Title == "Программирование на C#"),
-            _books.First(b => b.Title == "Убийство в Восточном экспрессе"),
-            _books.First(b => b.Title == "Физика для вузов"),
+            _books.First(b => b.Title == "And Then There Were None"),
+            _books.First(b => b.Title == "Angels & Demons"),
+            _books.First(b => b.Title == "Inferno"),
+            _books.First(b => b.Title == "Murder on the Orient Express"),
+            _books.First(b => b.Title == "Norwegian Wood"),
+            _books.First(b => b.Title == "Physics for Universities"),
+            _books.First(b => b.Title == "Programming in C#"),
+            _books.First(b => b.Title == "Roadside Picnic"),
+            _books.First(b => b.Title == "The Da Vinci Code"),
+            _books.First(b => b.Title == "The Great Encyclopedia"),
+            _books.First(b => b.Title == "The Master and Margarita"),
+            _books.First(b => b.Title == "War and Peace")
 
         };
 
@@ -69,11 +69,11 @@ public class LibraryTests : IClassFixture<DataSeed>
 
         var expectedTop5Readers = new List<Reader>
             {
-                _readers.First(r => r.FullName == "Джон Леннон"),       
-                _readers.First(r => r.FullName == "Бейонсе Ноулз"),     
-                _readers.First(r => r.FullName == "Илон Маск"),         
-                _readers.First(r => r.FullName == "Леонардо ДиКаприо"), 
-                _readers.First(r => r.FullName == "Ангела Меркель")      
+        _readers.First(r => r.FullName == "John Lennon"),
+        _readers.First(r => r.FullName == "Beyonce Knowles"),
+        _readers.First(r => r.FullName == "Elon Musk"),
+        _readers.First(r => r.FullName == "Leonardo DiCaprio"),
+        _readers.First(r => r.FullName == "Angela Merkel")
             };
 
         Assert.Equal(expectedTop5Readers, top5Readers);
@@ -106,11 +106,11 @@ public class LibraryTests : IClassFixture<DataSeed>
 
         var expected = new List<(string Name, int Days)>
         {
-            ("Сергей Брин", 60),
-            ("Джон Леннон", 47),
-            ("Леонардо ДиКаприо", 44),
-            ("Бейонсе Ноулз", 42),
-            ("Ангела Меркель", 30)
+            ("Sergey Brin", 60),
+            ("John Lennon", 47),
+            ("Leonardo DiCaprio", 44),
+            ("Beyonce Knowles", 42),
+            ("Angela Merkel", 30)
         };
 
         Assert.Equal(expected.Select(e => e.Name), top5Readers.Select(r => r.FullName));
@@ -135,8 +135,8 @@ public class LibraryTests : IClassFixture<DataSeed>
 
         var expected = new List<Publisher>
         {
-            Publisher.Eksmo,
             Publisher.AST,
+            Publisher.Eksmo,
             Publisher.Prosveshchenie,
             Publisher.Piter,
             Publisher.DMKPress
@@ -167,11 +167,11 @@ public class LibraryTests : IClassFixture<DataSeed>
 
         var expectedBooks = new List<Book>
         {
-            _books.First(b => b.Title == "Десять негритят"),
-            _books.First(b => b.Title == "Ангелы и демоны"),
-            _books.First(b => b.Title == "Пикник на обочине"),
-            _books.First(b => b.Title == "Война и мир"),
-            _books.First(b => b.Title == "Мастер и Маргарита")
+            _books.First(b => b.Title == "And Then There Were None"),
+            _books.First(b => b.Title == "Angels & Demons"),
+            _books.First(b => b.Title == "Roadside Picnic"),
+            _books.First(b => b.Title == "War and Peace"),
+            _books.First(b => b.Title == "The Master and Margarita")
         };
 
         Assert.Equal(expectedBooks.Select(b => b.Title), loansByBook.Select(b => b.Title));
