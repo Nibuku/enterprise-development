@@ -16,7 +16,7 @@
 * [Author](https://github.com/Nibuku/enterprise-development/blob/main/Library.Domain/Models/Author.cs)- класс хранит информацию об авторе и спиок его книг
 * [Book](https://github.com/Nibuku/enterprise-development/blob/main/Library.Domain/Models/Book.cs) - класс описывает карточку книги в соответствии с вариантом
 * [BookLoan](https://github.com/Nibuku/enterprise-development/blob/main/Library.Domain/Models/BookLoan.cs) - хранит информацию о выдачи конкретной книги читателю
-* [Reader](https://github.com/Nibuku/enterprise-development/blob/main/Library.Domain/Models/Reader.cs) - характеризует читателя, а также хрвнит список книг, взятых им
+* [Reader](https://github.com/Nibuku/enterprise-development/blob/main/Library.Domain/Models/Reader.cs) - характеризует читателя, а также хранит список книг, взятых им
 
 ### Enum
 * [PublicationType](https://github.com/Nibuku/enterprise-development/blob/main/Library.Domain/Enums/PublicationType.cs) - содержит типы книг (справочник, журнал, новела и др.)
