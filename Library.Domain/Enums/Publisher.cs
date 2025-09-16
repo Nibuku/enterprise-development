@@ -6,7 +6,6 @@
 public enum Publisher
 {
     /// <summary> AST publishing house. </summary>
-
     AST,
 
     /// <summary> Eksmo publishing house. </summary>

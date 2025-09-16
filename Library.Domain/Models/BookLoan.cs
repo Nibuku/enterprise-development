@@ -8,7 +8,7 @@ public class BookLoan
     /// <summary>
     /// Gets or sets unique id for the loan.
     /// </summary>
-    public int Id { get; set; }
+    public required int Id { get; set; }
 
     /// <summary>
     /// Gets or sets date when the book was loaned.

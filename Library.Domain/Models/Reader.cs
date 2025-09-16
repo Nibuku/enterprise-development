@@ -8,7 +8,7 @@ public class Reader
     /// <summary>
     /// Gets or sets the unique id for the reader.
     /// </summary>
-    public int Id { get; set; }
+    public required int Id { get; set; }
 
     /// <summary>
     /// Gets or sets full name of the reader.
