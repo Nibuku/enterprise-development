@@ -144,8 +144,8 @@ public class LibraryTests(DataSeed seed) : IClassFixture<DataSeed>
         };
 
         var recentLoans = seed.Checkouts
-                   .Where(ñ=> ñ.LoanDate >= oneYearAgo)
-                   .ToList();
+            .Where(ñ=> ñ.LoanDate >= oneYearAgo)
+            .ToList();
 
         var actualBooks = recentLoans
             .GroupBy(ñ => ñ.Book)
