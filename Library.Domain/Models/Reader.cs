@@ -33,5 +33,5 @@ public class Reader
     /// <summary>
     /// Gets or sets a list of book loans associated with this reader.
     /// </summary>
-    public List<BookLoan> BookLoans { get; set; } = new List<BookLoan>();
+    public List<BookLoan> BookLoans { get; set; } = [];
 }

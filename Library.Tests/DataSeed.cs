@@ -91,7 +91,7 @@ public class DataSeed
         new Reader { Id = 12, FullName = "Ellen DeGeneres", Address = "School St. 6, Apt 12", Phone = "+79160000012", RegistrationDate = new DateOnly(2023, 12, 5) }
     ];
 
-    private void LinkAuthorsAndBooks(List<Author> authors, List<Book> books)
+    private static void LinkAuthorsAndBooks(List<Author> authors, List<Book> books)
     {
         LinkAuthor(authors[0], books[0]); 
         LinkAuthor(authors[0], books[1]);

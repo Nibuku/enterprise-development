@@ -18,5 +18,5 @@ public class Author
     /// <summary>
     /// Gets or sets list of books written by this author.
     /// </summary>
-    public List<Book> Books { get; set; } = new List<Book>();
+    public List<Book> Books { get; set; } = [];
 }

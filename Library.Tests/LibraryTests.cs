@@ -6,18 +6,11 @@ namespace Library.Tests;
 /// <summary>
 /// A collection of unit tests for the Library domain.
 /// </summary>
-public class LibraryTests : IClassFixture<DataSeed>
+public class LibraryTests(DataSeed seed) : IClassFixture<DataSeed>
 {
-    private readonly List<Book> _books;
-    private readonly List<Reader> _readers;
-    private readonly List<BookLoan> _loans;
-
-    public LibraryTests(DataSeed seed)
-    {
-        _books = seed.Books;
-        _readers = seed.Readers;
-        _loans = seed.Loans;
-    }
+    private readonly List<Book> _books = seed.Books;
+    private readonly List<Reader> _readers = seed.Readers;
+    private readonly List<BookLoan> _loans = seed.Loans;
 
     /// <summary>
     /// Tests that loaned books are correctly retrieved and ordered by their title.
