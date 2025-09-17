@@ -118,7 +118,11 @@ public class LibraryTests(DataSeed seed) : IClassFixture<DataSeed>
         var topPublishers = seed.Checkouts
             .Where(c => c.LoanDate >= oneYearAgo)
             .GroupBy(c => c.Book.Publisher)
-            .Select(g => new { Publisher = g.Key, Count = g.Count() })
+            .Select(g => new 
+            { 
+                Publisher = g.Key,
+                Count = g.Count()
+            })
             .OrderByDescending(x => x.Count)
             .Take(5)
             .Select(x => x.Publisher.Name)
@@ -149,7 +153,11 @@ public class LibraryTests(DataSeed seed) : IClassFixture<DataSeed>
 
         var actualBooks = recentLoans
             .GroupBy(ñ => ñ.Book)
-            .Select(g => new { Book = g.Key, Count = g.Count() })
+            .Select(g => new 
+            { 
+                Book = g.Key,
+                Count = g.Count() 
+            })
             .OrderBy(x => x.Count)
             .ThenBy(x => x.Book.Title) 
             .Take(5)

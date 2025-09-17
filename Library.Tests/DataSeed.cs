@@ -19,10 +19,6 @@ public class DataSeed
         Checkouts = GetBookCheckouts(Books, Readers);
     }
 
-    /// <summary>
-    /// Creates a list of publisher.
-    /// </summary>
-    /// <returns> A list of publisher objects. </returns>
     private static readonly List<Publisher> _publishers =
     [
         new Publisher { Id = 1, Name = "AST" },
@@ -32,10 +28,6 @@ public class DataSeed
         new Publisher { Id = 5, Name = "DMKPress" }
     ];
 
-    /// <summary>
-    /// Creates a list type of publication
-    /// </summary>
-    /// <returns> A list type of publication objects </returns>
     private static readonly List<PublicationType> _publicationTypes =
     [
         new PublicationType { Id = 1, Type = "Novel" },
