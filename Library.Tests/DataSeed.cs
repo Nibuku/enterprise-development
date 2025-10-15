@@ -19,7 +19,7 @@ public class DataSeed
         Checkouts = GetBookCheckouts(Books, Readers);
     }
 
-    private static readonly List<Publisher> _publishers =
+    public static readonly List<Publisher> Publishers =
     [
         new Publisher { Id = 1, Name = "AST" },
         new Publisher { Id = 2, Name = "Eksmo" },
@@ -28,7 +28,7 @@ public class DataSeed
         new Publisher { Id = 5, Name = "DMKPress" }
     ];
 
-    private static readonly List<PublicationType> _publicationTypes =
+    public static readonly List<PublicationType> PublicationTypes =
     [
         new PublicationType { Id = 1, Type = "Novel" },
         new PublicationType { Id = 2, Type = "Textbook" },
@@ -42,18 +42,18 @@ public class DataSeed
     /// <returns> A list of Book objects. </returns>
     public static List<Book> GetBooks() =>
     [
-        new Book { Id = 1, InventoryNumber = "INV-001", CatalogCode = "FIC-CHR-001", Title = "Murder on the Orient Express", Authors = ["Agatha Christie"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Novel"), Publisher =  _publishers.Single(p => p.Name == "AST"), PublicationYear = 1934 },
-        new Book { Id = 2, InventoryNumber = "INV-002", CatalogCode = "FIC-CHR-002", Title = "And Then There Were None", Authors = ["Agatha Christie"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Novel"), Publisher = _publishers.Single(p => p.Name == "Eksmo"), PublicationYear = 1939 },
-        new Book { Id = 3, InventoryNumber = "INV-003", CatalogCode = "FIC-BRW-001", Title = "The Da Vinci Code", Authors = ["Dan Brown"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Novel"), Publisher = _publishers.Single(p => p.Name == "AST"), PublicationYear = 2003 },
-        new Book { Id = 4, InventoryNumber = "INV-004", CatalogCode = "FIC-BRW-002", Title = "Angels & Demons", Authors = ["Dan Brown"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Novel"), Publisher = _publishers.Single(p => p.Name == "Eksmo"), PublicationYear = 2000 },
-        new Book { Id = 5, InventoryNumber = "INV-005", CatalogCode = "FIC-BRW-003", Title = "Inferno", Authors = ["Dan Brown"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Novel"), Publisher = _publishers.Single(p => p.Name == "AST"), PublicationYear = 2013 },
-        new Book { Id = 6, InventoryNumber = "INV-006", CatalogCode = "FIC-STR-001", Title = "Roadside Picnic", Authors = ["Arkady Strugatsky", "Boris Strugatsky"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Novel"), Publisher = _publishers.Single(p => p.Name == "Eksmo"), PublicationYear = 1972 },
-        new Book { Id = 7, InventoryNumber = "INV-007", CatalogCode = "FIC-TOL-001", Title = "War and Peace", Authors = ["Leo Tolstoy"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Novel"), Publisher = _publishers.Single(p => p.Name == "AST"), PublicationYear = 1869 },
-        new Book { Id = 8, InventoryNumber = "INV-008", CatalogCode = "FIC-BUL-001", Title = "The Master and Margarita", Authors = ["Mikhail Bulgakov"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Novel"), Publisher = _publishers.Single(p => p.Name == "Eksmo"), PublicationYear = 1967 },
-        new Book { Id = 9, InventoryNumber = "INV-009", CatalogCode = "SCI-001", Title = "Physics for Universities", Authors = ["Isaac Newton"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Textbook"), Publisher = _publishers.Single(p => p.Name == "Piter"), PublicationYear = 2023 },
-        new Book { Id = 10, InventoryNumber = "INV-010", CatalogCode = "SCI-002", Title = "Norwegian Wood", Authors = ["Haruki Murakami"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Textbook"), Publisher = _publishers.Single(p => p.Name == "Prosveshchenie"), PublicationYear = 2022 },
-        new Book { Id = 11, InventoryNumber = "INV-011", CatalogCode = "REF-001", Title = "The Great Encyclopedia", Authors = ["Plato"], PublicationType = _publicationTypes.Single(pt => pt.Type == "ReferenceBook"), Publisher = _publishers.Single(p => p.Name == "AST"), PublicationYear = 2020 },
-        new Book { Id = 12, InventoryNumber = "INV-012", CatalogCode = "TUT-001", Title = "Programming in C#", Authors = ["Bill Gates"], PublicationType = _publicationTypes.Single(pt => pt.Type == "Tutorial"), Publisher = _publishers.Single(p => p.Name == "DMKPress"), PublicationYear = 2024 }
+        new Book { Id = 1, InventoryNumber = "INV-001", CatalogCode = "FIC-CHR-001", Title = "Murder on the Orient Express", Authors = ["Agatha Christie"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Novel"), Publisher =  Publishers.Single(p => p.Name == "AST"), PublicationYear = 1934 },
+        new Book { Id = 2, InventoryNumber = "INV-002", CatalogCode = "FIC-CHR-002", Title = "And Then There Were None", Authors = ["Agatha Christie"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Novel"), Publisher = Publishers.Single(p => p.Name == "Eksmo"), PublicationYear = 1939 },
+        new Book { Id = 3, InventoryNumber = "INV-003", CatalogCode = "FIC-BRW-001", Title = "The Da Vinci Code", Authors = ["Dan Brown"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Novel"), Publisher = Publishers.Single(p => p.Name == "AST"), PublicationYear = 2003 },
+        new Book { Id = 4, InventoryNumber = "INV-004", CatalogCode = "FIC-BRW-002", Title = "Angels & Demons", Authors = ["Dan Brown"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Novel"), Publisher = Publishers.Single(p => p.Name == "Eksmo"), PublicationYear = 2000 },
+        new Book { Id = 5, InventoryNumber = "INV-005", CatalogCode = "FIC-BRW-003", Title = "Inferno", Authors = ["Dan Brown"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Novel"), Publisher = Publishers.Single(p => p.Name == "AST"), PublicationYear = 2013 },
+        new Book { Id = 6, InventoryNumber = "INV-006", CatalogCode = "FIC-STR-001", Title = "Roadside Picnic", Authors = ["Arkady Strugatsky", "Boris Strugatsky"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Novel"), Publisher = Publishers.Single(p => p.Name == "Eksmo"), PublicationYear = 1972 },
+        new Book { Id = 7, InventoryNumber = "INV-007", CatalogCode = "FIC-TOL-001", Title = "War and Peace", Authors = ["Leo Tolstoy"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Novel"), Publisher = Publishers.Single(p => p.Name == "AST"), PublicationYear = 1869 },
+        new Book { Id = 8, InventoryNumber = "INV-008", CatalogCode = "FIC-BUL-001", Title = "The Master and Margarita", Authors = ["Mikhail Bulgakov"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Novel"), Publisher = Publishers.Single(p => p.Name == "Eksmo"), PublicationYear = 1967 },
+        new Book { Id = 9, InventoryNumber = "INV-009", CatalogCode = "SCI-001", Title = "Physics for Universities", Authors = ["Isaac Newton"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Textbook"), Publisher = Publishers.Single(p => p.Name == "Piter"), PublicationYear = 2023 },
+        new Book { Id = 10, InventoryNumber = "INV-010", CatalogCode = "SCI-002", Title = "Norwegian Wood", Authors = ["Haruki Murakami"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Textbook"), Publisher = Publishers.Single(p => p.Name == "Prosveshchenie"), PublicationYear = 2022 },
+        new Book { Id = 11, InventoryNumber = "INV-011", CatalogCode = "REF-001", Title = "The Great Encyclopedia", Authors = ["Plato"], PublicationType = PublicationTypes.Single(pt => pt.Type == "ReferenceBook"), Publisher = Publishers.Single(p => p.Name == "AST"), PublicationYear = 2020 },
+        new Book { Id = 12, InventoryNumber = "INV-012", CatalogCode = "TUT-001", Title = "Programming in C#", Authors = ["Bill Gates"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Tutorial"), Publisher = Publishers.Single(p => p.Name == "DMKPress"), PublicationYear = 2024 }
     ];
 
     /// <summary>

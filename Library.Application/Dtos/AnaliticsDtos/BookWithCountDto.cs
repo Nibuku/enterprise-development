@@ -1,9 +1,7 @@
-﻿namespace Library.Domain.Models;
+﻿using Library.Domain.Models;
 
-/// <summary>
-/// Class for book model in library.
-/// </summary>
-public class Book
+namespace Library.Application.Dtos.AnaliticsDtos;
+internal class BookWithCountDto
 {
     /// <summary>
     /// The unique id for the book.
@@ -44,4 +42,6 @@ public class Book
     /// List of authors who wrote this book.
     /// </summary>
     public List<string> Authors { get; set; } = [];
+
+    public required int Count { get; set; } = 0;
 }

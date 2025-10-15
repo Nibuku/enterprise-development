@@ -1,9 +1,12 @@
-﻿namespace Library.Domain.Models;
+﻿using Library.Domain.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-/// <summary>
-/// Class for book model in library.
-/// </summary>
-public class Book
+namespace Library.Application.Dtos;
+public class BookGetDto
 {
     /// <summary>
     /// The unique id for the book.

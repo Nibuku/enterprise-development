@@ -1,15 +1,9 @@
-﻿namespace Library.Domain.Models;
+﻿using Library.Domain.Models;
 
-/// <summary>
-/// Class for book model in library.
-/// </summary>
-public class Book
+namespace Library.Application.Dtos;
+
+public class BookCreateDto
 {
-    /// <summary>
-    /// The unique id for the book.
-    /// </summary>
-    public int Id { get; set; }
-
     /// <summary>
     /// The unique inventory number of the book.
     /// </summary>
