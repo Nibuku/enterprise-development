@@ -1,5 +1,4 @@
-﻿
-namespace Library.Application.Dtos;
+﻿namespace Library.Application.Dtos;
 public class BookReaderCreateDto
 {
     /// <summary>

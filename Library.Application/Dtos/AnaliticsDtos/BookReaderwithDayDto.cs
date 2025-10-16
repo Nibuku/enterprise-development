@@ -1,5 +1,5 @@
 ﻿namespace Library.Application.Dtos.AnaliticsDtos;
-internal class BookReaderwithDayDto
+public class BookReaderWithDayDto
 {
     /// <summary>
     /// The unique id for the reader.

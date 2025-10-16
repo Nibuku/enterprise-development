@@ -12,13 +12,19 @@ public class BookCheckoutService(
 
     public CheckoutGetDto Create(CheckoutCreateDto dto)
     {
-        var book = bookRepository.Read(dto.Book.Id)?? throw new KeyNotFoundException($"Книга с ID {dto.Book.Id} не найдена.");
+        var book = bookRepository.Read(dto.BookId)?? throw new KeyNotFoundException($"Книга с ID {dto.BookId} не найдена.");
+        var reader = readerRepository.Read(dto.ReaderId)?? throw new KeyNotFoundException($"Читатель с ID {dto.ReaderId} не найден.");
+        var newCheckout = new BookCheckout
+        {
+            Id = 0,
+            LoanDate = dto.LoanDate,
+            LoanDays = dto.LoanDays,
+            Book = book,
+            Reader = reader
+        };
 
-        var reader = readerRepository.Read(dto.Reader.Id)?? throw new KeyNotFoundException($"Читатель с ID {dto.Reader.Id} не найден.");
-        var bookCheckout = mapper.Map<BookCheckout>(dto);
-        bookCheckoutRepository.Create(bookCheckout);
-
-        return mapper.Map<CheckoutGetDto>(bookCheckout);
+        bookCheckoutRepository.Create(newCheckout);
+        return mapper.Map<CheckoutGetDto>(newCheckout);
     }
 
     public CheckoutGetDto Get(int dtoId)
@@ -38,8 +44,14 @@ public class BookCheckoutService(
     public CheckoutGetDto Update(CheckoutCreateDto dto, int dtoId)
     {
         var checkoutToUpdate = bookCheckoutRepository.Read(dtoId) ?? throw new KeyNotFoundException($"Выдача с ID {dtoId} не найдена.");
+        var book = bookRepository.Read(dto.BookId)
+               ?? throw new KeyNotFoundException($"Книга с ID {dto.BookId} не найдена.");
+
+        var reader = readerRepository.Read(dto.ReaderId)
+                     ?? throw new KeyNotFoundException($"Читатель с ID {dto.ReaderId} не найден.");
+        checkoutToUpdate.Reader =reader;
+        checkoutToUpdate.Book = book;
         mapper.Map(dto, checkoutToUpdate);
-        checkoutToUpdate.Id = dtoId;
         bookCheckoutRepository.Update(checkoutToUpdate);
         return mapper.Map<CheckoutGetDto>(checkoutToUpdate);
     }

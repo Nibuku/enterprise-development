@@ -1,6 +1,4 @@
-﻿using Library.Domain.Models;
-
-namespace Library.Application.Dtos;
+﻿namespace Library.Application.Dtos;
 public class CheckoutCreateDto
 {
 
@@ -17,12 +15,12 @@ public class CheckoutCreateDto
     /// <summary>
     /// The specific book that was loaned.
     /// </summary>
-    public required Book Book { get; set; }
+    public required int BookId { get; set; }
 
     /// <summary>
     /// The specific reader who took the book
     /// </summary>
-    public required BookReader Reader { get; set; }
+    public required int ReaderId { get; set; }
 
     /// <summary>
     /// The calculated due date of the loan.

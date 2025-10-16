@@ -1,6 +1,4 @@
-﻿using Library.Domain.Models;
-
-namespace Library.Application.Dtos;
+﻿namespace Library.Application.Dtos;
 
 public class BookCreateDto
 {
@@ -22,12 +20,12 @@ public class BookCreateDto
     /// <summary>
     /// Type of publication
     /// </summary>
-    public required PublicationType PublicationType { get; set; }
+    public required int PublicationTypeId { get; set; }
 
     /// <summary>
     /// Publisher of the book.
     /// </summary>
-    public required Publisher Publisher { get; set; }
+    public required int PublisherId { get; set; }
 
     /// <summary>
     /// The year when book was published.

@@ -12,9 +12,9 @@ public class BookService(
 {
     public BookGetDto Create(BookCreateDto dto)
     {
-        var publisher = publisherRepository.Read(dto.Publisher.Id) ?? throw new KeyNotFoundException($"Издательство с ID {dto.Publisher.Id} не найдено.");
+        var publisher = publisherRepository.Read(dto.PublisherId) ?? throw new KeyNotFoundException($"Издательство с ID {dto.PublisherId} не найдено.");
 
-        var type = publicationTypeRepository.Read(dto.PublicationType.Id) ?? throw new KeyNotFoundException($"Тип издания с ID {dto.PublicationType.Id} не найден.");
+        var type = publicationTypeRepository.Read(dto.PublicationTypeId) ?? throw new KeyNotFoundException($"Тип издания с ID {dto.PublicationTypeId} не найден.");
 
         var newBook = mapper.Map<Book>(dto);
         newBook.Publisher = publisher;
@@ -41,12 +41,11 @@ public class BookService(
     public BookGetDto Update(BookCreateDto dto, int dtoId)
     {
         var bookToUpdate = bookRepository.Read(dtoId) ?? throw new KeyNotFoundException($"Книга с ID {dtoId} не найдена для обновления.");
-        var publisher = publisherRepository.Read(dto.Publisher.Id) ?? throw new KeyNotFoundException($"Издательство с ID {dto.Publisher.Id} не найдено.");
+        var publisher = publisherRepository.Read(dto.PublisherId) ?? throw new KeyNotFoundException($"Издательство с ID {dto.PublisherId} не найдено.");
 
-        var type = publicationTypeRepository.Read(dto.PublicationType.Id) ?? throw new KeyNotFoundException($"Тип издания с ID {dto.PublicationType.Id} не найден.");
+        var type = publicationTypeRepository.Read(dto.PublicationTypeId) ?? throw new KeyNotFoundException($"Тип издания с ID {dto.PublicationTypeId} не найден.");
         mapper.Map(dto, bookToUpdate);
 
-        bookToUpdate.Id = dtoId;
         bookToUpdate.Publisher = publisher;
         bookToUpdate.PublicationType = type;
 

@@ -1,7 +1,7 @@
 ﻿using Library.Domain.Models;
 
 namespace Library.Application.Dtos.AnaliticsDtos;
-internal class BookWithCountDto
+public class BookWithCountDto
 {
     /// <summary>
     /// The unique id for the book.
@@ -26,17 +26,17 @@ internal class BookWithCountDto
     /// <summary>
     /// Type of publication
     /// </summary>
-    public required PublicationType PublicationType { get; set; }
+    public required int? TypeId { get; set; }
 
     /// <summary>
     /// Publisher of the book.
     /// </summary>
-    public required Publisher Publisher { get; set; }
+    public required int? PublisherId { get; set; }
 
     /// <summary>
     /// The year when book was published.
     /// </summary>
-    public required int PublicationYear { get; set; }
+    public required int? PublicationYear { get; set; }
 
     /// <summary>
     /// List of authors who wrote this book.

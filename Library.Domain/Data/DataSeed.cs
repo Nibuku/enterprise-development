@@ -1,6 +1,6 @@
 ﻿using Library.Domain.Models;
 
-namespace Library.Tests;
+namespace Library.Domain. Data;
 
 /// <summary>
 /// Methods to create and seed sample data for tests.
@@ -10,31 +10,35 @@ public class DataSeed
     /// <summary>
     /// Initializes the DataSeed class by linking authors to books and creating bookcheckouts.
     /// </summary>
-    public List<Book> Books { get; } = GetBooks();
-    public List<BookReader> Readers { get; } = GetReaders();
-    public List<BookCheckout> Checkouts { get; }
+    public static readonly List<Publisher> Publishers;
+    public static readonly List<PublicationType> PublicationTypes;
+    public static List<Book> Books { get; }
+    public static List<BookReader> Readers { get; }
+    public static List<BookCheckout> Checkouts { get; }
 
-    public DataSeed()
+    static DataSeed()
     {
+        Publishers =
+        [
+            new Publisher { Id = 1, Name = "AST" },
+            new Publisher { Id = 2, Name = "Eksmo" },
+            new Publisher { Id = 3, Name = "Piter" },
+            new Publisher { Id = 4, Name = "Prosveshchenie" },
+            new Publisher { Id = 5, Name = "DMKPress" }
+        ];
+
+        PublicationTypes =
+        [
+            new PublicationType { Id = 1, Type = "Novel" },
+            new PublicationType { Id = 2, Type = "Textbook" },
+            new PublicationType { Id = 3, Type = "ReferenceBook" },
+            new PublicationType { Id = 4, Type = "Tutorial" }
+        ];
+
+        Readers = GetReaders();
+        Books = GetBooks();
         Checkouts = GetBookCheckouts(Books, Readers);
     }
-
-    public static readonly List<Publisher> Publishers =
-    [
-        new Publisher { Id = 1, Name = "AST" },
-        new Publisher { Id = 2, Name = "Eksmo" },
-        new Publisher { Id = 3, Name = "Piter" },
-        new Publisher { Id = 4, Name = "Prosveshchenie" },
-        new Publisher { Id = 5, Name = "DMKPress" }
-    ];
-
-    public static readonly List<PublicationType> PublicationTypes =
-    [
-        new PublicationType { Id = 1, Type = "Novel" },
-        new PublicationType { Id = 2, Type = "Textbook" },
-        new PublicationType { Id = 3, Type = "ReferenceBook" },
-        new PublicationType { Id = 4, Type = "Tutorial" }
-    ];
 
     /// <summary>
     /// Creates a list of books.

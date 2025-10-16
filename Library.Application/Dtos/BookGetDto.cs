@@ -1,11 +1,4 @@
-﻿using Library.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Library.Application.Dtos;
+﻿namespace Library.Application.Dtos;
 public class BookGetDto
 {
     /// <summary>
@@ -31,12 +24,12 @@ public class BookGetDto
     /// <summary>
     /// Type of publication
     /// </summary>
-    public required PublicationType PublicationType { get; set; }
+    public required int PublicationTypeId { get; set; }
 
     /// <summary>
     /// Publisher of the book.
     /// </summary>
-    public required Publisher Publisher { get; set; }
+    public required int PublisherId { get; set; }
 
     /// <summary>
     /// The year when book was published.

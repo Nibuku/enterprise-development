@@ -15,6 +15,12 @@ public class MappingProfile : Profile
 
         CreateMap<CheckoutCreateDto, BookCheckout>().ReverseMap();
         CreateMap<CheckoutGetDto, BookCheckout>().ReverseMap();
+
+        CreateMap<PublisherCreateDto, Publisher>().ReverseMap();
+        CreateMap<PublisherGetDto, Publisher>().ReverseMap();
+
+        CreateMap<PublicationTypeCreateDto, PublicationType>().ReverseMap();
+        CreateMap<PublicationTypeGetDto, PublicationType>().ReverseMap();
     }
 
 }

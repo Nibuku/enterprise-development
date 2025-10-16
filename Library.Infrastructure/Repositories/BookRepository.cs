@@ -1,6 +1,6 @@
 ﻿using Library.Domain.Interfaces;
 using Library.Domain.Models;
-using Library.Tests;
+using Library.Domain.Data;
 
 namespace Library.Infrastructure.Repositories;
 
@@ -12,7 +12,7 @@ public class BookRepository: IRepositories<Book, int>
 
     public BookRepository()
     {
-            _books = DataSeed.GetBooks();
+            _books = DataSeed.Books;
             _maxId = _books.Count > 0 ? _books.Max(r => r.Id) : 0;
     }
     public void Create(Book book)

@@ -1,6 +1,6 @@
 ﻿using Library.Domain.Interfaces;
 using Library.Domain.Models;
-using Library.Tests;
+using Library.Domain.Data;
 
 namespace Library.Infrastructure.Repositories;
 public class PublicationTypeRepository : IRepositories<PublicationType, int> 

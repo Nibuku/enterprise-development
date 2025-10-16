@@ -1,6 +1,6 @@
 ﻿using Library.Domain.Interfaces;
 using Library.Domain.Models;
-using Library.Tests;
+using Library.Domain.Data;
 
 namespace Library.Infrastructure.Repositories;
 public class BookCheckoutRepository : IRepositories<BookCheckout, int>
@@ -8,9 +8,9 @@ public class BookCheckoutRepository : IRepositories<BookCheckout, int>
     private readonly List<BookCheckout> _bookCheckouts;
     private int _maxId;
 
-    public BookCheckoutRepository(DataSeed dataSeed)
+    public BookCheckoutRepository()
     {
-        _bookCheckouts = dataSeed.Checkouts;
+        _bookCheckouts = DataSeed.Checkouts;
         _maxId = _bookCheckouts.Count > 0 ? _bookCheckouts.Max(r => r.Id) : 0;
     }
 

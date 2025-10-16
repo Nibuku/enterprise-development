@@ -9,7 +9,6 @@ public class BookReaderService(
     BookReaderRepository bookReaderRepository,
     IMapper mapper) : IApplicationService<BookReaderGetDto, BookReaderCreateDto, int>
 {
-
     public BookReaderGetDto Create(BookReaderCreateDto dto)
     {
         var bookReader = mapper.Map<BookReader>(dto);
@@ -36,7 +35,6 @@ public class BookReaderService(
     {
         var readerToUpdate = bookReaderRepository.Read(dtoId) ?? throw new KeyNotFoundException($"Читатель с ID {dtoId} не найден.");
         mapper.Map(dto, readerToUpdate);
-        readerToUpdate.Id = dtoId;
         bookReaderRepository.Update(readerToUpdate);
         return mapper.Map<BookReaderGetDto>(readerToUpdate);
     }

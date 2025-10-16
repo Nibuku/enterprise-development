@@ -1,5 +1,5 @@
 ﻿namespace Library.Application.Dtos.AnaliticsDtos;
-internal class PublisherDto
+public class PublisherCountDto
 {
     /// <summary>
     /// The unique id for publisher.

@@ -1,10 +1,13 @@
+using Library.Domain.Data;
+using System.Data.Common;
 namespace Library.Tests;
 
 /// <summary>
 /// A collection of unit tests for the Library domain.
 /// </summary>
-public class LibraryTests(DataSeed seed) : IClassFixture<DataSeed>
+public class LibraryTests() : IClassFixture<DataSeed>
 {
+
     /// <summary>
     /// Tests that loaned books are correctly retrieved and ordered by their title.
     /// </summary>
@@ -27,7 +30,7 @@ public class LibraryTests(DataSeed seed) : IClassFixture<DataSeed>
             "War and Peace"
         };
 
-        var actualOrder = seed.Checkouts
+        var actualOrder = DataSeed.Checkouts
             .Select(c => c.Book)
             .Distinct()
             .OrderBy(b => b.Title)
@@ -52,7 +55,7 @@ public class LibraryTests(DataSeed seed) : IClassFixture<DataSeed>
             "Angela Merkel"
         };
 
-        var top5Readers = seed.Checkouts
+        var top5Readers = DataSeed.Checkouts
             .GroupBy(c=> c.Reader)
             .Select(g => new
             {
@@ -83,7 +86,7 @@ public class LibraryTests(DataSeed seed) : IClassFixture<DataSeed>
             ("Angela Merkel", 30)
         };
 
-        var topReaders = seed.Checkouts
+        var topReaders = DataSeed.Checkouts
             .GroupBy(c => c.Reader)
             .Select(g => new
             {
@@ -115,7 +118,7 @@ public class LibraryTests(DataSeed seed) : IClassFixture<DataSeed>
             "DMKPress"
         };
 
-        var topPublishers = seed.Checkouts
+        var topPublishers = DataSeed.Checkouts
             .Where(c => c.LoanDate >= oneYearAgo)
             .GroupBy(c => c.Book.Publisher)
             .Select(g => new 
@@ -147,7 +150,7 @@ public class LibraryTests(DataSeed seed) : IClassFixture<DataSeed>
             "Roadside Picnic"
         };
 
-        var recentLoans = seed.Checkouts
+        var recentLoans = DataSeed.Checkouts
             .Where(ñ=> ñ.LoanDate >= oneYearAgo)
             .ToList();
 
