@@ -7,16 +7,16 @@ namespace Library.Api.Controllers;
 /// Базовый контроллер для CRUD-операций над сущностями
 /// </summary>
 /// <typeparam name="TDto">DTO для Get-запросов</typeparam>
-/// <typeparam name="TCreateUpdateDto">DTO для Post/Put-запросов</typeparam>
+/// <typeparam name="TCreateDto">DTO для Post/Put-запросов</typeparam>
 /// <typeparam name="TKey">Тип идентификатора DTO</typeparam>
 /// <param name="appService">Служба для манипуляции DTO</param>
 /// <param name="logger">Логгер</param>
 [Route("api/[controller]")]
 [ApiController]
-public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(IApplicationService<TDto, TCreateUpdateDto, TKey> appService,
-    ILogger<CrudControllerBase<TDto, TCreateUpdateDto, TKey>> logger) : ControllerBase
+public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationService<TDto, TCreateDto, TKey> appService,
+    ILogger<CrudControllerBase<TDto, TCreateDto, TKey>> logger) : ControllerBase
     where TDto : class
-    where TCreateUpdateDto : class
+    where TCreateDto : class
     where TKey : struct
 {
     /// <summary>
@@ -27,7 +27,7 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(IApplicat
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
-    public ActionResult<TDto> Create(TCreateUpdateDto newDto)
+    public ActionResult<TDto> Create(TCreateDto newDto)
     {
         logger.LogInformation("{method} method of {controller} is called with {@dto} parameter", nameof(Create), GetType().Name, newDto);
         try
@@ -52,7 +52,7 @@ public abstract class CrudControllerBase<TDto, TCreateUpdateDto, TKey>(IApplicat
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult<TDto> Edit(TKey id, TCreateUpdateDto newDto)
+    public ActionResult<TDto> Edit(TKey id, TCreateDto newDto)
     {
         logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Edit), GetType().Name, id, newDto);
         try

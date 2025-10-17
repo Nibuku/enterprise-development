@@ -19,7 +19,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-
 builder.Services.AddSingleton<BookRepository, BookRepository>();
 builder.Services.AddSingleton<BookReaderRepository, BookReaderRepository>();
 builder.Services.AddSingleton<BookCheckoutRepository, BookCheckoutRepository>();
@@ -30,10 +29,11 @@ builder.Services.AddScoped<IApplicationService<BookGetDto, BookCreateDto, int>, 
 builder.Services.AddScoped<IApplicationService<BookReaderGetDto, BookReaderCreateDto, int>, BookReaderService>();
 builder.Services.AddScoped<IApplicationService<PublisherGetDto, PublisherCreateDto, int>, PublisherService>();
 builder.Services.AddScoped<IApplicationService<CheckoutGetDto, CheckoutCreateDto, int>, BookCheckoutService>();
-builder.Services.AddScoped<IApplicationService<PublicationTypeGetDto, PublicationTypeCreateDto, int>, PublicationTypeService>();
-
+builder.Services.AddScoped<IApplicationService<PublicationTypeGetDto, PublicationTypeCreateDto, int>, PublicationTypeService>(); 
+builder.Services.AddScoped<ILibraryAnalyticsService, LibraryAnalyticsService>();
 
 var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

@@ -1,39 +1,42 @@
 ﻿namespace Library.Application.Dtos;
 
+/// <summary>
+/// DTO для создания книг в библиотеке.
+/// </summary>
 public class BookCreateDto
 {
     /// <summary>
-    /// The unique inventory number of the book.
-    /// </summary>
+    /// Инвентарный номер книги.
+    /// </summary> 
     public required string InventoryNumber { get; set; }
 
     /// <summary>
-    /// Catalog code for the book.
-    /// </summary>
+    /// Код каталога.
+    /// </summary>     
     public required string CatalogCode { get; set; }
 
     /// <summary>
-    /// Title of the book.
+    /// Название книги.
     /// </summary>
     public required string Title { get; set; }
 
     /// <summary>
-    /// Type of publication
+    /// Id типа публикации
     /// </summary>
     public required int PublicationTypeId { get; set; }
 
     /// <summary>
-    /// Publisher of the book.
+    /// Id издательства
     /// </summary>
     public required int PublisherId { get; set; }
 
     /// <summary>
-    /// The year when book was published.
+    /// Год издания
     /// </summary>
     public required int PublicationYear { get; set; }
 
     /// <summary>
-    /// List of authors who wrote this book.
+    /// Список авторов
     /// </summary>
     public List<string> Authors { get; set; } = [];
 }

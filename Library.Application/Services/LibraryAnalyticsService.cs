@@ -1,6 +1,5 @@
 ﻿using AutoMapper;
 using Library.Application.Dtos.AnaliticsDtos;
-using Library.Domain.Models;
 using Library.Infrastructure.Repositories;
 
 namespace Library.Application.Services;
@@ -9,163 +8,117 @@ public class LibraryAnalyticsService(
     BookCheckoutRepository checkoutRepository,
     BookRepository bookRepository,
     BookReaderRepository readerRepository,
-    PublisherRepository publisherRepository,
     IMapper mapper) : ILibraryAnalyticsService
 {
-    // --- Вспомогательные методы (для получения всех данных за один раз) ---
 
-    // Внимание: Этот метод загружает ВСЕ данные, что неэффективно для больших БД.
-    private (List<BookCheckout> checkouts, List<Book> books, List<BookReader> readers, List<Publisher> publishers) GetAllEntities()
+    public List<BookWithCountDto> GetIssuedBooksSortedByTitle(DateOnly date)
     {
-        // Загружаем все необходимые сущности в память
         var checkouts = checkoutRepository.ReadAll();
         var books = bookRepository.ReadAll();
-        var readers = readerRepository.ReadAll();
-        var publishers = publisherRepository.ReadAll();
-        return (checkouts, books, readers, publishers);
-    }
 
-    // 1. Вывести информацию о выданных книгах, упорядоченных по названию.
-    public List<BookWithCountDto> GetIssuedBooksSortedByTitle()
-    {
-        var (checkouts, books, _, _) = GetAllEntities();
-        var today = DateOnly.FromDateTime(DateTime.Today);
-
-        var activeCheckouts = checkouts
-            .Where(c => c.LoanDate.AddDays(c.LoanDays) >= today)
-            .ToList();
-
-        var issuedBooksDto = activeCheckouts
-            .GroupBy(c => c.Book.Id)
-            .Select(group =>
-            {
-                var book = books.First(b => b.Id == group.Key);
-
-                var dto = mapper.Map<BookWithCountDto>(book);
-                dto.Count = group.Count(); 
-                return dto;
-            })
+        var allBookCheckouts = checkouts
+            .Where(r => r.LoanDate <= date && r.LoanDate.AddDays(r.LoanDays) >= date)
+            .GroupBy(r => r.Book.Id)
+            .Join(books,
+                r => r.Key,
+                b => b.Id,
+                (r, b) =>
+                {
+                    var dto = mapper.Map<BookWithCountDto>(b);
+                    dto.Count = r.Count();
+                    return dto;
+                })
             .OrderBy(b => b.Title)
             .ToList();
 
-        return issuedBooksDto;
+        return allBookCheckouts;
     }
 
     // 2. Вывести информацию о топ 5 читателей, прочитавших больше всего книг за заданный период.
-    public List<BookReaderWithCountDto> GetTopReadersByPeriod(DateTime startDate, DateTime endDate, int count = 5)
+    public List<BookReaderWithCountDto> GetTopReadersByPeriod(DateOnly start, DateOnly end)
     {
-        var (checkouts, _, readers, _) = GetAllEntities();
-        var startDateOnly = DateOnly.FromDateTime(startDate);
-        var endDateOnly = DateOnly.FromDateTime(endDate);
+        var checkouts = checkoutRepository.ReadAll();
+        var readers = readerRepository.ReadAll();
 
-        var recordsInPeriod = checkouts
-            .Where(r => r.LoanDate >= startDateOnly && r.LoanDate <= endDateOnly)
-            .ToList();
-
-        var topReadersData = recordsInPeriod
+        var topReaders = checkouts
+            .Where(r => r.LoanDate >= start && r.LoanDate.AddDays(r.LoanDays) <= end)
             .GroupBy(r => r.Reader.Id)
-            .OrderByDescending(g => g.Count())
-            .Take(count)
+            .Select(x =>
+            {
+                var reader = readers.First(c => c.Id == x.Key);
+                var dto = mapper.Map<BookReaderWithCountDto>(reader);
+                dto.Count = x.Count();
+                return dto;
+            })
+            .OrderByDescending(x => x.Count)
+            .ThenBy(x => x.FullName)
+            .Take(5)
             .ToList();
 
-        var result = topReadersData.Select(group =>
-        {
-            var reader = readers.First(r => r.Id == group.Key);
-            var dto = mapper.Map<BookReaderWithCountDto>(reader);
-            dto.Count = group.Count();
-            return dto;
-        })
-        .ToList();
-
-        return result;
+        return topReaders;
     }
 
     // 3. Вывести информацию о читателях, бравших книги на наибольший период времени, упорядочить по ФИО.
-    public List<BookReaderWithDayDto> GetLongestBorrowers()
+    public List<BookReaderWithDaysDto> GetLongestBorrowers()
     {
-        var (checkouts, _, readers, _) = GetAllEntities();
+        var checkouts = checkoutRepository.ReadAll();
+        var readers = readerRepository.ReadAll();
 
-        var readersWithMaxDuration = checkouts
-            .GroupBy(c => c.Reader.Id)
-            .Select(group => new
+        var topReaders = checkouts
+            .GroupBy(r => r.Reader.Id)
+            .Select(x =>
             {
-                ReaderId = group.Key,
-                MaxDuration = group.Max(c => c.LoanDays)
-            })
-            .ToList();
-
-        if (readersWithMaxDuration.Count == 0) return [];
-
-        var overallMaxDuration = readersWithMaxDuration.Max(x => x.MaxDuration);
-
-        var longestBorrowersIds = readersWithMaxDuration
-            .Where(x => x.MaxDuration == overallMaxDuration)
-            .Select(x => x.ReaderId)
-            .ToList();
-
-        var result = readers
-            .Where(r => longestBorrowersIds.Contains(r.Id))
-            .Select(reader =>
-            {
-                var dto = mapper.Map<BookReaderWithDayDto>(reader);
-                dto.TotalDays = overallMaxDuration;
+                var customer = readers.First(c => c.Id == x.Key);
+                var dto = mapper.Map<BookReaderWithDaysDto>(customer);       
+                dto.TotalDays= x.Max(r => r.LoanDays);
                 return dto;
             })
-            .OrderBy(r => r.FullName)
             .ToList();
 
-        return result;
+        var maxDays = topReaders.Max(x => x.TotalDays);
+
+        var top = topReaders
+            .Where(x => x.TotalDays == maxDays)
+            .OrderBy(c => c.FullName)
+            .ToList();
+
+        return top;
     }
 
     // 4. Вывести топ 5 наиболее популярных издательств за последний год.
-    public List<PublisherCountDto> GetTopPublishersByLastYear(int count)
+    public List<PublisherCountDto> GetTopPublishersByLastYear(DateOnly start)
     {
-        var (checkouts, books, _, publishers) = GetAllEntities();
-        var oneYearAgo = DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
+        var checkouts = checkoutRepository.ReadAll();
+        var books = bookRepository.ReadAll();
 
-        var recordsLastYear = checkouts
-            .Where(c => c.LoanDate >= oneYearAgo)
-            .ToList();
+        var topFivePublishers = checkouts
+            .Where(r => r.LoanDate >= start)
 
-        var topPublishersData = recordsLastYear
-            .Join(books,
-                  record => record.Book.Id,
-                  book => book.Id,
-                  (record, book) => book) 
-            .GroupBy(book => book.Publisher.Id)
-            .Select(group => new
+            .Select(r => books.First(b => b.Id == r.Book.Id).Publisher)
+            .GroupBy(p => p)
+            .OrderByDescending(g => g.Count())
+            .Take(5)
+            .Select(g => new PublisherCountDto
             {
-                PublisherId = group.Key,
-                Count = group.Count()
+                Name = g.Key.Name,
+                Count = g.Count()
             })
-            .OrderByDescending(x => x.Count)
-            .Take(count)
             .ToList();
 
-        var result = topPublishersData.Select(x =>
-        {
-            var publisher = publishers.First(p => p.Id == x.PublisherId);
-            var dto = mapper.Map<PublisherCountDto>(publisher);
-            dto.Count = x.Count;
-            return dto;
-        })
-        .ToList();
-
-        return result;
+        return topFivePublishers;
     }
 
     // 5. Вывести топ 5 наименее популярных книг за последний год.
-    public List<BookWithCountDto> GetLeastPopularBooksByLastYear(int count)
+    public List<BookWithCountDto> GetLeastPopularBooksByLastYear(DateOnly start)
     {
-        var (checkouts, books, _, _) = GetAllEntities();
-        var oneYearAgo = DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
-
-        var recordsLastYear = checkouts
-            .Where(r => r.LoanDate >= oneYearAgo)
+        var records = checkoutRepository.ReadAll();
+        var books = bookRepository.ReadAll();
+        var recordsInPeriod = records
+            .Where(r => r.LoanDate >= start)
             .ToList();
 
-        var bookCounts = recordsLastYear
-            .GroupBy(r => r.Book.Id)
+        var bookCounts = recordsInPeriod
+            .GroupBy(r => r.Book.Id) 
             .ToDictionary(g => g.Key, g => g.Count());
 
         var result = books
@@ -177,7 +130,7 @@ public class LibraryAnalyticsService(
             })
             .OrderBy(dto => dto.Count) 
             .ThenBy(dto => dto.Title)
-            .Take(count)
+            .Take(5)
             .ToList();
 
         return result;

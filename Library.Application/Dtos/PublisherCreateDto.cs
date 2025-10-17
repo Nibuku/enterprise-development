@@ -1,8 +1,12 @@
 ﻿namespace Library.Application.Dtos;
+
+/// <summary>
+/// DTO для издательств
+/// </summary>
 public class PublisherCreateDto
 {
     /// <summary>
-    /// Publisher's name.
+    /// Название издательства
     /// </summary>
     public required string Name { get; set; }
 }

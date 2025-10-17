@@ -1,13 +1,10 @@
-using Library.Domain.Data;
-using System.Data.Common;
 namespace Library.Tests;
 
 /// <summary>
 /// A collection of unit tests for the Library domain.
 /// </summary>
-public class LibraryTests() : IClassFixture<DataSeed>
+public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture>
 {
-
     /// <summary>
     /// Tests that loaned books are correctly retrieved and ordered by their title.
     /// </summary>
@@ -30,7 +27,7 @@ public class LibraryTests() : IClassFixture<DataSeed>
             "War and Peace"
         };
 
-        var actualOrder = DataSeed.Checkouts
+        var actualOrder = fixture.CheckoutRepository.ReadAll()
             .Select(c => c.Book)
             .Distinct()
             .OrderBy(b => b.Title)
@@ -55,7 +52,7 @@ public class LibraryTests() : IClassFixture<DataSeed>
             "Angela Merkel"
         };
 
-        var top5Readers = DataSeed.Checkouts
+        var top5Readers = fixture.CheckoutRepository.ReadAll()
             .GroupBy(c=> c.Reader)
             .Select(g => new
             {
@@ -86,7 +83,7 @@ public class LibraryTests() : IClassFixture<DataSeed>
             ("Angela Merkel", 30)
         };
 
-        var topReaders = DataSeed.Checkouts
+        var topReaders = fixture.CheckoutRepository.ReadAll()
             .GroupBy(c => c.Reader)
             .Select(g => new
             {
@@ -118,7 +115,7 @@ public class LibraryTests() : IClassFixture<DataSeed>
             "DMKPress"
         };
 
-        var topPublishers = DataSeed.Checkouts
+        var topPublishers = fixture.CheckoutRepository.ReadAll()
             .Where(c => c.LoanDate >= oneYearAgo)
             .GroupBy(c => c.Book.Publisher)
             .Select(g => new 
@@ -150,7 +147,7 @@ public class LibraryTests() : IClassFixture<DataSeed>
             "Roadside Picnic"
         };
 
-        var recentLoans = DataSeed.Checkouts
+        var recentLoans = fixture.CheckoutRepository.ReadAll()
             .Where(ñ=> ñ.LoanDate >= oneYearAgo)
             .ToList();
 

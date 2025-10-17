@@ -1,17 +1,17 @@
 ﻿namespace Library.Domain.Models;
 
 /// <summary>
-/// Сlass for publication types
+/// Класс для типов публикации
 /// </summary>
 public class PublicationType
 {
     /// <summary>
-    /// The unique id for type of publication.
+    /// Id типа публикации
     /// </summary>
     public required int Id { get; set; }
 
     /// <summary>
-    /// Type of publication
+    /// Тип публикации
     /// </summary>
     public required string Type { get; set; } 
 }

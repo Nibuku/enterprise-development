@@ -1,47 +1,47 @@
 ﻿namespace Library.Domain.Models;
 
 /// <summary>
-/// Class for book model in library.
+/// Класс для книг в библиотеке.
 /// </summary>
 public class Book
 {
     /// <summary>
-    /// The unique id for the book.
+    /// Id для книги.
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// The unique inventory number of the book.
+    /// Инвентарный номер книги.
     /// </summary>
     public required string InventoryNumber { get; set; }
 
     /// <summary>
-    /// Catalog code for the book.
+    /// Код каталога.
     /// </summary>
     public required string CatalogCode { get; set; }
 
     /// <summary>
-    /// Title of the book.
+    /// Название.
     /// </summary>
     public required string Title { get; set; }
 
     /// <summary>
-    /// Type of publication
+    /// Тип публикации
     /// </summary>
     public required PublicationType PublicationType { get; set; }
 
     /// <summary>
-    /// Publisher of the book.
+    /// Издательство
     /// </summary>
     public required Publisher Publisher { get; set; }
 
     /// <summary>
-    /// The year when book was published.
+    /// Год издания
     /// </summary>
     public required int PublicationYear { get; set; }
 
     /// <summary>
-    /// List of authors who wrote this book.
+    /// Список авторов
     /// </summary>
     public List<string> Authors { get; set; } = [];
 }

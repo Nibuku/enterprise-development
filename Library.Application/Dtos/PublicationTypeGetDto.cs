@@ -1,13 +1,17 @@
 ﻿namespace Library.Application.Dtos;
+
+/// <summary>
+/// DTO для типов публикации
+/// </summary>
 public class PublicationTypeGetDto
 {
     /// <summary>
-    /// The unique id for type of publication.
+    /// Id типа публикации
     /// </summary>
     public required int Id { get; set; }
 
     /// <summary>
-    /// Type of publication
+    /// Тип публикации
     /// </summary>
     public required string Type { get; set; }
 }

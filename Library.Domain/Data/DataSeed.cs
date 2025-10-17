@@ -3,19 +3,38 @@
 namespace Library.Domain. Data;
 
 /// <summary>
-/// Methods to create and seed sample data for tests.
+/// Класс для создания и хранения данных для тестов
 /// </summary>
 public class DataSeed
 {
     /// <summary>
-    /// Initializes the DataSeed class by linking authors to books and creating bookcheckouts.
+    /// Издательства
     /// </summary>
     public static readonly List<Publisher> Publishers;
+
+    /// <summary>
+    /// Типы публикаций
+    /// </summary>
     public static readonly List<PublicationType> PublicationTypes;
+
+    /// <summary>
+    /// Список книг
+    /// </summary>
     public static List<Book> Books { get; }
+
+    /// <summary>
+    /// Список читателей
+    /// </summary>
     public static List<BookReader> Readers { get; }
+
+    /// <summary>
+    /// Выдачи
+    /// </summary>
     public static List<BookCheckout> Checkouts { get; }
 
+    /// <summary>
+    /// Статический конструктор класса.
+    /// </summary>
     static DataSeed()
     {
         Publishers =
@@ -41,9 +60,9 @@ public class DataSeed
     }
 
     /// <summary>
-    /// Creates a list of books.
+    /// Метод создает список книг.
     /// </summary>
-    /// <returns> A list of Book objects. </returns>
+    /// <returns> Список объектов типа Book. </returns>
     public static List<Book> GetBooks() =>
     [
         new Book { Id = 1, InventoryNumber = "INV-001", CatalogCode = "FIC-CHR-001", Title = "Murder on the Orient Express", Authors = ["Agatha Christie"], PublicationType = PublicationTypes.Single(pt => pt.Type == "Novel"), Publisher =  Publishers.Single(p => p.Name == "AST"), PublicationYear = 1934 },
@@ -61,9 +80,9 @@ public class DataSeed
     ];
 
     /// <summary>
-    /// Creates a list of readers.
+    /// Метод создает список читателей.
     /// </summary>
-    /// <returns> A list of Reader objects. </returns>
+    /// <returns> Список объектов типа Book.</returns>
     public static List<BookReader> GetReaders() =>
     [
         new BookReader { Id = 1, FullName = "Elon Musk", Address = "Sun St. 1, Apt 1", Phone = "+79160000001", RegistrationDate = new DateOnly(2023, 1, 10) },
@@ -81,11 +100,11 @@ public class DataSeed
     ];
 
     /// <summary>
-    /// Creates a list of book loans based on books and readers.
+    /// Создает список выдач книг с указанием читателей и книг
     /// </summary>
-    /// <param name="books"> list of books to loan.</param>
-    /// <param name="readers"> list of readers who will take books.</param>
-    /// <returns> A list of BookCheckouts objects.</returns>
+    /// <param name="books"> список книг для выдачи</param>
+    /// <param name="readers"> список читателей</param>
+    /// <returns> Список объектов типо BookCheckout </returns>
     public static List<BookCheckout> GetBookCheckouts(List<Book> books, List<BookReader> readers) =>
     [
         new() { Id = 1, Book = books[0], Reader = readers[0], LoanDate = new DateOnly(2025, 1, 10), LoanDays = 14 },
@@ -101,10 +120,10 @@ public class DataSeed
         new() { Id = 11, Book = books[10], Reader = readers[10], LoanDate = new DateOnly(2025, 6, 7), LoanDays = 60 },
         new() { Id = 12, Book = books[11], Reader = readers[11], LoanDate = new DateOnly(2025, 6, 15), LoanDays = 14 },
 
-        new() { Id = 13, Book = books[0], Reader = readers[1], LoanDate = new DateOnly(2025, 7, 1), LoanDays = 21 },
-        new() { Id = 14, Book = books[2], Reader = readers[0], LoanDate = new DateOnly(2025, 7, 10), LoanDays = 14 },
-        new() { Id = 15, Book = books[4], Reader = readers[2], LoanDate = new DateOnly(2025, 8, 5), LoanDays = 30 },
-        new() { Id = 16, Book = books[9], Reader = readers[2], LoanDate = new DateOnly(2025, 6, 5), LoanDays = 10 },
-        new() { Id = 17, Book = books[2], Reader = readers[4], LoanDate = new DateOnly(2025, 9, 5), LoanDays = 30 }
+        new() { Id = 13, Book = books[0], Reader = readers[1], LoanDate = new DateOnly(2025, 10, 1), LoanDays = 21 },
+        new() { Id = 14, Book = books[2], Reader = readers[0], LoanDate = new DateOnly(2025, 10, 10), LoanDays = 14 },
+        new() { Id = 15, Book = books[4], Reader = readers[2], LoanDate = new DateOnly(2025, 10, 5), LoanDays = 30 },
+        new() { Id = 16, Book = books[9], Reader = readers[2], LoanDate = new DateOnly(2025, 10, 5), LoanDays = 10 },
+        new() { Id = 17, Book = books[2], Reader = readers[4], LoanDate = new DateOnly(2025, 10, 5), LoanDays = 30 }
     ];
 }
