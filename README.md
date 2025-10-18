@@ -1,6 +1,4 @@
 # Разработка корпоративных приложений
-[Таблица с успеваемостью](https://docs.google.com/spreadsheets/d/1JD6aiOG6r7GrA79oJncjgUHWtfeW4g_YZ9ayNgxb_w0/edit?usp=sharing)
-
 ## Задание «Библиотека»
 В базе данных библиотеки хранятся сведения о каталоге книг, читателях и выданных на руки книгах.
 
@@ -26,3 +24,54 @@
 3. TopReadersByTotalLoanDays() - Вывести информацию о читателях, бравших книги на наибольший период времени, упорядочить по ФИО.
 4. TopPopularPublishersLastYear() - Вывести топ 5 наиболее популярных издательств за последний год.
 5. TopLeastPopularBooksLastYear() - Вывести топ 5 наименее популярных книг за последний год.
+
+[LibraryFixture](https://github.com/Nibuku/enterprise-development/Library.Tests/LibraryFixture.cs) - фикстура, использующая для заполнения репозитории.
+
+### Library.Infrastructure - Слой для доступа к данным
+- **Repositories** - Реализации репозиториев:
+  - [BookRepository.cs](./Library.Infrastructure/Repositories/BookRepository.cs)
+  - [BookReaderRepository.cs](./Library.Infrastructure/Repositories/BookReaderRepository.cs) 
+  - [BookCheckoutRepository.cs](./Library.Infrastructure/Repositories/BookCheckoutRepository.cs)
+  - [PublisherRepository.cs](./Library.Infrastructure/Repositories/PublisherRepository.cs)
+  - [PublicationTypeRepository.cs](./Library.Infrastructure/Repositories/PublicationTypeRepository.cs)
+
+### Library.Application - Сервисный слой
+#### Dtos
+- AnaliticsDtos - DTO для аналитических запросов:
+  - [BookReaderWithCountDto.cs](./Library.Application/Dtos/BookReaderWithCountDto.cs) - Читатель с количеством книг, которые он прочитал.
+  - [BookReaderWithDaysDto.cs](./Library.Application/Dtos/BookReaderWithDaysDto.cs) - Читатель с количеством дней, которые у него были книги на руках.
+  - [BookWithCountDto.cs](./Library.Application/Dtos/BookWithCountDto.cs) - Книга с счетчиком выдач.  
+  - [PublisherCountDto.cs](./Library.Application/Dtos/PublisherCountDto.cs) - Издательство с счетчиком книг.
+
+- DTO:
+  - [BookCreateDto.cs](./Library.Application/Dtos/BookCreateDto.cs) / [BookGetDto.cs](./Library.Application/Dtos/BookGetDto.cs) - Для создания и получения книг.
+  - [BookReaderCreateDto.cs](./Library.Application/Dtos/BookReaderCreateDto.cs) / [BookReaderGetDto.cs](./Library.Application/Dtos/BookReaderGetDto.cs) - Для читателей.
+  - [CheckoutCreateDto.cs](./Library.Application/Dtos/CheckoutCreateDto.cs) / [CheckoutGetDto.cs](./Library.Application/Dtos/CheckoutGetDto.cs) - Для выдачи книг.
+  - [PublicationTypeCreateDto.cs](./Library.Application/Dtos/PublicationTypeCreateDto.cs) / [PublicationTypeGetDto.cs](./Library.Application/Dtos/PublicationTypeGetDto.cs) - Для типов публикаций.
+  - [PublisherCreateDto.cs](./Library.Application/Dtos/PublisherCreateDto.cs) / [PublisherGetDto.cs](./Library.Application/Dtos/PublisherGetDto.cs) - Для издательств.
+
+
+#### Interfaces - Контракты сервисов
+- [IApplicationService.cs](./Library.Application/Interfaces/IApplicationService.cs) - Интерфейс для CRUD операций.
+- [ILibraryAnalyticsService.cs](./Library.Application/Interfaces/ILibraryAnalyticsService.cs) - Интерфейс для аналитической службы.
+
+#### Services - Реализации сервисов с CRUD операциями
+- [BookService.cs](./Library.Application/Services/BookService.cs) - Для книг.
+- [BookReaderService.cs](./Library.Application/Services/BookReaderService.cs) - Для читателей.
+- [BookCheckoutService.cs](./Library.Application/Services/BookCheckoutService.cs) - Для выдачи книг.
+- [PublicationTypeService.cs](./Library.Application/Services/PublicationTypeService.cs) - Для типов публикаций.
+- [PublisherService.cs](./Library.Application/Services/PublisherService.cs) - Для издательств.
+- [LibraryAnalyticsService.cs](./Library.Application/Services/LibraryAnalyticsService.cs) - Сервис аналитических запросов.
+
+- [MappingProfile.cs](./Library.Application/MappingProfile.cs) - Настройки AutoMapper для преобразования между DTO и доменной областью.
+
+
+### Library.Api - Веб-API
+#### Controllers - API контроллеры
+- [AnalyticsController.cs](./Library.Api/Controllers/AnalyticsController.cs) - Контроллер для аналитических запросов (содержит те же запросы, которые проверяются в юнит-тестах).
+- [BookController.cs](./Library.Api/Controllers/BookController.cs) - Управление книгами.
+- [BookReaderController.cs](./Library.Api/Controllers/BookReaderController.cs) - Управление читателями.
+- [BookCheckoutController.cs](./Library.Api/Controllers/BookCheckoutController.cs) - Управление выдачей книг.
+- [PublicationTypeController.cs](./Library.Api/Controllers/PublicationTypeController.cs) - Управление типами публикаций.
+- [PublisherController.cs](./Library.Api/Controllers/PublisherController.cs) - Управление издательствами.
+- [CrudControllerBase.cs](./Library.Api/Controllers/CrudControllerBase.cs) - Базовый класс для CRUD операций.
