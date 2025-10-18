@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Library.Application.Dtos;
+using Library.Application.Interfaces;
 using Library.Domain.Models;
 using Library.Infrastructure.Repositories;
 

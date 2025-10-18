@@ -1,14 +1,14 @@
 ﻿using Library.Application.Dtos.AnaliticsDtos;
-using Library.Application.Services;
+using Library.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers;
 
 /// <summary>
-/// Предоставляет синхронные API-методы для получения библиотечной аналитики.
+/// Предоставляет API-методы для аналитических запросов.
 /// </summary>
-/// <param name="analyticsService">Синхронный аналитический сервис.</param>
-/// <param name="logger">Логгер для записи информации и ошибок.</param>
+/// <param name="analyticsService">Аналитический сервис.</param>
+/// <param name="logger">Логгер для записи информации.</param>
 [ApiController]
 [Route("api/analytics")]
 public class AnalyticsController(
@@ -16,149 +16,121 @@ public class AnalyticsController(
     ILogger<AnalyticsController> logger) : ControllerBase
 {
     /// <summary>
+    /// Вспомогательный метод для логированияк.
+    /// </summary>
+    protected ActionResult Logging(string method, Func<ActionResult> action)
+    {
+        logger.LogInformation("START: {Method}", method);
+        try
+        {
+            var result = action();
+            var count = 0;
+            if (result is OkObjectResult okResult && okResult.Value != null)
+            {
+                if (okResult.Value is System.Collections.IEnumerable collection)
+                {
+                    count = collection.Cast<object>().Count();
+                }
+                else count = 1;
+            }
+            logger.LogInformation("SUCCESS: {Method}. Found {Count} records.", method, count);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "ERROR: {Method} failed.", method);
+            return StatusCode(500, $"Server error: {ex.Message}");
+        }
+    }
+
+    /// <summary>
     /// Возвращает все книги, которые находятся на руках у читателей на текущую дату.
     /// </summary>
     [HttpGet("issued-books")]
     [ProducesResponseType(typeof(List<BookWithCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<BookWithCountDto>> GetIssuedBooksSortedByTitle()
+    public ActionResult<List<BookWithCountDto>> GetBooksOrderedByTitle()
     {
-        const string methodName = nameof(GetIssuedBooksSortedByTitle);
-        logger.LogInformation("START: {Method}", methodName);
-
-        try
+        return Logging(nameof(GetBooksOrderedByTitle), () =>
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
-            var result = analyticsService.GetIssuedBooksSortedByTitle(today);
-
-            logger.LogInformation("SUCCESS: {Method}. Found {Count} records.", methodName, result.Count);
-            return result.Count > 0 ? Ok(result) : NoContent();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "ERROR: {Method} failed.", methodName);
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+            var result = analyticsService.GetBooksOrderedByTitle(today);
+            return Ok(result);
+        });
     }
 
     /// <summary>
     /// Возвращает топ 5 читателей, прочитавших наибольшее количество книг за заданный период.
-    /// Период должен быть полностью покрыт займом (начало займа >= start, конец займа <= end).
     /// </summary>
-    /// <param name="start">Дата начала периода (включительно).</param>
-    /// <param name="end">Дата окончания периода (включительно).</param>
+    /// <param name="start">Начало периода.</param>
+    /// <param name="end">Конец периода.</param>
     [HttpGet("top-readers-by-count")]
     [ProducesResponseType(typeof(List<BookReaderWithCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<BookReaderWithCountDto>> GetTopReadersByPeriod(
+    public ActionResult<List<BookReaderWithCountDto>> GetTopReadersByNumberOfBooks(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end)
     {
-        const string methodName = nameof(GetTopReadersByPeriod);
-        logger.LogInformation("START: {Method} with period {Start} to {End}", methodName, start, end);
-
-        try
+        return Logging(nameof(GetTopReadersByNumberOfBooks), () =>
         {
-            var result = analyticsService.GetTopReadersByPeriod(start, end);
-
-            logger.LogInformation("SUCCESS: {Method}. Found {Count} records.", methodName, result.Count);
-            return result.Count > 0 ? Ok(result) : NoContent();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "ERROR: {Method} failed.", methodName);
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+            var result = analyticsService.GetTopReadersByNumberOfBooks(start, end);
+            return Ok(result);
+        });
     }
 
     /// <summary>
-    /// Возвращает читателей с самой большой максимальной длительностью одного займа (LoanDays).
+    /// Возвращает читателей, бравших книги на наибольшее количество дней).
     /// </summary>
     [HttpGet("longest-borrowers")]
     [ProducesResponseType(typeof(List<BookReaderWithDaysDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<BookReaderWithDaysDto>> GetLongestBorrowers()
+    public ActionResult<List<BookReaderWithDaysDto>> GetTopReadersByTotalLoanDays()
     {
-        const string methodName = nameof(GetLongestBorrowers);
-        logger.LogInformation("START: {Method}", methodName);
-
-        try
+        return Logging(nameof(GetTopReadersByTotalLoanDays), () =>
         {
-            var result = analyticsService.GetLongestBorrowers();
-
-            logger.LogInformation("SUCCESS: {Method}. Found {Count} records.", methodName, result.Count);
+            var result = analyticsService.GetTopReadersByTotalLoanDays();
             return result.Count > 0 ? Ok(result) : NoContent();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "ERROR: {Method} failed.", methodName);
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+        });
     }
 
     /// <summary>
-    /// Возвращает топ 5 наиболее популярных издательств, начиная с указанной даты (LoanDate >= start).
+    /// Возвращает топ 5 наиболее популярных издательств за год.
     /// </summary>
-    /// <param name="start">Дата начала периода (по умолчанию - год назад).</param>
+    /// <param name="start">Дата начала периода</param>
     [HttpGet("top-publishers")]
     [ProducesResponseType(typeof(List<PublisherCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<PublisherCountDto>> GetTopPublishersByLastYear(
+    public ActionResult<List<PublisherCountDto>> GetTopPopularPublishersLastYear(
         [FromQuery] DateOnly? start = null)
     {
-        const string methodName = nameof(GetTopPublishersByLastYear);
-
-        // Если дата не указана, используем "год назад"
-        var startDate = start ?? DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
-
-        logger.LogInformation("START: {Method} with start date {Start}", methodName, startDate);
-
-        try
+        return Logging(nameof(GetTopPopularPublishersLastYear), () =>
         {
-            var result = analyticsService.GetTopPublishersByLastYear(startDate);
-
-            logger.LogInformation("SUCCESS: {Method}. Found {Count} records.", methodName, result.Count);
-            return result.Count > 0 ? Ok(result) : NoContent();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "ERROR: {Method} failed.", methodName);
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+            var startDate = start ?? DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
+            var result = analyticsService.GetTopPopularPublishersLastYear(startDate);
+            return Ok(result);
+        });
     }
 
     /// <summary>
-    /// Возвращает топ 5 наименее популярных книг, начиная с указанной даты (LoanDate >= start).
+    /// Возвращает топ 5 наименее популярных книг.
     /// </summary>
-    /// <param name="start">Дата начала периода (по умолчанию - год назад).</param>
+    /// <param name="start">Дата начала периода.</param>
     [HttpGet("least-popular-books")]
     [ProducesResponseType(typeof(List<BookWithCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<BookWithCountDto>> GetLeastPopularBooksByLastYear(
+    public ActionResult<List<BookWithCountDto>> GetTopLeastPopularBooksLastYear(
         [FromQuery] DateOnly? start = null)
     {
-        const string methodName = nameof(GetLeastPopularBooksByLastYear);
-
-        var startDate = start ?? DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
-
-        logger.LogInformation("START: {Method} with start date {Start}", methodName, startDate);
-
-        try
+        return Logging(nameof(GetTopLeastPopularBooksLastYear), () =>
         {
-            var result = analyticsService.GetLeastPopularBooksByLastYear(startDate);
-
-            logger.LogInformation("SUCCESS: {Method}. Found {Count} records.", methodName, result.Count);
-            return result.Count > 0 ? Ok(result) : NoContent();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "ERROR: {Method} failed.", methodName);
-            return StatusCode(500, $"Internal server error: {ex.Message}");
-        }
+            var startDate = start ?? DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
+            var result = analyticsService.GetTopLeastPopularBooksLastYear(startDate);
+            return Ok(result);
+        });
     }
 }

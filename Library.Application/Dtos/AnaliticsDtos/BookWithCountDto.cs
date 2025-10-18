@@ -1,47 +1,54 @@
 ﻿using Library.Domain.Models;
 
 namespace Library.Application.Dtos.AnaliticsDtos;
+
+/// <summary>
+/// Аналитическое DTO для книг
+/// </summary>
 public class BookWithCountDto
 {
     /// <summary>
-    /// The unique id for the book.
+    /// Идентификатор книги
     /// </summary>
     public int Id { get; set; }
 
     /// <summary>
-    /// The unique inventory number of the book.
+    /// Инвентарный номер книги.
     /// </summary>
     public required string InventoryNumber { get; set; }
 
     /// <summary>
-    /// Catalog code for the book.
-    /// </summary>
+    /// Код каталога.
+    /// </summary> 
     public required string CatalogCode { get; set; }
 
     /// <summary>
-    /// Title of the book.
+    /// Название книги.
     /// </summary>
     public required string Title { get; set; }
 
     /// <summary>
-    /// Type of publication
+    /// Id типа публикации
     /// </summary>
-    public required int? TypeId { get; set; }
+    public required int? PublicationTypeId { get; set; }
 
     /// <summary>
-    /// Publisher of the book.
+    /// Id издательства
     /// </summary>
     public required int? PublisherId { get; set; }
 
     /// <summary>
-    /// The year when book was published.
+    /// Год издания
     /// </summary>
     public required int? PublicationYear { get; set; }
 
     /// <summary>
-    /// List of authors who wrote this book.
+    /// Список авторов
     /// </summary>
     public List<string> Authors { get; set; } = [];
 
+    /// <summary>
+    /// Количество раз, которое брали книгу
+    /// </summary>
     public required int Count { get; set; } = 0;
 }

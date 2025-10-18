@@ -4,8 +4,15 @@ using Library.Application.Dtos.AnaliticsDtos;
 using Library.Domain.Models;
 
 namespace Library.Application;
+
+/// <summary>
+/// AutoMapper для преобразования между DTO и доменом.
+/// </summary>
 public class MappingProfile : Profile
 {
+    /// <summary>
+    /// Создает новый экземпляр профиля маппинга.
+    /// </summary>
     public MappingProfile()
     {
         CreateMap<BookCreateDto, Book>().ReverseMap();
@@ -24,19 +31,10 @@ public class MappingProfile : Profile
         CreateMap<PublicationTypeGetDto, PublicationType>().ReverseMap();
 
 
-        CreateMap<Book, BookWithCountDto>()
-            // Поле Count игнорируем, т.к. оно устанавливается вручную в сервисе.
-            .ForMember(dest => dest.Count, opt => opt.Ignore());
+        CreateMap<Book, BookWithCountDto>().ReverseMap();
 
-        // Для GetTopReadersByPeriod
-        // Маппинг BookReader -> BookReaderWithCountDto
-        CreateMap<BookReader, BookReaderWithCountDto>()
-            .ForMember(dest => dest.Count, opt => opt.Ignore());
-
-        // Для GetLongestBorrowers
-        // Маппинг BookReader -> BookReaderWithDaysDto (или BookReaderWithDayDto, если имя отличается)
-        CreateMap<BookReader, BookReaderWithDaysDto>() // ИЛИ BookReaderWithDayDto, проверьте имя
-            .ForMember(dest => dest.TotalDays, opt => opt.Ignore());
+        CreateMap<BookReader, BookReaderWithCountDto>().ReverseMap();
+        CreateMap<BookReader, BookReaderWithDaysDto>().ReverseMap();
     }
 
 }

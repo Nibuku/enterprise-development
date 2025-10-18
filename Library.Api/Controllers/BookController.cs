@@ -3,5 +3,10 @@ using Library.Application.Services;
 
 namespace Library.Api.Controllers;
 
-public class BookController(IApplicationService<BookGetDto, BookCreateDto, int> crudService, ILogger<BookController> logger)
-    : CrudControllerBase<BookGetDto, BookCreateDto, int>(crudService, logger);
+/// <summary>
+/// Предоставляет API-методы для книг.
+/// </summary>
+/// <param name="bookService">Сервис для работы с книгами.</param>
+/// <param name="logger">Логгер для записи информации.</param>
+public class BookController(BookService bookService, ILogger<BookController> logger)
+    : CrudControllerBase<BookGetDto, BookCreateDto, int>(bookService, logger);

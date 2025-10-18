@@ -1,33 +1,26 @@
 namespace Library.Tests;
 
 /// <summary>
-/// A collection of unit tests for the Library domain.
+/// Коллекция юнит-тестов для библиотеки
 /// </summary>
 public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture>
 {
     /// <summary>
-    /// Tests that loaned books are correctly retrieved and ordered by their title.
+    /// Проверяется. что выданные книги исвлечены правильно и отсортированы.
     /// </summary>
     [Fact]
     public void BooksOrderedByTitle()
     {
+        var testDate = new DateOnly(2025, 10, 18);
         var expectedOrder = new List<string>
         {
-            "And Then There Were None",
-            "Angels & Demons",
             "Inferno",
             "Murder on the Orient Express",
-            "Norwegian Wood",
-            "Physics for Universities",
-            "Programming in C#",
-            "Roadside Picnic",
             "The Da Vinci Code",
-            "The Great Encyclopedia",
-            "The Master and Margarita",
-            "War and Peace"
         };
 
         var actualOrder = fixture.CheckoutRepository.ReadAll()
+            .Where(c => c.LoanDate <= testDate && c.LoanDate.AddDays(c.LoanDays) >= testDate)
             .Select(c => c.Book)
             .Distinct()
             .OrderBy(b => b.Title)
@@ -38,11 +31,13 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     }
 
     /// <summary>
-    /// Test that outputs information about the top 5 readers who have read the most books in a given period.
+    /// Тест выводит информацию о топ-5 читателях, прочитавших наибольшее количество книг за период.
     /// </summary>
     [Fact]
     public void TopReadersByNumberOfBooks()
     {
+        var start = new DateOnly(2025, 1, 1);
+        var end = new DateOnly(2025, 12, 31);
         var expectedTop5Readers = new List<string>
         {
             "John Lennon",
@@ -53,6 +48,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
         };
 
         var top5Readers = fixture.CheckoutRepository.ReadAll()
+            .Where(c => c.LoanDate >= start && c.LoanDate.AddDays(c.LoanDays) <= end)
             .GroupBy(c=> c.Reader)
             .Select(g => new
             {
@@ -69,7 +65,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     }
 
     /// <summary>
-    /// Test that outputs information about readers who have taken books for the longest period of time, sorted by full name.
+    /// Тест выводит информацию о читателях, бравших книги на наибольший период времени, отсортированных по ФИО.
     /// </summary>
     [Fact]
     public void TopReadersByTotalLoanDays()
@@ -100,7 +96,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     }
 
     /// <summary>
-    /// Test that displays the top 5 most popular publishers over the past year.
+    /// Тест выводит топ-5 наиболее популярных издательств за последний год.
     /// </summary>
     [Fact]
     public void TopPopularPublishersLastYear()
@@ -132,7 +128,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     }
 
     /// <summary>
-    /// Test that outputs the top 5 least popular books over the past year.
+    /// Тест выводит топ-5 наименее популярных книг за последний год.
     /// </summary>
     [Fact]
     public void TopLeastPopularBooksLastYear()

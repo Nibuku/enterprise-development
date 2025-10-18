@@ -1,35 +1,32 @@
-﻿namespace Library.Application.Services;
+﻿namespace Library.Application.Interfaces;
 
 /// <summary>
-/// Интерфейс службы приложения для CRUD операций
+/// Интерфейс сервиса для CRUD операций
 /// </summary>
-/// <typeparam name="TDto">DTO для Get-запросов</typeparam>
-/// <typeparam name="TCreateUpdateDto">DTO для Post/Put-запросов</typeparam>
+/// <typeparam name="TGetDto">DTO для Get-запросов</typeparam>
+/// <typeparam name="TCreateDto">DTO для Post/Put-запросов</typeparam>
 /// <typeparam name="TKey">Тип идентификатора DTO</typeparam>
-public interface IApplicationService<TDto, TCreateUpdateDto, TKey>
-    where TDto : class
-    where TCreateUpdateDto : class
-    where TKey : struct
+public interface IApplicationService<TGetDto, TCreateDto, TKey>
 {
     /// <summary>
     /// Создание DTO
     /// </summary>
     /// <param name="dto">DTO</param>
     /// <returns></returns>
-    public TDto Create(TCreateUpdateDto dto);
+    public TGetDto Create(TCreateDto dto);
 
     /// <summary>
     /// Получение DTO по идентификатору
     /// </summary>
     /// <param name="dtoId">Идентификатор DTO</param>
     /// <returns></returns>
-    public TDto Get(TKey dtoId);
+    public TGetDto Get(TKey dtoId);
 
     /// <summary>
     /// Получение всего списка DTO
     /// </summary>
     /// <returns></returns>
-    public List<TDto> GetAll();
+    public List<TGetDto> GetAll();
 
     /// <summary>
     /// Обновление DTO
@@ -37,7 +34,7 @@ public interface IApplicationService<TDto, TCreateUpdateDto, TKey>
     /// <param name="dto">DTO</param>
     /// <param name="dtoId">Идентификатор DTO</param> 
     /// <returns></returns>
-    public TDto Update(TCreateUpdateDto dto, TKey dtoId);
+    public TGetDto Update(TCreateDto dto, TKey dtoId);
 
     /// <summary>
     /// Удаление DTO

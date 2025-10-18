@@ -1,30 +1,37 @@
 ﻿namespace Library.Application.Dtos.AnaliticsDtos;
+
+/// <summary>
+/// DTO для аналитических запросов, связанных с читателем
+/// </summary>
 public class BookReaderWithDaysDto
 {
     /// <summary>
-    /// The unique id for the reader.
+    /// Id читателя
     /// </summary>
     public required int Id { get; set; }
 
     /// <summary>
-    /// Full name.
+    /// Полное имя
     /// </summary>
     public required string FullName { get; set; }
 
     /// <summary>
-    /// Physical address.
+    /// Адрес
     /// </summary>
     public string? Address { get; set; }
 
     /// <summary>
-    /// Phone number.
+    /// Номер телефона
     /// </summary>
     public string? Phone { get; set; }
 
     /// <summary>
-    /// Date when the reader was registered in the library.
+    /// Дата регистрации читателя.
     /// </summary>
     public required DateOnly RegistrationDate { get; set; }
 
+    /// <summary>
+    /// Общее количество дней, на которое читатель брал книги.
+    /// </summary>
     public required int TotalDays { get; set; } = 0;
 }

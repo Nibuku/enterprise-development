@@ -6,7 +6,7 @@
 public class BookGetDto
 {
     /// <summary>
-    /// The unique id for the book.
+    /// Идентификатор книги
     /// </summary>
     public int Id { get; set; }
 

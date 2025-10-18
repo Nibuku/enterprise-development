@@ -2,6 +2,7 @@
 using Library.Application.Dtos;
 using Library.Infrastructure.Repositories;
 using Library.Domain.Models;
+using Library.Application.Interfaces;
 
 namespace Library.Application.Services;
 

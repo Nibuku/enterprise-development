@@ -1,4 +1,4 @@
-using Library.Application.Services;
+using Library.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers;
@@ -8,17 +8,42 @@ namespace Library.Api.Controllers;
 /// </summary>
 /// <typeparam name="TDto">DTO для Get-запросов</typeparam>
 /// <typeparam name="TCreateDto">DTO для Post/Put-запросов</typeparam>
-/// <typeparam name="TKey">Тип идентификатора DTO</typeparam>
-/// <param name="appService">Служба для манипуляции DTO</param>
+/// <typeparam name="TKey">Тип Id DTO</typeparam>
+/// <param name="appService">Служба для работы с DTO</param>
 /// <param name="logger">Логгер</param>
 [Route("api/[controller]")]
 [ApiController]
 public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationService<TDto, TCreateDto, TKey> appService,
     ILogger<CrudControllerBase<TDto, TCreateDto, TKey>> logger) : ControllerBase
-    where TDto : class
-    where TCreateDto : class
-    where TKey : struct
 {
+    /// <summary>
+    /// Вспомогательный метод для логированияк.
+    /// </summary>
+    protected ActionResult Logging(string method, Func<ActionResult> action)
+    {
+        logger.LogInformation("START: {Method}", method);
+        try
+        {
+            var result = action();
+            var count = 0;
+            if (result is OkObjectResult okResult && okResult.Value != null)
+            {
+                if (okResult.Value is System.Collections.IEnumerable collection)
+                {
+                    count = collection.Cast<object>().Count();
+                }
+                else count = 1;
+            }
+            logger.LogInformation("SUCCESS: {Method}. Found {Count} records.", method, count);
+            return result;
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "ERROR: {Method} failed.", method);
+            return StatusCode(500, $"Server error: {ex.Message}");
+        }
+    }
+
     /// <summary>
     /// Добавление новой записи
     /// </summary>
@@ -29,22 +54,15 @@ public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationSer
     [ProducesResponseType(500)]
     public ActionResult<TDto> Create(TCreateDto newDto)
     {
-        logger.LogInformation("{method} method of {controller} is called with {@dto} parameter", nameof(Create), GetType().Name, newDto);
-        try
+        return Logging(nameof(Create), () =>
         {
-            var res = appService.Create(newDto);
-            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Create), GetType().Name);
-            return CreatedAtAction(nameof(this.Create), res);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("An exception happened during {method} method of {controller}: {@exception}", nameof(Create), GetType().Name, ex);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
-        }
+            var result = appService.Create(newDto);
+            return CreatedAtAction(nameof(this.Create), result);
+        });
     }
 
     /// <summary>
-    /// Изменение имеющихся данных
+    /// Изменение данных по Id
     /// </summary>
     /// <param name="id">Идентификатор</param>
     /// <param name="newDto">Измененные данные</param>
@@ -54,22 +72,22 @@ public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationSer
     [ProducesResponseType(500)]
     public ActionResult<TDto> Edit(TKey id, TCreateDto newDto)
     {
-        logger.LogInformation("{method} method of {controller} is called with {key},{@dto} parameters", nameof(Edit), GetType().Name, id, newDto);
-        try
-        {
-            var res = appService.Update(newDto, id);
-            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Edit), GetType().Name);
-            return Ok(res);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("An exception happened during {method} method of {controller}: {@exception}", nameof(Edit), GetType().Name, ex);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
-        }
+        return Logging(nameof(Edit), () =>
+        { 
+            try
+            {
+                var result = appService.Update(newDto, id);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        });
     }
 
     /// <summary>
-    /// Удаление данных
+    /// Удаление данных по Id
     /// </summary>
     /// <param name="id">Идентификатор</param>
     [HttpDelete("{id}")]
@@ -77,18 +95,18 @@ public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationSer
     [ProducesResponseType(500)]
     public IActionResult Delete(TKey id)
     {
-        logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Delete), GetType().Name, id);
-        try
+        return Logging(nameof(Delete), () =>
         {
-            appService.Delete(id);
-            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Delete), GetType().Name);
-            return Ok();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("An exception happened during {method} method of {controller}: {@exception}", nameof(Delete), GetType().Name, ex);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
-        }
+            try
+            {
+                appService.Delete(id);
+                return Ok();
+            }
+            catch (KeyNotFoundException)
+            { 
+                return NotFound();
+            }
+        });
     }
 
     /// <summary>
@@ -100,22 +118,15 @@ public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationSer
     [ProducesResponseType(500)]
     public ActionResult<IList<TDto>> GetAll()
     {
-        logger.LogInformation("{method} method of {controller} is called", nameof(GetAll), GetType().Name);
-        try
+        return Logging(nameof(GetAll), () =>
         {
-            var res = appService.GetAll();
-            logger.LogInformation("{method} method of {controller} executed successfully", nameof(GetAll), GetType().Name);
-            return Ok(res);
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("An exception happened during {method} method of {controller}: {@exception}", nameof(GetAll), GetType().Name, ex);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
-        }
+            var result = appService.GetAll();
+            return Ok(result);
+        });
     }
 
     /// <summary>
-    /// Получение данных по идентификатору
+    /// Получение данных по Id
     /// </summary>
     /// <param name="id">Идентификатор</param>
     /// <returns>Данные</returns>
@@ -125,17 +136,17 @@ public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationSer
     [ProducesResponseType(500)]
     public ActionResult<TDto> Get(TKey id)
     {
-        logger.LogInformation("{method} method of {controller} is called with {id} parameter", nameof(Get), GetType().Name, id);
-        try
+        return Logging(nameof(Get), () =>
         {
-            var res = appService.Get(id);
-            logger.LogInformation("{method} method of {controller} executed successfully", nameof(Get), GetType().Name);
-            return res != null ? Ok(res) : NoContent();
-        }
-        catch (Exception ex)
-        {
-            logger.LogError("An exception happened during {method} method of {controller}: {@exception}", nameof(Get), GetType().Name, ex);
-            return StatusCode(500, $"{ex.Message}\n\r{ex.InnerException?.Message}");
-        }
+            try
+            {
+                var result = appService.Get(id);
+                return Ok(result);
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound();
+            }
+        });
     }
 }

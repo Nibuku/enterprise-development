@@ -1,17 +1,25 @@
 ﻿using AutoMapper;
 using Library.Application.Dtos.AnaliticsDtos;
+using Library.Application.Interfaces;
 using Library.Infrastructure.Repositories;
 
 namespace Library.Application.Services;
 
+/// <summary>
+/// Сервис для аналитических запросов.
+/// </summary>
 public class LibraryAnalyticsService(
     BookCheckoutRepository checkoutRepository,
     BookRepository bookRepository,
     BookReaderRepository readerRepository,
     IMapper mapper) : ILibraryAnalyticsService
 {
-
-    public List<BookWithCountDto> GetIssuedBooksSortedByTitle(DateOnly date)
+    /// <summary>
+    /// Получает информацию о выданных книгах, упорядоченных по названию.
+    /// </summary>
+    /// <param name="date">Дата, на которую проверяется наличие книг в выдаче</param>
+    /// <returns>Список книг, отсортированный по названию.</returns>
+    public List<BookWithCountDto> GetBooksOrderedByTitle(DateOnly date)
     {
         var checkouts = checkoutRepository.ReadAll();
         var books = bookRepository.ReadAll();
@@ -34,8 +42,13 @@ public class LibraryAnalyticsService(
         return allBookCheckouts;
     }
 
-    // 2. Вывести информацию о топ 5 читателей, прочитавших больше всего книг за заданный период.
-    public List<BookReaderWithCountDto> GetTopReadersByPeriod(DateOnly start, DateOnly end)
+    /// <summary>
+    /// Получает топ-5 читателей, прочитавших наибольшее количество книг за период.
+    /// </summary>
+    /// <param name="start">Начало периода</param>
+    /// <param name="end">Конец периода</param>
+    /// <returns>Список из 5 читателей, отсортированный по убыванию количества книг</returns>
+    public List<BookReaderWithCountDto> GetTopReadersByNumberOfBooks(DateOnly start, DateOnly end)
     {
         var checkouts = checkoutRepository.ReadAll();
         var readers = readerRepository.ReadAll();
@@ -58,8 +71,11 @@ public class LibraryAnalyticsService(
         return topReaders;
     }
 
-    // 3. Вывести информацию о читателях, бравших книги на наибольший период времени, упорядочить по ФИО.
-    public List<BookReaderWithDaysDto> GetLongestBorrowers()
+    /// <summary>
+    /// Получает топ-5 читателей, бравших книги на наибольший период времени.
+    /// </summary>
+    /// <returns>Список из 5 читателей, отсортированный по убыванию количества дней/returns>
+    public List<BookReaderWithDaysDto> GetTopReadersByTotalLoanDays()
     {
         var checkouts = checkoutRepository.ReadAll();
         var readers = readerRepository.ReadAll();
@@ -68,25 +84,25 @@ public class LibraryAnalyticsService(
             .GroupBy(r => r.Reader.Id)
             .Select(x =>
             {
-                var customer = readers.First(c => c.Id == x.Key);
-                var dto = mapper.Map<BookReaderWithDaysDto>(customer);       
-                dto.TotalDays= x.Max(r => r.LoanDays);
+                var reader = readers.First(c => c.Id == x.Key);
+                var dto = mapper.Map<BookReaderWithDaysDto>(reader);       
+                dto.TotalDays= x.Sum(r => r.LoanDays);
                 return dto;
             })
+            .OrderByDescending(r => r.TotalDays)
+            .ThenBy(r => r.FullName)
+            .Take(5)
             .ToList();
 
-        var maxDays = topReaders.Max(x => x.TotalDays);
-
-        var top = topReaders
-            .Where(x => x.TotalDays == maxDays)
-            .OrderBy(c => c.FullName)
-            .ToList();
-
-        return top;
+        return topReaders;
     }
 
-    // 4. Вывести топ 5 наиболее популярных издательств за последний год.
-    public List<PublisherCountDto> GetTopPublishersByLastYear(DateOnly start)
+    /// <summary>
+    /// Получает топ-5 наиболее популярных издательств за год.
+    /// </summary>
+    /// <param name="start">Началпериода</param>
+    /// <returns>Список из 5 издательств, отсортированный по убыванию популярности</returns>
+    public List<PublisherCountDto> GetTopPopularPublishersLastYear(DateOnly start)
     {
         var checkouts = checkoutRepository.ReadAll();
         var books = bookRepository.ReadAll();
@@ -108,8 +124,12 @@ public class LibraryAnalyticsService(
         return topFivePublishers;
     }
 
-    // 5. Вывести топ 5 наименее популярных книг за последний год.
-    public List<BookWithCountDto> GetLeastPopularBooksByLastYear(DateOnly start)
+    /// <summary>
+    /// Получает топ-5 наименее популярных книг за год.
+    /// </summary>
+    /// <param name="start">Началпериода</param>
+    /// <returns>Список из 5 книг, отсортированный по возрастанию популярности</returns>
+    public List<BookWithCountDto> GetTopLeastPopularBooksLastYear(DateOnly start)
     {
         var records = checkoutRepository.ReadAll();
         var books = bookRepository.ReadAll();
