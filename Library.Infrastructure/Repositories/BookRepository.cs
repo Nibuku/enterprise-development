@@ -19,8 +19,8 @@ public class BookRepository: IRepositories<Book, int>
     /// </summary>
     public BookRepository()
     {
-            _books = DataSeed.Books;
-            _maxId = _books.Count > 0 ? _books.Max(r => r.Id) : 0;
+        _books = DataSeed.Books;
+        _maxId = _books.Count > 0 ? _books.Max(r => r.Id) : 0;
     }
 
     /// <summary>
@@ -78,7 +78,5 @@ public class BookRepository: IRepositories<Book, int>
     {
         var deleted_book = Read(id) ?? throw new KeyNotFoundException($"Книга с Id {id} не найдена.");
         _books.Remove(deleted_book);
-        
     }
-
 }

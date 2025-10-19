@@ -6,15 +6,15 @@ namespace Library.Api.Controllers;
 /// <summary>
 /// Базовый контроллер для CRUD-операций над сущностями
 /// </summary>
-/// <typeparam name="TDto">DTO для Get-запросов</typeparam>
+/// <typeparam name="TGetDto">DTO для Get-запросов</typeparam>
 /// <typeparam name="TCreateDto">DTO для Post/Put-запросов</typeparam>
 /// <typeparam name="TKey">Тип Id DTO</typeparam>
 /// <param name="appService">Служба для работы с DTO</param>
 /// <param name="logger">Логгер</param>
 [Route("api/[controller]")]
 [ApiController]
-public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationService<TDto, TCreateDto, TKey> appService,
-    ILogger<CrudControllerBase<TDto, TCreateDto, TKey>> logger) : ControllerBase
+public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplicationService<TGetDto, TCreateDto, TKey> appService,
+    ILogger<CrudControllerBase<TGetDto, TCreateDto, TKey>> logger) : ControllerBase
 {
     /// <summary>
     /// Вспомогательный метод для логированияк.
@@ -52,7 +52,7 @@ public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationSer
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
-    public ActionResult<TDto> Create(TCreateDto newDto)
+    public ActionResult<TGetDto> Create(TCreateDto newDto)
     {
         return Logging(nameof(Create), () =>
         {
@@ -70,7 +70,7 @@ public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationSer
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult<TDto> Edit(TKey id, TCreateDto newDto)
+    public ActionResult<TGetDto> Edit(TKey id, TCreateDto newDto)
     {
         return Logging(nameof(Edit), () =>
         { 
@@ -116,7 +116,7 @@ public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationSer
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult<IList<TDto>> GetAll()
+    public ActionResult<IList<TGetDto>> GetAll()
     {
         return Logging(nameof(GetAll), () =>
         {
@@ -134,7 +134,7 @@ public abstract class CrudControllerBase<TDto, TCreateDto, TKey>(IApplicationSer
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<TDto> Get(TKey id)
+    public ActionResult<TGetDto> Get(TKey id)
     {
         return Logging(nameof(Get), () =>
         {

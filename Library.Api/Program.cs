@@ -13,13 +13,9 @@ var mapperConfig = new MapperConfiguration(
 IMapper? mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
-
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-
-
 
 builder.Services.AddSingleton<BookRepository, BookRepository>();
 builder.Services.AddSingleton<BookReaderRepository, BookReaderRepository>();
@@ -32,7 +28,7 @@ builder.Services.AddScoped<BookReaderService>();
 builder.Services.AddScoped<PublisherService>();
 builder.Services.AddScoped<BookCheckoutService>();
 builder.Services.AddScoped<PublicationTypeService>(); 
-builder.Services.AddScoped<ILibraryAnalyticsService, LibraryAnalyticsService>();
+builder.Services.AddScoped<LibraryAnalyticsService>();
 
 var app = builder.Build();
 

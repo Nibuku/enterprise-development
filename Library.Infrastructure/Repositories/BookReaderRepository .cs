@@ -64,7 +64,6 @@ public class BookReaderRepository : IRepositories<BookReader, int>
         update_reader.Phone = reader.Phone;
         update_reader.FullName = reader.FullName;
         update_reader.RegistrationDate = reader.RegistrationDate;
-        
     }
 
     /// <summary>

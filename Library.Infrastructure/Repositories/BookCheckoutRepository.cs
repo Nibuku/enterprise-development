@@ -65,7 +65,6 @@ public class BookCheckoutRepository : IRepositories<BookCheckout, int>
         update_check.Book = bookCheckout.Book;
         update_check.LoanDate = bookCheckout.LoanDate;
         update_check.LoanDays = bookCheckout.LoanDays;
-        
     }
 
     /// <summary>
@@ -77,5 +76,4 @@ public class BookCheckoutRepository : IRepositories<BookCheckout, int>
         var deleted_check = Read(id) ?? throw new KeyNotFoundException($"Запись о выдаче с Id {id} не найдена");
         _bookCheckouts.Remove(deleted_check);
     }
-
 }

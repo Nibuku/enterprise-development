@@ -1,5 +1,5 @@
 ﻿using Library.Application.Dtos.AnaliticsDtos;
-using Library.Application.Interfaces;
+using Library.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers;
@@ -12,7 +12,7 @@ namespace Library.Api.Controllers;
 [ApiController]
 [Route("api/analytics")]
 public class AnalyticsController(
-    ILibraryAnalyticsService analyticsService,
+    LibraryAnalyticsService analyticsService,
     ILogger<AnalyticsController> logger) : ControllerBase
 {
     /// <summary>
@@ -83,7 +83,7 @@ public class AnalyticsController(
     /// <summary>
     /// Возвращает читателей, бравших книги на наибольшее количество дней).
     /// </summary>
-    [HttpGet("longest-borrowers")]
+    [HttpGet("top-readers-by-days")]
     [ProducesResponseType(typeof(List<BookReaderWithDaysDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]

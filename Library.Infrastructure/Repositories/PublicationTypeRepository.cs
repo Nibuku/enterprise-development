@@ -72,6 +72,5 @@ public class PublicationTypeRepository : IRepositories<PublicationType, int>
     {
         var deleted_type = Read(id) ?? throw new KeyNotFoundException($"Type with ID {id} not found for delete.");
         _types.Remove(deleted_type);
-
     }
 }

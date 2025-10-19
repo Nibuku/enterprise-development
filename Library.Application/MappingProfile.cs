@@ -30,9 +30,7 @@ public class MappingProfile : Profile
         CreateMap<PublicationTypeCreateDto, PublicationType>().ReverseMap();
         CreateMap<PublicationTypeGetDto, PublicationType>().ReverseMap();
 
-
         CreateMap<Book, BookWithCountDto>().ReverseMap();
-
         CreateMap<BookReader, BookReaderWithCountDto>().ReverseMap();
         CreateMap<BookReader, BookReaderWithDaysDto>().ReverseMap();
     }

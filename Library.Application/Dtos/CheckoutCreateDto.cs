@@ -5,7 +5,6 @@
 /// </summary>
 public class CheckoutCreateDto
 {
-
     /// <summary>
     /// Дата взятия книги
     /// </summary>
