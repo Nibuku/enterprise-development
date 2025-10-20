@@ -1,4 +1,4 @@
-﻿namespace Library.Application.Interfaces;
+﻿namespace Library.Application.Contracts.Interfaces;
 
 /// <summary>
 /// Интерфейс сервиса для CRUD операций

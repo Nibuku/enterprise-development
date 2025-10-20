@@ -2,13 +2,13 @@
 using Library.Domain.Models;
 using Library.Domain.Data;
 
-namespace Library.Infrastructure.Repositories;
+namespace Library.Infrastructure.InMemory.Repositories;
 
 /// <summary>
 /// Репозиторий с CRUD-операциями для BookCheckout.
 /// Использует данные из DataSeed.
 /// </summary>
-public class BookCheckoutRepository : IRepositories<BookCheckout, int>
+public class BookCheckoutRepository : IRepository<BookCheckout, int>
 {
     private readonly List<BookCheckout> _bookCheckouts;
     private int _maxId;
@@ -19,7 +19,7 @@ public class BookCheckoutRepository : IRepositories<BookCheckout, int>
     /// </summary>
     public BookCheckoutRepository()
     {
-        _bookCheckouts = DataSeed.Checkouts;
+        _bookCheckouts = [.. DataSeed.Checkouts];
         _maxId = _bookCheckouts.Count > 0 ? _bookCheckouts.Max(r => r.Id) : 0;
     }
 
@@ -46,34 +46,43 @@ public class BookCheckoutRepository : IRepositories<BookCheckout, int>
     /// Генерирует новый Id и добавляет запись в коллекцию.
     /// </summary>
     /// <param name="bookCheckout"> Объект BookCheckout. </param>
-    public void Create(BookCheckout bookCheckout)
+    /// <returns> Id созданной записи о выдаче.</returns>
+    public int Create(BookCheckout bookCheckout)
     {
         bookCheckout.Id = ++_maxId;
         _bookCheckouts.Add(bookCheckout);
+        return bookCheckout.Id;
     }
 
     /// <summary>
     /// Обновляет существующую запись о выдаче.
     /// </summary>
     /// <param name="bookCheckout"> Обновленный объект BookCheckout </param>
-    /// <exception cref="KeyNotFoundException"> Вызывается, если запись с указанным Id не найдена. </exception>
-    public void Update(BookCheckout bookCheckout)
+    /// <returns> Обновленный объект, или null, если запись о выдаче не найдена.</returns>
+    public BookCheckout? Update(BookCheckout bookCheckout)
     {
-        var update_check = Read(bookCheckout.Id) ?? throw new KeyNotFoundException($"Запись о выдаче с Id {bookCheckout.Id} не найдена.");
+        var update_check = Read(bookCheckout.Id); 
+
+        if (update_check == null) 
+            return null; 
 
         update_check.Reader = bookCheckout.Reader;
         update_check.Book = bookCheckout.Book;
         update_check.LoanDate = bookCheckout.LoanDate;
         update_check.LoanDays = bookCheckout.LoanDays;
+        return update_check;
     }
 
     /// <summary>
     /// Удаляет запись о выдаче по Id.
     /// </summary>
     /// <param name="id"> Id записи, которую нужно удалить. </param>
-    /// <exception cref="KeyNotFoundException"> Вызывается, если запись с указанным Id не найдена. </exception>
-    public void Delete(int id) {
-        var deleted_check = Read(id) ?? throw new KeyNotFoundException($"Запись о выдаче с Id {id} не найдена");
-        _bookCheckouts.Remove(deleted_check);
+    /// <returns>Результат удаления.</returns>
+    public bool Delete(int id) {
+        var deleted_check = Read(id);
+        if (deleted_check == null)
+            return false;
+
+        return _bookCheckouts.Remove(deleted_check);
     }
 }

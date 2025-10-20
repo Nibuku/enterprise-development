@@ -1,12 +1,12 @@
-namespace Library.Tests;
+п»їnamespace Library.Tests;
 
 /// <summary>
-/// Коллекция юнит-тестов для библиотеки
+/// РљРѕР»Р»РµРєС†РёСЏ СЋРЅРёС‚-С‚РµСЃС‚РѕРІ РґР»СЏ Р±РёР±Р»РёРѕС‚РµРєРё
 /// </summary>
 public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture>
 {
     /// <summary>
-    /// Проверяется. что выданные книги исвлечены правильно и отсортированы.
+    /// РџСЂРѕРІРµСЂСЏРµС‚СЃСЏ. С‡С‚Рѕ РІС‹РґР°РЅРЅС‹Рµ РєРЅРёРіРё РёСЃРІР»РµС‡РµРЅС‹ РїСЂР°РІРёР»СЊРЅРѕ Рё РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅС‹.
     /// </summary>
     [Fact]
     public void BooksOrderedByTitle()
@@ -31,7 +31,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     }
 
     /// <summary>
-    /// Тест выводит информацию о топ-5 читателях, прочитавших наибольшее количество книг за период.
+    /// РўРµСЃС‚ РІС‹РІРѕРґРёС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ С‚РѕРї-5 С‡РёС‚Р°С‚РµР»СЏС…, РїСЂРѕС‡РёС‚Р°РІС€РёС… РЅР°РёР±РѕР»СЊС€РµРµ РєРѕР»РёС‡РµСЃС‚РІРѕ РєРЅРёРі Р·Р° РїРµСЂРёРѕРґ.
     /// </summary>
     [Fact]
     public void TopReadersByNumberOfBooks()
@@ -65,7 +65,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     }
 
     /// <summary>
-    /// Тест выводит информацию о читателях, бравших книги на наибольший период времени, отсортированных по ФИО.
+    /// РўРµСЃС‚ РІС‹РІРѕРґРёС‚ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ С‡РёС‚Р°С‚РµР»СЏС…, Р±СЂР°РІС€РёС… РєРЅРёРіРё РЅР° РЅР°РёР±РѕР»СЊС€РёР№ РїРµСЂРёРѕРґ РІСЂРµРјРµРЅРё, РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅС‹С… РїРѕ Р¤РРћ.
     /// </summary>
     [Fact]
     public void TopReadersByTotalLoanDays()
@@ -96,7 +96,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     }
 
     /// <summary>
-    /// Тест выводит топ-5 наиболее популярных издательств за последний год.
+    /// РўРµСЃС‚ РІС‹РІРѕРґРёС‚ С‚РѕРї-5 РЅР°РёР±РѕР»РµРµ РїРѕРїСѓР»СЏСЂРЅС‹С… РёР·РґР°С‚РµР»СЊСЃС‚РІ Р·Р° РїРѕСЃР»РµРґРЅРёР№ РіРѕРґ.
     /// </summary>
     [Fact]
     public void TopPopularPublishersLastYear()
@@ -128,7 +128,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     }
 
     /// <summary>
-    /// Тест выводит топ-5 наименее популярных книг за последний год.
+    /// РўРµСЃС‚ РІС‹РІРѕРґРёС‚ С‚РѕРї-5 РЅР°РёРјРµРЅРµРµ РїРѕРїСѓР»СЏСЂРЅС‹С… РєРЅРёРі Р·Р° РїРѕСЃР»РµРґРЅРёР№ РіРѕРґ.
     /// </summary>
     [Fact]
     public void TopLeastPopularBooksLastYear()
@@ -144,11 +144,11 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
         };
 
         var recentLoans = fixture.CheckoutRepository.ReadAll()
-            .Where(с=> с.LoanDate >= oneYearAgo)
+            .Where(СЃ=> СЃ.LoanDate >= oneYearAgo)
             .ToList();
 
         var actualBooks = recentLoans
-            .GroupBy(с => с.Book)
+            .GroupBy(СЃ => СЃ.Book)
             .Select(g => new 
             { 
                 Book = g.Key,

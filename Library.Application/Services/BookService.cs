@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Library.Application.Dtos;
-using Library.Application.Interfaces;
+using Library.Application.Contracts.Dtos;
+using Library.Application.Contracts.Interfaces;
+using Library.Domain.Interfaces;
 using Library.Domain.Models;
-using Library.Infrastructure.Repositories;
 
 namespace Library.Application.Services;
 
@@ -10,9 +10,9 @@ namespace Library.Application.Services;
 /// Сервис, обеспечивающий CRUD-операции для работы с книгами.
 /// </summary>
 public class BookService(
-    BookRepository bookRepository,
-    PublisherRepository publisherRepository,
-    PublicationTypeRepository publicationTypeRepository,
+    IRepository<Book, int> bookRepository,
+    IRepository<Publisher, int> publisherRepository,
+    IRepository<PublicationType, int> publicationTypeRepository,
     IMapper mapper) : IApplicationService<BookGetDto, BookCreateDto, int>
 {
     /// <summary>
@@ -22,8 +22,8 @@ public class BookService(
     /// <returns>DTO созданной книги</returns>
     public BookGetDto Create(BookCreateDto dto)
     {
-        var publisher = publisherRepository.Read(dto.PublisherId) ?? throw new KeyNotFoundException($"Издательство с ID {dto.PublisherId} не найдено.");
-        var type = publicationTypeRepository.Read(dto.PublicationTypeId) ?? throw new KeyNotFoundException($"Тип издания с ID {dto.PublicationTypeId} не найден.");
+        var publisher = publisherRepository.Read(dto.PublisherId) ?? throw new InvalidOperationException($"Издательство с ID {dto.PublisherId} не найдено.");
+        var type = publicationTypeRepository.Read(dto.PublicationTypeId) ?? throw new InvalidOperationException($"Тип издания с ID {dto.PublicationTypeId} не найден.");
         var newBook = mapper.Map<Book>(dto);
         newBook.Publisher = publisher;
         newBook.PublicationType = type;
@@ -37,11 +37,11 @@ public class BookService(
     /// </summary>
     /// <param name="dtoId"> Id книги </param>
     /// <returns>DTO книги</returns>
-    /// <exception cref="KeyNotFoundException">Вызывается, если книга с указанным Id не найден.</exception>
+    /// <exception cref="InvalidOperationException">Вызывается, если книга с указанным Id не найден.</exception>
     public BookGetDto Get(int dtoId)
     {
         var book = bookRepository.Read(dtoId)
-            ?? throw new KeyNotFoundException($"Книга с ID {dtoId} не найдена.");
+            ?? throw new InvalidOperationException($"Книга с ID {dtoId} не найдена.");
 
         return mapper.Map<BookGetDto>(book);
     }
@@ -62,12 +62,12 @@ public class BookService(
     /// <param name="dto">DTO с данными для обновления</param>
     /// <param name="dtoId">Id обновляемой зкниги</param>
     /// <returns>DTO обновленной книги</returns>
-    /// <exception cref="KeyNotFoundException">Вызывается, если книга, издательство или тип издания с указанным Id не найдены.</exception>
+    /// <exception cref="InvalidOperationException">Вызывается, если книга, издательство или тип издания с указанным Id не найдены.</exception>
     public BookGetDto Update(BookCreateDto dto, int dtoId)
     {
-        var bookToUpdate = bookRepository.Read(dtoId) ?? throw new KeyNotFoundException($"Книга с ID {dtoId} не найдена для обновления.");
-        var publisher = publisherRepository.Read(dto.PublisherId) ?? throw new KeyNotFoundException($"Издательство с ID {dto.PublisherId} не найдено.");
-        var type = publicationTypeRepository.Read(dto.PublicationTypeId) ?? throw new KeyNotFoundException($"Тип издания с ID {dto.PublicationTypeId} не найден.");
+        var bookToUpdate = bookRepository.Read(dtoId) ?? throw new InvalidOperationException($"Книга с ID {dtoId} не найдена для обновления.");
+        var publisher = publisherRepository.Read(dto.PublisherId) ?? throw new InvalidOperationException($"Издательство с ID {dto.PublisherId} не найдено.");
+        var type = publicationTypeRepository.Read(dto.PublicationTypeId) ?? throw new InvalidOperationException($"Тип издания с ID {dto.PublicationTypeId} не найден.");
         mapper.Map(dto, bookToUpdate);
 
         bookToUpdate.Publisher = publisher;
@@ -81,8 +81,10 @@ public class BookService(
     /// Удаляет запись о книге по Id.
     /// </summary>
     /// <param name="dtoId">Id удаляемой книги/param>
+    /// <exception cref="InvalidOperationException">Вызывается, если книга с указанным Id не найдена.</exception>
     public void Delete(int dtoId)
     {
-        bookRepository.Delete(dtoId);
+        if (!bookRepository.Delete(dtoId))
+            throw new InvalidOperationException($"Книга с ID {dtoId} не найдена.");
     }
 }

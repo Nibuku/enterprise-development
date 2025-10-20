@@ -2,13 +2,13 @@
 using Library.Domain.Models;
 using Library.Domain.Data;
 
-namespace Library.Infrastructure.Repositories;
+namespace Library.Infrastructure.InMemory.Repositories;
 
 /// <summary>
 /// Репозиторий с CRUD-операциями для Book.
 /// Использует данные из DataSeed.
 /// </summary>
-public class BookRepository: IRepositories<Book, int>
+public class BookRepository: IRepository<Book, int>
 {
     private readonly List<Book> _books;
     private int _maxId;
@@ -19,7 +19,7 @@ public class BookRepository: IRepositories<Book, int>
     /// </summary>
     public BookRepository()
     {
-        _books = DataSeed.Books;
+        _books = [.. DataSeed.Books];
         _maxId = _books.Count > 0 ? _books.Max(r => r.Id) : 0;
     }
 
@@ -28,20 +28,25 @@ public class BookRepository: IRepositories<Book, int>
     /// Генерирует новый Id и добавляет книгу в коллекцию.
     /// </summary>
     /// <param name="book"> Объект Book. </param>
-    public void Create(Book book)
+    /// <returns> Id созданной книги.</returns>
+    public int Create(Book book)
     {
         book.Id = ++_maxId;
         _books.Add(book);
+        return book.Id;
     }
 
     /// <summary>
     /// Обновляет информацию о существующей книге.
     /// </summary>
     /// <param name="book"> Обновленный объект Book </param>
-    /// <exception cref="KeyNotFoundException"> Вызывается, если книга указанным Id не найдена. </exception>
-    public void Update(Book book)
+    /// <returns> Обновлённая книга или null, если не найдена. </returns>
+    public Book? Update(Book book)
     {
-        var update_book = Read(book.Id) ?? throw new KeyNotFoundException($"Книга с Id {book.Id} не найдена.");
+        var update_book = Read(book.Id);
+        if (update_book == null) 
+            return null;
+
         update_book.Title = book.Title;
         update_book.Authors = book.Authors;
         update_book.Publisher = book.Publisher;
@@ -49,12 +54,13 @@ public class BookRepository: IRepositories<Book, int>
         update_book.PublicationYear = book.PublicationYear;
         update_book.CatalogCode = book.CatalogCode;
         update_book.PublicationType = book.PublicationType;
+        return update_book;
     }
 
     /// <summary>
     /// Метод возвращает книгу по заданному Id.
     /// </summary>
-    /// <returns>Объект Book. </returns>
+    /// <returns>Объект Book.</returns>
     public Book? Read(int id)
     {
         return _books.FirstOrDefault(a => a.Id == id);
@@ -63,7 +69,7 @@ public class BookRepository: IRepositories<Book, int>
     /// <summary>
     /// Метод возвращает все книги.
     /// </summary>
-    /// <returns> Список всех объектов Book. </returns>
+    /// <returns> Список всех объектов Book.</returns>
     public List<Book> ReadAll() 
     { 
         return [.. _books];
@@ -73,10 +79,13 @@ public class BookRepository: IRepositories<Book, int>
     /// Удаляет книгу по Id.
     /// </summary>
     /// <param name="id"> Id книги, которую нужно удалить. </param>
-    /// <exception cref="KeyNotFoundException"> Вызывается, если книга с указанным Id не найдена. </exception>
-    public void Delete(int id)
+    /// <returns>Результат удаления.</returns>
+    public bool Delete(int id)
     {
-        var deleted_book = Read(id) ?? throw new KeyNotFoundException($"Книга с Id {id} не найдена.");
-        _books.Remove(deleted_book);
+        var deleted_book = Read(id);
+        if (deleted_book == null) 
+            return false;
+
+        return _books.Remove(deleted_book);
     }
 }

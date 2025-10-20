@@ -1,4 +1,4 @@
-using Library.Application.Interfaces;
+using Library.Application.Contracts.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers;
@@ -17,7 +17,7 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     ILogger<CrudControllerBase<TGetDto, TCreateDto, TKey>> logger) : ControllerBase
 {
     /// <summary>
-    /// ¬спомогательный метод дл€ логировани€к.
+    /// ¬спомогательный метод дл€ логировани€.
     /// </summary>
     protected ActionResult Logging(string method, Func<ActionResult> action)
     {

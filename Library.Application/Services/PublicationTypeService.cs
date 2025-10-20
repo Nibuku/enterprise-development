@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Library.Application.Dtos;
-using Library.Application.Interfaces;
+using Library.Application.Contracts.Dtos;
+using Library.Application.Contracts.Interfaces;
+using Library.Domain.Interfaces;
 using Library.Domain.Models;
-using Library.Infrastructure.Repositories;
 
 namespace Library.Application.Services;
 
@@ -10,7 +10,7 @@ namespace Library.Application.Services;
 /// Сервис, обеспечивающий CRUD-операции для работы с типами публикаций.
 /// </summary>
 public class PublicationTypeService(
-    PublicationTypeRepository typeRepository,
+     IRepository<PublicationType, int> typeRepository,
     IMapper mapper) : IApplicationService<PublicationTypeGetDto, PublicationTypeCreateDto, int>
 {
     /// <summary>
@@ -31,11 +31,11 @@ public class PublicationTypeService(
     /// </summary>
     /// <param name="dtoId"> Id типа </param>
     /// <returns>DTO типа публикации</returns>
-    /// <exception cref="KeyNotFoundException">Вызывается, если тип публикации с указанным Id не найден.</exception>
+    /// <exception cref="InvalidOperationException">Вызывается, если тип публикации с указанным Id не найден.</exception>
     public PublicationTypeGetDto Get(int dtoId)
     {
         var type = typeRepository.Read(dtoId)
-            ?? throw new KeyNotFoundException($"Тип публикации с ID {dtoId} не найден.");
+            ?? throw new InvalidOperationException($"Тип публикации с ID {dtoId} не найден.");
 
         return mapper.Map<PublicationTypeGetDto>(type);
     }
@@ -56,10 +56,10 @@ public class PublicationTypeService(
     /// <param name="dto">DTO с данными для обновления</param>
     /// <param name="dtoId">Id обновляемого типа</param>
     /// <returns>DTO типа публикации</returns>
-    /// <exception cref="KeyNotFoundException">Вызывается, если тип издания с указанным Id не найден.</exception>
+    /// <exception cref="InvalidOperationException">Вызывается, если тип издания с указанным Id не найден.</exception>
     public PublicationTypeGetDto Update(PublicationTypeCreateDto dto, int dtoId)
     {
-        var typeToUpdate = typeRepository.Read(dtoId) ?? throw new KeyNotFoundException($"Тип публикации с ID {dtoId} не найден.");
+        var typeToUpdate = typeRepository.Read(dtoId) ?? throw new InvalidOperationException($"Тип публикации с ID {dtoId} не найден.");
         mapper.Map(dto, typeToUpdate);
         typeRepository.Update(typeToUpdate);
         return mapper.Map<PublicationTypeGetDto>(typeToUpdate);
@@ -69,8 +69,10 @@ public class PublicationTypeService(
     /// Удаляет тип публикации по Id.
     /// </summary>
     /// <param name="dtoId">Id удаляемого типа/param>
+    /// <exception cref="InvalidOperationException">Вызывается, если тип публикации с указанным Id не найдена.</exception>
     public void Delete(int dtoId)
-    {
-        typeRepository.Delete(dtoId);
+    {        
+        if (!typeRepository.Delete(dtoId))
+            throw new InvalidOperationException($"Тип публикации с ID {dtoId} не найдена.");
     }
 }

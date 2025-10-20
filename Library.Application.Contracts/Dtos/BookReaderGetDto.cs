@@ -1,4 +1,4 @@
-﻿namespace Library.Application.Dtos;
+﻿namespace Library.Application.Contracts.Dtos;
 
 /// <summary>
 /// DTO для читателя

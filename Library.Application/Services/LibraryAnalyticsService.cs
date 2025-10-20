@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using Library.Application.Dtos.AnaliticsDtos;
-using Library.Application.Interfaces;
-using Library.Infrastructure.Repositories;
+using Library.Application.Contracts.Dtos.AnaliticsDtos;
+using Library.Application.Contracts.Interfaces;
+using Library.Domain.Interfaces;
+using Library.Domain.Models;
 
 namespace Library.Application.Services;
 
@@ -9,9 +10,9 @@ namespace Library.Application.Services;
 /// Сервис для аналитических запросов.
 /// </summary>
 public class LibraryAnalyticsService(
-    BookCheckoutRepository checkoutRepository,
-    BookRepository bookRepository,
-    BookReaderRepository readerRepository,
+    IRepository<BookCheckout, int> checkoutRepository,
+    IRepository<Book, int> bookRepository,
+    IRepository<BookReader, int> readerRepository,
     IMapper mapper) : ILibraryAnalyticsService
 {
     /// <summary>

@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Library.Application.Dtos;
-using Library.Application.Interfaces;
+using Library.Application.Contracts.Dtos;
+using Library.Application.Contracts.Interfaces;
+using Library.Domain.Interfaces;
 using Library.Domain.Models;
-using Library.Infrastructure.Repositories;
 
 namespace Library.Application.Services;
 
@@ -10,7 +10,7 @@ namespace Library.Application.Services;
 /// Сервис, обеспечивающий CRUD-операции для работы с читателями.
 /// </summary>
 public class BookReaderService(
-    BookReaderRepository bookReaderRepository,
+    IRepository<BookReader, int> bookReaderRepository,
     IMapper mapper) : IApplicationService<BookReaderGetDto, BookReaderCreateDto, int>
 {
     /// <summary>
@@ -31,11 +31,11 @@ public class BookReaderService(
     /// </summary>
     /// <param name="dtoId"> Id читателя</param>
     /// <returns>DTO читателя</returns>
-    /// <exception cref="KeyNotFoundException">Вызывается, если читатель с указанным Id не найден.</exception>
+    /// <exception cref="InvalidOperationException">Вызывается, если читатель с указанным Id не найден.</exception>
     public BookReaderGetDto Get(int dtoId)
     {
         var bookReader = bookReaderRepository.Read(dtoId)
-            ?? throw new KeyNotFoundException($"Читатель с ID {dtoId} не найден.");
+            ?? throw new InvalidOperationException($"Читатель с ID {dtoId} не найден.");
 
         return mapper.Map<BookReaderGetDto>(bookReader);
     }
@@ -56,10 +56,10 @@ public class BookReaderService(
     /// <param name="dto">DTO с данными для обновления</param>
     /// <param name="dtoId">Id обновляемой записи</param>
     /// <returns>DTO обновленной записи читателя</returns>
-    /// <exception cref="KeyNotFoundException">Вызывается, если читатель с указанным Id не найден.</exception>
+    /// <exception cref="InvalidOperationException">Вызывается, если читатель с указанным Id не найден.</exception>
     public BookReaderGetDto Update(BookReaderCreateDto dto, int dtoId)
     {
-        var readerToUpdate = bookReaderRepository.Read(dtoId) ?? throw new KeyNotFoundException($"Читатель с ID {dtoId} не найден.");
+        var readerToUpdate = bookReaderRepository.Read(dtoId) ?? throw new InvalidOperationException($"Читатель с ID {dtoId} не найден.");
         mapper.Map(dto, readerToUpdate);
         bookReaderRepository.Update(readerToUpdate);
         return mapper.Map<BookReaderGetDto>(readerToUpdate);
@@ -69,8 +69,10 @@ public class BookReaderService(
     /// Удаляет запись о читателе по Id.
     /// </summary>
     /// <param name="dtoId">Id удаляемого читателя/param>
+    /// <exception cref="InvalidOperationException">Вызывается, если читатель с указанным Id не найден.</exception>
     public void Delete(int dtoId)
     {
-        bookReaderRepository.Delete(dtoId);
+        if (!bookReaderRepository.Delete(dtoId))
+            throw new InvalidOperationException($"Читатель с ID {dtoId} не найдена.");
     }
 }

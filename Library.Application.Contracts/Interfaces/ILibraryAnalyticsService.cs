@@ -1,6 +1,6 @@
-﻿using Library.Application.Dtos.AnaliticsDtos;
+﻿using Library.Application.Contracts.Dtos.AnaliticsDtos;
 
-namespace Library.Application.Interfaces;
+namespace Library.Application.Contracts.Interfaces;
 
 /// <summary>
 /// Интерфейс сервиса для аналитикческих запросов.

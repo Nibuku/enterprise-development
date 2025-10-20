@@ -1,9 +1,11 @@
 using AutoMapper;
-using Library.Application.Dtos;
-using Library.Application.Services;
-using Library.Infrastructure.Repositories;
 using Library.Application;
-using Library.Application.Interfaces;
+using Library.Application.Services;
+using Library.Application.Contracts.Interfaces;
+using Library.Domain.Interfaces;
+using Library.Domain.Models;
+using Library.Infrastructure.InMemory.Repositories;
+using Library.Application.Contracts.Dtos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,20 +17,19 @@ builder.Services.AddSingleton(mapper);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<BookRepository, BookRepository>();
-builder.Services.AddSingleton<BookReaderRepository, BookReaderRepository>();
-builder.Services.AddSingleton<BookCheckoutRepository, BookCheckoutRepository>();
-builder.Services.AddSingleton<PublisherRepository, PublisherRepository>();
-builder.Services.AddSingleton<PublicationTypeRepository, PublicationTypeRepository>();
+builder.Services.AddSingleton<IRepository<Book, int>, BookRepository>();
+builder.Services.AddSingleton<IRepository<BookReader, int>, BookReaderRepository>();
+builder.Services.AddSingleton<IRepository<BookCheckout, int>, BookCheckoutRepository>();
+builder.Services.AddSingleton<IRepository<Publisher, int>, PublisherRepository>();
+builder.Services.AddSingleton<IRepository<PublicationType, int>, PublicationTypeRepository>();
 
-builder.Services.AddScoped<BookService>();
-builder.Services.AddScoped<BookReaderService>();
-builder.Services.AddScoped<PublisherService>();
-builder.Services.AddScoped<BookCheckoutService>();
-builder.Services.AddScoped<PublicationTypeService>(); 
-builder.Services.AddScoped<LibraryAnalyticsService>();
+builder.Services.AddScoped<IApplicationService<BookGetDto, BookCreateDto, int>, BookService>();
+builder.Services.AddScoped<IApplicationService<BookReaderGetDto, BookReaderCreateDto, int>, BookReaderService>();
+builder.Services.AddScoped<IApplicationService<PublisherGetDto, PublisherCreateDto, int>, PublisherService>();
+builder.Services.AddScoped<IApplicationService<CheckoutGetDto, CheckoutCreateDto, int>, BookCheckoutService>();
+builder.Services.AddScoped<IApplicationService<PublicationTypeGetDto, PublicationTypeCreateDto, int>, PublicationTypeService>(); 
+builder.Services.AddScoped<ILibraryAnalyticsService, LibraryAnalyticsService>();
 
 builder.Services.AddSwaggerGen(c =>
 {

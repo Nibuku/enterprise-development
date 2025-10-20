@@ -2,13 +2,13 @@
 using Library.Domain.Models;
 using Library.Domain.Data;
 
-namespace Library.Infrastructure.Repositories;
+namespace Library.Infrastructure.InMemory.Repositories;
 
 /// <summary>
 /// Репозиторий с CRUD-операциями для Publisher.
 /// Использует данные из DataSeed.
 /// </summary>
-public class PublisherRepository : IRepositories<Publisher, int>
+public class PublisherRepository : IRepository<Publisher, int>
 {
     private readonly List<Publisher> _publishers;
     private int _maxId;
@@ -19,7 +19,7 @@ public class PublisherRepository : IRepositories<Publisher, int>
     /// </summary>
     public PublisherRepository()
     {
-        _publishers = DataSeed.Publishers;
+        _publishers = [.. DataSeed.Publishers];
         _maxId = _publishers.Count > 0 ? _publishers.Max(r => r.Id) : 0;
     }
 
@@ -46,31 +46,40 @@ public class PublisherRepository : IRepositories<Publisher, int>
     /// Генерирует новый Id и добавляет запись в коллекцию.
     /// </summary>
     /// <param name="publisher"> Объект Publisher. </param>
-    public void Create(Publisher publisher)
+    /// <returns> Id созданной книги.</returns>
+    public int Create(Publisher publisher)
     {
         publisher.Id = ++_maxId;
         _publishers.Add(publisher);
+        return publisher.Id;
     }
 
     /// <summary>
     /// Обновляет информацию о существующем издательстве.
     /// </summary>
     /// <param name="publisher"> Обновленный объект Publisher </param>
-    /// <exception cref="KeyNotFoundException"> Вызывается, если издательство с указанным Id не найдено. </exception>
-    public void Update(Publisher publisher)
+    /// <returns> Обновлённое издательство или null, если не найдена. </returns>
+    public Publisher? Update(Publisher publisher)
     {
-        var update_publisher = Read(publisher.Id) ?? throw new KeyNotFoundException($"Издательство с Id {publisher.Id} не найдено.");
+        var update_publisher = Read(publisher.Id);
+        if (update_publisher == null) 
+            return null;
+
         update_publisher.Name = publisher.Name;
+        return update_publisher;
     }
 
     /// <summary>
     /// Удаляет издательство по Id.
     /// </summary>
     /// <param name="id"> Id издательства, которое нужно удалить. </param>
-    /// <exception cref="KeyNotFoundException"> Вызывается, если издательство с указанным Id не найдено. </exception>
-    public void Delete(int id)
+    /// <returns>Результат удаления.</returns>
+    public bool Delete(int id)
     {
-        var deleted_publisher = Read(id) ?? throw new KeyNotFoundException($"Издательство с Id {id} не найдено.");
-        _publishers.Remove(deleted_publisher);
+        var deleted_publisher = Read(id);
+        if (deleted_publisher == null) 
+            return false;
+
+        return _publishers.Remove(deleted_publisher); ;
     }
 }

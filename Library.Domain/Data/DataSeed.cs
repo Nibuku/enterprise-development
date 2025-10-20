@@ -1,11 +1,11 @@
 ﻿using Library.Domain.Models;
 
-namespace Library.Domain. Data;
+namespace Library.Domain.Data;
 
 /// <summary>
 /// Класс для создания и хранения данных для тестов
 /// </summary>
-public class DataSeed
+public static class DataSeed
 {
     /// <summary>
     /// Издательства

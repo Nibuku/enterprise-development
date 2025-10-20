@@ -1,15 +1,10 @@
-﻿namespace Library.Application.Dtos;
+﻿namespace Library.Application.Contracts.Dtos;
 
 /// <summary>
-/// DTO для записи выданных книг
+/// DTO для создания записи о выданных книгах
 /// </summary>
-public class CheckoutGetDto
+public class CheckoutCreateDto
 {
-    /// <summary>
-    /// Id записи о выдаче
-    /// </summary>
-    public required int Id { get; set; }
-
     /// <summary>
     /// Дата взятия книги
     /// </summary>

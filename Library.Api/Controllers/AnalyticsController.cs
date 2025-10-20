@@ -1,5 +1,5 @@
-﻿using Library.Application.Dtos.AnaliticsDtos;
-using Library.Application.Services;
+﻿using Library.Application.Contracts.Dtos.AnaliticsDtos;
+using Library.Application.Contracts.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers;
@@ -12,13 +12,13 @@ namespace Library.Api.Controllers;
 [ApiController]
 [Route("api/analytics")]
 public class AnalyticsController(
-    LibraryAnalyticsService analyticsService,
+    ILibraryAnalyticsService analyticsService,
     ILogger<AnalyticsController> logger) : ControllerBase
 {
     /// <summary>
-    /// Вспомогательный метод для логированияк.
+    /// Вспомогательный метод для логирования.
     /// </summary>
-    protected ActionResult Logging(string method, Func<ActionResult> action)
+    private ActionResult Logging(string method, Func<ActionResult> action)
     {
         logger.LogInformation("START: {Method}", method);
         try

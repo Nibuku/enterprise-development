@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Library.Application.Dtos;
-using Library.Application.Dtos.AnaliticsDtos;
+using Library.Application.Contracts.Dtos;
+using Library.Application.Contracts.Dtos.AnaliticsDtos;
 using Library.Domain.Models;
 
 namespace Library.Application;

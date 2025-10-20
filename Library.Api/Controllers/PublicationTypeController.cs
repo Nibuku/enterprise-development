@@ -1,5 +1,5 @@
-﻿using Library.Application.Dtos;
-using Library.Application.Services;
+﻿using Library.Application.Contracts.Dtos;
+using Library.Application.Contracts.Interfaces;
 
 namespace Library.Api.Controllers;
 
@@ -8,5 +8,5 @@ namespace Library.Api.Controllers;
 /// </summary>
 /// <param name="publicationTypeService">Сервис для работы с типами.</param>
 /// <param name="logger">Логгер для записи информации.</param>
-public class PublicationTypeController(PublicationTypeService publicationTypeService, ILogger<PublicationTypeController> logger)
+public class PublicationTypeController(IApplicationService<PublicationTypeGetDto, PublicationTypeCreateDto, int> publicationTypeService, ILogger<PublicationTypeController> logger)
     : CrudControllerBase<PublicationTypeGetDto, PublicationTypeCreateDto, int>(publicationTypeService, logger);

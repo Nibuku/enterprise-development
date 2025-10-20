@@ -1,5 +1,5 @@
-﻿using Library.Application.Dtos;
-using Library.Application.Services;
+﻿using Library.Application.Contracts.Dtos;
+using Library.Application.Contracts.Interfaces;
 
 namespace Library.Api.Controllers;
 
@@ -8,5 +8,5 @@ namespace Library.Api.Controllers;
 /// </summary>
 /// <param name="readerService">Сервис для работы с читателями.</param>
 /// <param name="logger">Логгер для записи информации.</param>
-public class BookReaderController(BookReaderService readerService, ILogger<BookReaderController> logger)
+public class BookReaderController(IApplicationService<BookReaderGetDto, BookReaderCreateDto, int> readerService, ILogger<BookReaderController> logger)
     : CrudControllerBase<BookReaderGetDto, BookReaderCreateDto, int>(readerService, logger);

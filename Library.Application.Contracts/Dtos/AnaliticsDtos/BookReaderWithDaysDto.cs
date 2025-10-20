@@ -1,4 +1,4 @@
-﻿namespace Library.Application.Dtos.AnaliticsDtos;
+﻿namespace Library.Application.Contracts.Dtos.AnaliticsDtos;
 
 /// <summary>
 /// DTO для аналитических запросов, связанных с читателем

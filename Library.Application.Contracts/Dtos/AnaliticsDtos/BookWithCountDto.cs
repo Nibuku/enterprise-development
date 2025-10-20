@@ -1,9 +1,9 @@
-﻿namespace Library.Application.Dtos;
+﻿namespace Library.Application.Contracts.Dtos.AnaliticsDtos;
 
 /// <summary>
-/// DTO для книг в библиотеке.
+/// Аналитическое DTO для книг
 /// </summary>
-public class BookGetDto
+public class BookWithCountDto
 {
     /// <summary>
     /// Идентификатор книги
@@ -28,20 +28,25 @@ public class BookGetDto
     /// <summary>
     /// Id типа публикации
     /// </summary>
-    public required int PublicationTypeId { get; set; }
+    public required int? PublicationTypeId { get; set; }
 
     /// <summary>
     /// Id издательства
     /// </summary>
-    public required int PublisherId { get; set; }
+    public required int? PublisherId { get; set; }
 
     /// <summary>
     /// Год издания
     /// </summary>
-    public required int PublicationYear { get; set; }
+    public required int? PublicationYear { get; set; }
 
     /// <summary>
     /// Список авторов
     /// </summary>
     public List<string> Authors { get; set; } = [];
+
+    /// <summary>
+    /// Количество раз, которое брали книгу
+    /// </summary>
+    public required int Count { get; set; } = 0;
 }

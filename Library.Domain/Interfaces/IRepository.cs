@@ -5,25 +5,25 @@
 /// </summary>
 /// <typeparam name="TEntity">Тип сущности</typeparam>
 /// <typeparam name="TKey">Тип Id сущности</typeparam>
-public interface IRepositories<TEntity, TKey>
+public interface IRepository<TEntity, TKey>
 {
     /// <summary>
     /// Создает новый объект.
     /// </summary>
     /// <param name="entity">Создаваемый объект</param>
-    public void Create(TEntity entity);
+    public TKey Create(TEntity entity);
 
     /// <summary>
     /// Обновляет существующий объект.
     /// </summary>
     /// <param name="entity">Обновленный объект</param>
-    public void Update(TEntity entity);
+    public TEntity? Update(TEntity entity);
 
     /// <summary>
     /// Удаляет объект по указанному Id.
     /// </summary>
     /// <param name="key">Id удаляемого объекта</param>
-    public void Delete(TKey key);
+    public bool Delete(TKey key);
 
     /// <summary>
     /// Получает список всех существующих объектов
@@ -37,5 +37,4 @@ public interface IRepositories<TEntity, TKey>
     /// <param name="key">Id объекта</param>
     /// <returns>Найденный объект или null.</returns>
     public TEntity? Read(TKey key);
-
 }
