@@ -6,7 +6,7 @@
 public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture>
 {
     /// <summary>
-    /// Проверяется. что выданные книги исвлечены правильно и отсортированы.
+    /// Тест выводит информацию о выданных книгах, элементы отсортированы по названию.
     /// </summary>
     [Fact]
     public void BooksOrderedByTitle()

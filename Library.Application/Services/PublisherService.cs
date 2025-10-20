@@ -10,7 +10,7 @@ namespace Library.Application.Services;
 /// Сервис, обеспечивающий CRUD-операции для работы с издательствами.
 /// </summary>
 public class PublisherService(
-     IRepository<Publisher, int> publisherRepository,
+    IRepository<Publisher, int> publisherRepository,
     IMapper mapper) : IApplicationService<PublisherGetDto, PublisherCreateDto, int>
 {
     /// <summary>

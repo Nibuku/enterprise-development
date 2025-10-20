@@ -38,7 +38,7 @@ public class PublisherRepository : IRepository<Publisher, int>
     /// <returns> Список всех объектов Publisher. </returns>
     public List<Publisher> ReadAll()
     {
-        return _publishers;
+        return [.. _publishers];
     }
 
     /// <summary>

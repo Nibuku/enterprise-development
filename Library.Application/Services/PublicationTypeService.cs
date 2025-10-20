@@ -10,7 +10,7 @@ namespace Library.Application.Services;
 /// Сервис, обеспечивающий CRUD-операции для работы с типами публикаций.
 /// </summary>
 public class PublicationTypeService(
-     IRepository<PublicationType, int> typeRepository,
+    IRepository<PublicationType, int> typeRepository,
     IMapper mapper) : IApplicationService<PublicationTypeGetDto, PublicationTypeCreateDto, int>
 {
     /// <summary>
