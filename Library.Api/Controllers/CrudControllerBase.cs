@@ -19,12 +19,12 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     /// <summary>
     /// ¬спомогательный метод дл€ логировани€.
     /// </summary>
-    protected ActionResult Logging(string method, Func<ActionResult> action)
+    protected async Task<ActionResult> Logging(string method, Func<Task<ActionResult>> action)
     {
         logger.LogInformation("START: {Method}", method);
         try
         {
-            var result = action();
+            var result =await action();
             var count = 0;
             if (result is OkObjectResult okResult && okResult.Value != null)
             {
@@ -52,11 +52,11 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
-    public ActionResult<TGetDto> Create(TCreateDto newDto)
+    public async Task<ActionResult<TGetDto>> Create(TCreateDto newDto)
     {
-        return Logging(nameof(Create), () =>
+        return await Logging(nameof(Create), async () =>
         {
-            var result = appService.Create(newDto);
+            var result =await appService.Create(newDto);
             return CreatedAtAction(nameof(this.Create), result);
         });
     }
@@ -70,13 +70,13 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult<TGetDto> Edit(TKey id, TCreateDto newDto)
+    public async Task<ActionResult<TGetDto>> Edit(TKey id, TCreateDto newDto)
     {
-        return Logging(nameof(Edit), () =>
+        return await Logging(nameof(Edit), async () =>
         { 
             try
             {
-                var result = appService.Update(newDto, id);
+                var result =await  appService.Update(newDto, id);
                 return Ok(result);
             }
             catch (KeyNotFoundException)
@@ -93,13 +93,13 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     [HttpDelete("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public IActionResult Delete(TKey id)
+    public async Task<IActionResult> Delete(TKey id)
     {
-        return Logging(nameof(Delete), () =>
+        return await Logging(nameof(Delete), async () =>
         {
             try
             {
-                appService.Delete(id);
+                await appService.Delete(id);
                 return Ok();
             }
             catch (KeyNotFoundException)
@@ -116,11 +116,11 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
-    public ActionResult<IList<TGetDto>> GetAll()
+    public async Task<ActionResult<IList<TGetDto>>> GetAll()
     {
-        return Logging(nameof(GetAll), () =>
+        return await Logging(nameof(GetAll), async () =>
         {
-            var result = appService.GetAll();
+            var result = await appService.GetAll();
             return Ok(result);
         });
     }
@@ -134,13 +134,13 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<TGetDto> Get(TKey id)
+    public async Task<ActionResult<TGetDto>> Get(TKey id)
     {
-        return Logging(nameof(Get), () =>
+        return await Logging(nameof(Get), async () =>
         {
             try
             {
-                var result = appService.Get(id);
+                var result = await appService.Get(id);
                 return Ok(result);
             }
             catch (KeyNotFoundException)

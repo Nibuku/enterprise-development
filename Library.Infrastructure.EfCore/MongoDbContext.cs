@@ -6,10 +6,9 @@ public class MongoDbContext
 {
     private readonly IMongoDatabase _database;
 
-    public MongoDbContext(string connectionString, string databaseName)
+    public MongoDbContext(IMongoDatabase database)
     {
-        var client = new MongoClient(connectionString);
-        _database = client.GetDatabase(databaseName);
+        _database = database;
     }
 
     public IMongoCollection<T> GetCollection<T>(string name)

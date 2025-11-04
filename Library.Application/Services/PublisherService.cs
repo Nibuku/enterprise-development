@@ -10,7 +10,7 @@ namespace Library.Application.Services;
 /// Сервис, обеспечивающий CRUD-операции для работы с издательствами.
 /// </summary>
 public class PublisherService(
-    IRepository<Publisher, int> publisherRepository,
+    IRepositoryAsync<Publisher, int> publisherRepository,
     IMapper mapper) : IApplicationService<PublisherGetDto, PublisherCreateDto, int>
 {
     /// <summary>
@@ -18,10 +18,10 @@ public class PublisherService(
     /// </summary>
     /// <param name="dto">DTO с данными для создания</param>
     /// <returns>DTO созданной записи</returns>
-    public PublisherGetDto Create(PublisherCreateDto dto)
+    public async Task<PublisherGetDto> Create(PublisherCreateDto dto)
     {
         var publisher = mapper.Map<Publisher>(dto);
-        publisherRepository.Create(publisher);
+        await publisherRepository.Create(publisher);
 
         return mapper.Map<PublisherGetDto>(publisher);
     }
@@ -32,9 +32,9 @@ public class PublisherService(
     /// <param name="dtoId"> Id издательства </param>
     /// <returns>DTO читателя</returns>
     /// <exception cref="InvalidOperationException">Вызывается, если издательство с указанным Id не найдено.</exception>
-    public PublisherGetDto Get(int dtoId)
+    public async Task<PublisherGetDto> Get(int dtoId)
     {
-        var publisher = publisherRepository.Read(dtoId)
+        var publisher =await publisherRepository.Read(dtoId)
             ?? throw new InvalidOperationException($"Издательство с ID {dtoId} не найден.");
 
         return mapper.Map<PublisherGetDto>(publisher);
@@ -44,9 +44,9 @@ public class PublisherService(
     /// Получает список с DTO всех издательств.
     /// </summary>
     /// <returns>Список DTO всех записей</returns>
-    public List<PublisherGetDto> GetAll()
+    public async Task<List<PublisherGetDto>> GetAll()
     {
-        var publishers = publisherRepository.ReadAll();
+        var publishers =await publisherRepository.ReadAll();
         return mapper.Map<List<PublisherGetDto>>(publishers);
     }
 
@@ -57,11 +57,11 @@ public class PublisherService(
     /// <param name="dtoId">Id обновляемого издательства</param>
     /// <returns>DTO издательства</returns>
     /// <exception cref="InvalidOperationException">Вызывается, если издательство с указанным Id не найдено.</exception>
-    public PublisherGetDto Update(PublisherCreateDto dto, int dtoId)
+    public async Task<PublisherGetDto> Update(PublisherCreateDto dto, int dtoId)
     {
-        var publisherToUpdate = publisherRepository.Read(dtoId) ?? throw new InvalidOperationException($"Издательство с ID {dtoId} не найден.");
+        var publisherToUpdate =await publisherRepository.Read(dtoId) ?? throw new InvalidOperationException($"Издательство с ID {dtoId} не найден.");
         mapper.Map(dto, publisherToUpdate);
-        publisherRepository.Update(publisherToUpdate);
+        await publisherRepository.Update(publisherToUpdate);
         return mapper.Map<PublisherGetDto>(publisherToUpdate);
     }
 
@@ -70,9 +70,9 @@ public class PublisherService(
     /// </summary>
     /// <param name="dtoId">Id удаляемого издательства/param>
     /// <exception cref="InvalidOperationException">Вызывается, если издательство с указанным Id не найдено.</exception>
-    public void Delete(int dtoId)
+    public async Task Delete(int dtoId)
     {
-        if (!publisherRepository.Delete(dtoId))
+        if (!await publisherRepository.Delete(dtoId))
             throw new InvalidOperationException($"Издательство с ID {dtoId} не найдена.");
     }
 }

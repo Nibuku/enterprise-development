@@ -13,20 +13,20 @@ public interface IApplicationService<TGetDto, TCreateDto, TKey>
     /// </summary>
     /// <param name="dto">DTO</param>
     /// <returns></returns>
-    public TGetDto Create(TCreateDto dto);
+    public Task<TGetDto> Create(TCreateDto dto);
 
     /// <summary>
     /// Получение DTO по идентификатору
     /// </summary>
     /// <param name="dtoId">Идентификатор DTO</param>
     /// <returns></returns>
-    public TGetDto Get(TKey dtoId);
+    public Task<TGetDto> Get(TKey dtoId);
 
     /// <summary>
     /// Получение всего списка DTO
     /// </summary>
     /// <returns></returns>
-    public List<TGetDto> GetAll();
+    public Task<List<TGetDto>> GetAll();
 
     /// <summary>
     /// Обновление DTO
@@ -34,11 +34,11 @@ public interface IApplicationService<TGetDto, TCreateDto, TKey>
     /// <param name="dto">DTO</param>
     /// <param name="dtoId">Идентификатор DTO</param> 
     /// <returns></returns>
-    public TGetDto Update(TCreateDto dto, TKey dtoId);
+    public Task<TGetDto> Update(TCreateDto dto, TKey dtoId);
 
     /// <summary>
     /// Удаление DTO
     /// </summary>
     /// <param name="dtoId">Идентификатор DTO</param>
-    public void Delete(TKey dtoId);
+    public Task Delete(TKey dtoId);
 }

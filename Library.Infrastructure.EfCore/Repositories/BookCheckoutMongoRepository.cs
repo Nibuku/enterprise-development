@@ -11,7 +11,7 @@ public class BookCheckoutMongoRepository: IRepositoryAsync<BookCheckout, int>
 
     public BookCheckoutMongoRepository(MongoDbContext context)
     {
-        _checks = context.GetCollection<BookCheckout>("BookCheckout");
+        _checks = context.GetCollection<BookCheckout>("Checkouts");
 
         var last = _checks.Find(_ => true)
             .SortByDescending(x => x.Id)

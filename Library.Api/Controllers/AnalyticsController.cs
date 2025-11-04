@@ -18,12 +18,12 @@ public class AnalyticsController(
     /// <summary>
     /// Вспомогательный метод для логирования.
     /// </summary>
-    private ActionResult Logging(string method, Func<ActionResult> action)
+    private async Task<ActionResult> Logging(string method, Func<Task<ActionResult>> action)
     {
         logger.LogInformation("START: {Method}", method);
         try
         {
-            var result = action();
+            var result =await action();
             var count = 0;
             if (result is OkObjectResult okResult && okResult.Value != null)
             {
@@ -50,12 +50,12 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<BookWithCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<BookWithCountDto>> GetBooksOrderedByTitle()
+    public async Task<ActionResult<List<BookWithCountDto>>> GetBooksOrderedByTitle()
     {
-        return Logging(nameof(GetBooksOrderedByTitle), () =>
+        return await Logging(nameof(GetBooksOrderedByTitle), async () =>
         {
             var today = DateOnly.FromDateTime(DateTime.Today);
-            var result = analyticsService.GetBooksOrderedByTitle(today);
+            var result =await analyticsService.GetBooksOrderedByTitle(today);
             return Ok(result);
         });
     }
@@ -69,13 +69,13 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<BookReaderWithCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<BookReaderWithCountDto>> GetTopReadersByNumberOfBooks(
+    public async Task<ActionResult<List<BookReaderWithCountDto>>> GetTopReadersByNumberOfBooks(
         [FromQuery] DateOnly start,
         [FromQuery] DateOnly end)
     {
-        return Logging(nameof(GetTopReadersByNumberOfBooks), () =>
+        return await Logging(nameof(GetTopReadersByNumberOfBooks), async() =>
         {
-            var result = analyticsService.GetTopReadersByNumberOfBooks(start, end);
+            var result = await analyticsService.GetTopReadersByNumberOfBooks(start, end);
             return Ok(result);
         });
     }
@@ -87,11 +87,11 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<BookReaderWithDaysDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<BookReaderWithDaysDto>> GetTopReadersByTotalLoanDays()
+    public async Task<ActionResult<List<BookReaderWithDaysDto>>> GetTopReadersByTotalLoanDays()
     {
-        return Logging(nameof(GetTopReadersByTotalLoanDays), () =>
+        return await Logging(nameof(GetTopReadersByTotalLoanDays), async () =>
         {
-            var result = analyticsService.GetTopReadersByTotalLoanDays();
+            var result = await analyticsService.GetTopReadersByTotalLoanDays();
             return result.Count > 0 ? Ok(result) : NoContent();
         });
     }
@@ -104,13 +104,13 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<PublisherCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<PublisherCountDto>> GetTopPopularPublishersLastYear(
+    public async Task<ActionResult<List<PublisherCountDto>>> GetTopPopularPublishersLastYear(
         [FromQuery] DateOnly? start = null)
     {
-        return Logging(nameof(GetTopPopularPublishersLastYear), () =>
+        return await Logging(nameof(GetTopPopularPublishersLastYear), async() =>
         {
             var startDate = start ?? DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
-            var result = analyticsService.GetTopPopularPublishersLastYear(startDate);
+            var result =await  analyticsService.GetTopPopularPublishersLastYear(startDate);
             return Ok(result);
         });
     }
@@ -123,13 +123,13 @@ public class AnalyticsController(
     [ProducesResponseType(typeof(List<BookWithCountDto>), 200)]
     [ProducesResponseType(204)]
     [ProducesResponseType(500)]
-    public ActionResult<List<BookWithCountDto>> GetTopLeastPopularBooksLastYear(
+    public async Task<ActionResult<List<BookWithCountDto>>> GetTopLeastPopularBooksLastYear(
         [FromQuery] DateOnly? start = null)
     {
-        return Logging(nameof(GetTopLeastPopularBooksLastYear), () =>
+        return await Logging(nameof(GetTopLeastPopularBooksLastYear), async () =>
         {
             var startDate = start ?? DateOnly.FromDateTime(DateTime.Today.AddYears(-1));
-            var result = analyticsService.GetTopLeastPopularBooksLastYear(startDate);
+            var result = await analyticsService.GetTopLeastPopularBooksLastYear(startDate);
             return Ok(result);
         });
     }

@@ -10,9 +10,9 @@ namespace Library.Application.Services;
 /// Сервис для аналитических запросов.
 /// </summary>
 public class LibraryAnalyticsService(
-    IRepository<BookCheckout, int> checkoutRepository,
-    IRepository<Book, int> bookRepository,
-    IRepository<BookReader, int> readerRepository,
+    IRepositoryAsync<BookCheckout, int> checkoutRepository,
+    IRepositoryAsync<Book, int> bookRepository,
+    IRepositoryAsync<BookReader, int> readerRepository,
     IMapper mapper) : ILibraryAnalyticsService
 {
     /// <summary>
@@ -20,10 +20,10 @@ public class LibraryAnalyticsService(
     /// </summary>
     /// <param name="date">Дата, на которую проверяется наличие книг в выдаче</param>
     /// <returns>Список книг, отсортированный по названию.</returns>
-    public List<BookWithCountDto> GetBooksOrderedByTitle(DateOnly date)
+    public async Task<List<BookWithCountDto>> GetBooksOrderedByTitle(DateOnly date)
     {
-        var checkouts = checkoutRepository.ReadAll();
-        var books = bookRepository.ReadAll();
+        var checkouts = await checkoutRepository.ReadAll();
+        var books =await bookRepository.ReadAll();
 
         var allBookCheckouts = checkouts
             .Where(r => r.LoanDate <= date && r.LoanDate.AddDays(r.LoanDays) >= date)
@@ -49,10 +49,10 @@ public class LibraryAnalyticsService(
     /// <param name="start">Начало периода</param>
     /// <param name="end">Конец периода</param>
     /// <returns>Список из 5 читателей, отсортированный по убыванию количества книг</returns>
-    public List<BookReaderWithCountDto> GetTopReadersByNumberOfBooks(DateOnly start, DateOnly end)
+    public async Task<List<BookReaderWithCountDto>> GetTopReadersByNumberOfBooks(DateOnly start, DateOnly end)
     {
-        var checkouts = checkoutRepository.ReadAll();
-        var readers = readerRepository.ReadAll();
+        var checkouts =await  checkoutRepository.ReadAll();
+        var readers =await readerRepository.ReadAll();
 
         var topReaders = checkouts
             .Where(r => r.LoanDate >= start && r.LoanDate.AddDays(r.LoanDays) <= end)
@@ -76,10 +76,10 @@ public class LibraryAnalyticsService(
     /// Получает топ-5 читателей, бравших книги на наибольший период времени.
     /// </summary>
     /// <returns>Список из 5 читателей, отсортированный по убыванию количества дней/returns>
-    public List<BookReaderWithDaysDto> GetTopReadersByTotalLoanDays()
+    public async Task<List<BookReaderWithDaysDto>> GetTopReadersByTotalLoanDays()
     {
-        var checkouts = checkoutRepository.ReadAll();
-        var readers = readerRepository.ReadAll();
+        var checkouts =await checkoutRepository.ReadAll();
+        var readers =await readerRepository.ReadAll();
 
         var topReaders = checkouts
             .GroupBy(r => r.Reader.Id)
@@ -103,10 +103,10 @@ public class LibraryAnalyticsService(
     /// </summary>
     /// <param name="start">Началпериода</param>
     /// <returns>Список из 5 издательств, отсортированный по убыванию популярности</returns>
-    public List<PublisherCountDto> GetTopPopularPublishersLastYear(DateOnly start)
+    public async Task<List<PublisherCountDto>> GetTopPopularPublishersLastYear(DateOnly start)
     {
-        var checkouts = checkoutRepository.ReadAll();
-        var books = bookRepository.ReadAll();
+        var checkouts =await checkoutRepository.ReadAll();
+        var books = await bookRepository.ReadAll();
 
         var topFivePublishers = checkouts
             .Where(r => r.LoanDate >= start)
@@ -130,10 +130,10 @@ public class LibraryAnalyticsService(
     /// </summary>
     /// <param name="start">Началпериода</param>
     /// <returns>Список из 5 книг, отсортированный по возрастанию популярности</returns>
-    public List<BookWithCountDto> GetTopLeastPopularBooksLastYear(DateOnly start)
+    public async Task<List<BookWithCountDto>> GetTopLeastPopularBooksLastYear(DateOnly start)
     {
-        var records = checkoutRepository.ReadAll();
-        var books = bookRepository.ReadAll();
+        var records =await checkoutRepository.ReadAll();
+        var books =await bookRepository.ReadAll();
         var recordsInPeriod = records
             .Where(r => r.LoanDate >= start)
             .ToList();

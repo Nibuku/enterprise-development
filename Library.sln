@@ -17,6 +17,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Application.Contrac
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Infrastructure.Mongo", "Library.Infrastructure.EfCore\Library.Infrastructure.Mongo.csproj", "{959BE9F6-497E-482B-8637-69F2B5A68108}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.AppHost", "Library.AppHost\Library.AppHost.csproj", "{5DD2D793-681F-49D4-A32F-552D8499B7B9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.ServiceDefaults", "Library.ServiceDefaults\Library.ServiceDefaults.csproj", "{20A02B2E-00E1-4B45-B91C-7438E1086DE8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +55,14 @@ Global
 		{959BE9F6-497E-482B-8637-69F2B5A68108}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{959BE9F6-497E-482B-8637-69F2B5A68108}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{959BE9F6-497E-482B-8637-69F2B5A68108}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DD2D793-681F-49D4-A32F-552D8499B7B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DD2D793-681F-49D4-A32F-552D8499B7B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DD2D793-681F-49D4-A32F-552D8499B7B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DD2D793-681F-49D4-A32F-552D8499B7B9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{20A02B2E-00E1-4B45-B91C-7438E1086DE8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{20A02B2E-00E1-4B45-B91C-7438E1086DE8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{20A02B2E-00E1-4B45-B91C-7438E1086DE8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{20A02B2E-00E1-4B45-B91C-7438E1086DE8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

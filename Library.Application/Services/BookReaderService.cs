@@ -10,7 +10,7 @@ namespace Library.Application.Services;
 /// Сервис, обеспечивающий CRUD-операции для работы с читателями.
 /// </summary>
 public class BookReaderService(
-    IRepository<BookReader, int> bookReaderRepository,
+    IRepositoryAsync<BookReader, int> bookReaderRepository,
     IMapper mapper) : IApplicationService<BookReaderGetDto, BookReaderCreateDto, int>
 {
     /// <summary>
@@ -18,10 +18,10 @@ public class BookReaderService(
     /// </summary>
     /// <param name="dto">DTO с данными для создания</param>
     /// <returns>DTO созданной записи</returns>
-    public BookReaderGetDto Create(BookReaderCreateDto dto)
+    public async Task<BookReaderGetDto> Create(BookReaderCreateDto dto)
     {
         var bookReader = mapper.Map<BookReader>(dto);
-        bookReaderRepository.Create(bookReader);
+        await bookReaderRepository.Create(bookReader);
 
         return mapper.Map<BookReaderGetDto>(bookReader);
     }
@@ -32,9 +32,9 @@ public class BookReaderService(
     /// <param name="dtoId"> Id читателя</param>
     /// <returns>DTO читателя</returns>
     /// <exception cref="InvalidOperationException">Вызывается, если читатель с указанным Id не найден.</exception>
-    public BookReaderGetDto Get(int dtoId)
+    public async Task<BookReaderGetDto> Get(int dtoId)
     {
-        var bookReader = bookReaderRepository.Read(dtoId)
+        var bookReader = await bookReaderRepository.Read(dtoId)
             ?? throw new InvalidOperationException($"Читатель с ID {dtoId} не найден.");
 
         return mapper.Map<BookReaderGetDto>(bookReader);
@@ -44,9 +44,9 @@ public class BookReaderService(
     /// Получает список с DTO всех читателей.
     /// </summary>
     /// <returns>Список DTO всех записей</returns>
-    public List<BookReaderGetDto> GetAll()
+    public async Task<List<BookReaderGetDto>> GetAll()
     {
-        var bookReaders = bookReaderRepository.ReadAll();
+        var bookReaders =await bookReaderRepository.ReadAll();
         return mapper.Map<List<BookReaderGetDto>>(bookReaders);
     }
 
@@ -57,11 +57,11 @@ public class BookReaderService(
     /// <param name="dtoId">Id обновляемой записи</param>
     /// <returns>DTO обновленной записи читателя</returns>
     /// <exception cref="InvalidOperationException">Вызывается, если читатель с указанным Id не найден.</exception>
-    public BookReaderGetDto Update(BookReaderCreateDto dto, int dtoId)
+    public async Task<BookReaderGetDto> Update(BookReaderCreateDto dto, int dtoId)
     {
-        var readerToUpdate = bookReaderRepository.Read(dtoId) ?? throw new InvalidOperationException($"Читатель с ID {dtoId} не найден.");
+        var readerToUpdate = await bookReaderRepository.Read(dtoId) ?? throw new InvalidOperationException($"Читатель с ID {dtoId} не найден.");
         mapper.Map(dto, readerToUpdate);
-        bookReaderRepository.Update(readerToUpdate);
+        await bookReaderRepository.Update(readerToUpdate);
         return mapper.Map<BookReaderGetDto>(readerToUpdate);
     }
 
@@ -70,9 +70,9 @@ public class BookReaderService(
     /// </summary>
     /// <param name="dtoId">Id удаляемого читателя/param>
     /// <exception cref="InvalidOperationException">Вызывается, если читатель с указанным Id не найден.</exception>
-    public void Delete(int dtoId)
+    public async Task Delete(int dtoId)
     {
-        if (!bookReaderRepository.Delete(dtoId))
+        if (!await bookReaderRepository.Delete(dtoId))
             throw new InvalidOperationException($"Читатель с ID {dtoId} не найдена.");
     }
 }

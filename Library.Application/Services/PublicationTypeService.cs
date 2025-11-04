@@ -10,7 +10,7 @@ namespace Library.Application.Services;
 /// Сервис, обеспечивающий CRUD-операции для работы с типами публикаций.
 /// </summary>
 public class PublicationTypeService(
-    IRepository<PublicationType, int> typeRepository,
+    IRepositoryAsync<PublicationType, int> typeRepository,
     IMapper mapper) : IApplicationService<PublicationTypeGetDto, PublicationTypeCreateDto, int>
 {
     /// <summary>
@@ -18,10 +18,10 @@ public class PublicationTypeService(
     /// </summary>
     /// <param name="dto">DTO с данными для создания</param>
     /// <returns>DTO созданного типа</returns>
-    public PublicationTypeGetDto Create(PublicationTypeCreateDto dto)
+    public async Task<PublicationTypeGetDto> Create(PublicationTypeCreateDto dto)
     {
         var type = mapper.Map<PublicationType>(dto);
-        typeRepository.Create(type);
+        await typeRepository.Create(type);
 
         return mapper.Map<PublicationTypeGetDto>(type);
     }
@@ -32,9 +32,9 @@ public class PublicationTypeService(
     /// <param name="dtoId"> Id типа </param>
     /// <returns>DTO типа публикации</returns>
     /// <exception cref="InvalidOperationException">Вызывается, если тип публикации с указанным Id не найден.</exception>
-    public PublicationTypeGetDto Get(int dtoId)
+    public async Task<PublicationTypeGetDto> Get(int dtoId)
     {
-        var type = typeRepository.Read(dtoId)
+        var type = await typeRepository.Read(dtoId)
             ?? throw new InvalidOperationException($"Тип публикации с ID {dtoId} не найден.");
 
         return mapper.Map<PublicationTypeGetDto>(type);
@@ -44,9 +44,9 @@ public class PublicationTypeService(
     /// Получает список с DTO всех типов публикации.
     /// </summary>
     /// <returns>Список DTO всех типов</returns>
-    public List<PublicationTypeGetDto> GetAll()
+    public async Task<List<PublicationTypeGetDto>> GetAll()
     {
-        var types = typeRepository.ReadAll();
+        var types =await typeRepository.ReadAll();
         return mapper.Map<List<PublicationTypeGetDto>>(types);
     }
 
@@ -57,11 +57,11 @@ public class PublicationTypeService(
     /// <param name="dtoId">Id обновляемого типа</param>
     /// <returns>DTO типа публикации</returns>
     /// <exception cref="InvalidOperationException">Вызывается, если тип издания с указанным Id не найден.</exception>
-    public PublicationTypeGetDto Update(PublicationTypeCreateDto dto, int dtoId)
+    public async Task<PublicationTypeGetDto> Update(PublicationTypeCreateDto dto, int dtoId)
     {
-        var typeToUpdate = typeRepository.Read(dtoId) ?? throw new InvalidOperationException($"Тип публикации с ID {dtoId} не найден.");
+        var typeToUpdate =await typeRepository.Read(dtoId) ?? throw new InvalidOperationException($"Тип публикации с ID {dtoId} не найден.");
         mapper.Map(dto, typeToUpdate);
-        typeRepository.Update(typeToUpdate);
+        await typeRepository.Update(typeToUpdate);
         return mapper.Map<PublicationTypeGetDto>(typeToUpdate);
     }
 
@@ -70,9 +70,9 @@ public class PublicationTypeService(
     /// </summary>
     /// <param name="dtoId">Id удаляемого типа/param>
     /// <exception cref="InvalidOperationException">Вызывается, если тип публикации с указанным Id не найдена.</exception>
-    public void Delete(int dtoId)
+    public async Task Delete(int dtoId)
     {        
-        if (!typeRepository.Delete(dtoId))
+        if (!await typeRepository.Delete(dtoId))
             throw new InvalidOperationException($"Тип публикации с ID {dtoId} не найдена.");
     }
 }

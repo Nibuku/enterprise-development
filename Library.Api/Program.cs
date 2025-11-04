@@ -1,13 +1,19 @@
 using AutoMapper;
 using Library.Application;
-using Library.Application.Services;
+using Library.Application.Contracts.Dtos;
 using Library.Application.Contracts.Interfaces;
+using Library.Application.Services;
+using Library.Domain.Data;
 using Library.Domain.Interfaces;
 using Library.Domain.Models;
-using Library.Infrastructure.InMemory.Repositories;
-using Library.Application.Contracts.Dtos;
+using Library.Infrastructure.Mongo;
+using Library.Infrastructure.Mongo.Repositories;
+using Library.ServiceDefaults;
+using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.AddServiceDefaults();
 
 var mapperConfig = new MapperConfiguration(
     config => config.AddProfile(new MappingProfile()),
@@ -15,14 +21,27 @@ var mapperConfig = new MapperConfiguration(
 IMapper? mapper = mapperConfig.CreateMapper();
 builder.Services.AddSingleton(mapper);
 
+builder.Services.AddSingleton<IMongoClient>(sp =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("library");
+    return new MongoClient(connectionString);
+});
+
+builder.Services.AddSingleton(sp =>
+{
+    var client = sp.GetRequiredService<IMongoClient>();
+    var database = client.GetDatabase("library"); 
+    return new MongoDbContext(database);
+});
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
-builder.Services.AddSingleton<IRepository<Book, int>, BookRepository>();
-builder.Services.AddSingleton<IRepository<BookReader, int>, BookReaderRepository>();
-builder.Services.AddSingleton<IRepository<BookCheckout, int>, BookCheckoutRepository>();
-builder.Services.AddSingleton<IRepository<Publisher, int>, PublisherRepository>();
-builder.Services.AddSingleton<IRepository<PublicationType, int>, PublicationTypeRepository>();
+builder.Services.AddScoped<IRepositoryAsync<Book, int>, BookMongoRepository>();
+builder.Services.AddScoped<IRepositoryAsync<BookReader, int>, BookReaderMongoRepository>();
+builder.Services.AddScoped<IRepositoryAsync<BookCheckout, int>, BookCheckoutMongoRepository>();
+builder.Services.AddScoped<IRepositoryAsync<Publisher, int>, PublisherMongoRepository>();
+builder.Services.AddScoped<IRepositoryAsync<PublicationType, int>, TypeMongoRepository>();
 
 builder.Services.AddScoped<IApplicationService<BookGetDto, BookCreateDto, int>, BookService>();
 builder.Services.AddScoped<IApplicationService<BookReaderGetDto, BookReaderCreateDto, int>, BookReaderService>();
@@ -30,6 +49,9 @@ builder.Services.AddScoped<IApplicationService<PublisherGetDto, PublisherCreateD
 builder.Services.AddScoped<IApplicationService<CheckoutGetDto, CheckoutCreateDto, int>, BookCheckoutService>();
 builder.Services.AddScoped<IApplicationService<PublicationTypeGetDto, PublicationTypeCreateDto, int>, PublicationTypeService>(); 
 builder.Services.AddScoped<ILibraryAnalyticsService, LibraryAnalyticsService>();
+
+builder.Services.AddScoped<DbSeed>();
+builder.Services.AddHostedService<DbService>();
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -39,6 +61,7 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
+
 
 if (app.Environment.IsDevelopment())
 {
