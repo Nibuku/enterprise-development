@@ -8,7 +8,7 @@ namespace Library.Infrastructure.InMemory.Repositories;
 /// Репозиторий с CRUD-операциями для Publisher.
 /// Использует данные из DataSeed.
 /// </summary>
-public class PublisherRepository : IRepository<Publisher, int>
+public class PublisherRepository : IRepositoryAsync<Publisher, int>
 {
     private readonly List<Publisher> _publishers;
     private int _maxId;
@@ -27,18 +27,18 @@ public class PublisherRepository : IRepository<Publisher, int>
     /// Метод возвращает издательство по заданному Id.
     /// </summary>
     /// <returns>Объект Publisher. </returns>
-    public Publisher? Read(int id)
+    public Task<Publisher?> Read(int id)
     {
-        return _publishers.FirstOrDefault(t => t.Id == id);
+        return Task.FromResult(_publishers.FirstOrDefault(t => t.Id == id));
     }
 
     /// <summary>
     /// Метод возвращает все записи о всех издательствах.
     /// </summary>
     /// <returns> Список всех объектов Publisher. </returns>
-    public List<Publisher> ReadAll()
+    public Task<List<Publisher>> ReadAll()
     {
-        return [.. _publishers];
+        return Task.FromResult<List<Publisher>>([.. _publishers]);
     }
 
     /// <summary>
@@ -46,12 +46,12 @@ public class PublisherRepository : IRepository<Publisher, int>
     /// Генерирует новый Id и добавляет запись в коллекцию.
     /// </summary>
     /// <param name="publisher"> Объект Publisher. </param>
-    /// <returns> Id созданной книги.</returns>
-    public int Create(Publisher publisher)
+    /// <returns> Id созданного издательства.</returns>
+    public Task<int> Create(Publisher publisher)
     {
         publisher.Id = ++_maxId;
         _publishers.Add(publisher);
-        return publisher.Id;
+        return Task.FromResult(publisher.Id);
     }
 
     /// <summary>
@@ -59,9 +59,9 @@ public class PublisherRepository : IRepository<Publisher, int>
     /// </summary>
     /// <param name="publisher"> Обновленный объект Publisher </param>
     /// <returns> Обновлённое издательство или null, если не найдена. </returns>
-    public Publisher? Update(Publisher publisher)
+    public async Task<Publisher?> Update(Publisher publisher)
     {
-        var update_publisher = Read(publisher.Id);
+        var update_publisher =await Read(publisher.Id);
         if (update_publisher == null) 
             return null;
 
@@ -74,9 +74,9 @@ public class PublisherRepository : IRepository<Publisher, int>
     /// </summary>
     /// <param name="id"> Id издательства, которое нужно удалить. </param>
     /// <returns>Результат удаления.</returns>
-    public bool Delete(int id)
+    public async Task<bool> Delete(int id)
     {
-        var deleted_publisher = Read(id);
+        var deleted_publisher =await Read(id);
         if (deleted_publisher == null) 
             return false;
 

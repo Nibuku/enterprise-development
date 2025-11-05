@@ -8,7 +8,7 @@ namespace Library.Infrastructure.InMemory.Repositories;
 /// Репозиторий с CRUD-операциями для PublicationType.
 /// Использует данные из DataSeed.
 /// </summary>
-public class PublicationTypeRepository : IRepository<PublicationType, int> 
+public class PublicationTypeRepository : IRepositoryAsync<PublicationType, int> 
 {
     private readonly List<PublicationType> _types;
     private int _maxId;
@@ -29,11 +29,11 @@ public class PublicationTypeRepository : IRepository<PublicationType, int>
     /// </summary>
     /// <param name="type"> Объект PublicationType. </param>
     /// <returns> Id созданного типа публикации.</returns>
-    public int Create(PublicationType type)
+    public Task<int> Create(PublicationType type)
     {
         type.Id = ++_maxId;
         _types.Add(type);
-        return type.Id;
+        return Task.FromResult(type.Id);
     }
 
     /// <summary>
@@ -41,9 +41,9 @@ public class PublicationTypeRepository : IRepository<PublicationType, int>
     /// </summary>
     /// <param name="type"> Обновленный объект PublicationType </param>
     /// <returns> Обновленный объект, или null, если тип публикации не найден.</returns>
-    public PublicationType? Update(PublicationType type)
+    public async Task<PublicationType?> Update(PublicationType type)
     {
-        var update_type = Read(type.Id);
+        var update_type =await Read(type.Id);
         if (update_type == null)
             return null;
 
@@ -55,18 +55,18 @@ public class PublicationTypeRepository : IRepository<PublicationType, int>
     /// Метод возвращает тип публикации по заданному Id.
     /// </summary>
     /// <returns>Объект PublicationType.</returns>
-    public PublicationType? Read(int id)
+    public Task<PublicationType?> Read(int id)
     {
-        return _types.FirstOrDefault(t => t.Id == id);
+        return Task.FromResult(_types.FirstOrDefault(t => t.Id == id));
     }
 
     /// <summary>
     /// Метод возвращает список всех типой публикаций.
     /// </summary>
     /// <returns> Список всех объектов PublicationType.</returns>
-    public List<PublicationType> ReadAll() 
+    public Task<List<PublicationType>> ReadAll() 
     {
-        return [.._types]; 
+        return Task.FromResult<List<PublicationType>>([.._types]); 
     }
 
     /// <summary>
@@ -74,9 +74,9 @@ public class PublicationTypeRepository : IRepository<PublicationType, int>
     /// </summary>
     /// <param name="id"> Id типа, который нужно удалить. </param>
     /// <returns>Результат удаления.</returns>
-    public bool Delete(int id)
+    public async Task<bool> Delete(int id)
     {
-        var deleted_type = Read(id);
+        var deleted_type = await Read(id);
         if (deleted_type == null)
             return false;
 

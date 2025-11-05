@@ -120,10 +120,10 @@ public static class DataSeed
         new() { Id = 11, Book = books[10], Reader = readers[10], LoanDate = new DateOnly(2025, 6, 7), LoanDays = 60 },
         new() { Id = 12, Book = books[11], Reader = readers[11], LoanDate = new DateOnly(2025, 6, 15), LoanDays = 14 },
 
-        new() { Id = 13, Book = books[0], Reader = readers[1], LoanDate = new DateOnly(2025, 10, 1), LoanDays = 21 },
-        new() { Id = 14, Book = books[2], Reader = readers[0], LoanDate = new DateOnly(2025, 10, 10), LoanDays = 14 },
-        new() { Id = 15, Book = books[4], Reader = readers[2], LoanDate = new DateOnly(2025, 10, 5), LoanDays = 30 },
-        new() { Id = 16, Book = books[9], Reader = readers[2], LoanDate = new DateOnly(2025, 10, 5), LoanDays = 10 },
-        new() { Id = 17, Book = books[2], Reader = readers[4], LoanDate = new DateOnly(2025, 10, 5), LoanDays = 30 }
+        new() { Id = 13, Book = books[0], Reader = readers[1], LoanDate = new DateOnly(2025, 10, 20), LoanDays = 21 },
+        new() { Id = 14, Book = books[2], Reader = readers[0], LoanDate = new DateOnly(2025, 10, 20), LoanDays = 14 },
+        new() { Id = 15, Book = books[4], Reader = readers[2], LoanDate = new DateOnly(2025, 10, 25), LoanDays = 30 },
+        new() { Id = 16, Book = books[9], Reader = readers[2], LoanDate = new DateOnly(2025, 10, 25), LoanDays = 10 },
+        new() { Id = 17, Book = books[2], Reader = readers[4], LoanDate = new DateOnly(2025, 10, 25), LoanDays = 30 }
     ];
 }

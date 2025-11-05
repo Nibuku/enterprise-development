@@ -8,7 +8,7 @@ namespace Library.Infrastructure.InMemory.Repositories;
 /// Репозиторий с CRUD-операциями для BookReader.
 /// Использует данные из DataSeed.
 /// </summary>
-public class BookReaderRepository : IRepository<BookReader, int>
+public class BookReaderRepository : IRepositoryAsync<BookReader, int>
 {
     private readonly List<BookReader> _readers;
     private int _maxId;
@@ -27,18 +27,18 @@ public class BookReaderRepository : IRepository<BookReader, int>
     /// Метод возвращает читателя по заданному Id.
     /// </summary>
     /// <returns>Объект BookReader. </returns>
-    public BookReader? Read(int id)
+    public Task<BookReader?> Read(int id)
     {
-        return _readers.FirstOrDefault(a => a.Id == id);
+        return Task.FromResult(_readers.FirstOrDefault(a => a.Id == id));
     }
 
     /// <summary>
     /// Метод возвращает всех читателей.
     /// </summary>
     /// <returns> Список всех объектов BookReader. </returns>
-    public List<BookReader> ReadAll()
+    public Task<List<BookReader>> ReadAll()
     {
-        return [.. _readers];
+        return Task.FromResult<List<BookReader>>([.. _readers]);
     }
 
     /// <summary>
@@ -47,11 +47,11 @@ public class BookReaderRepository : IRepository<BookReader, int>
     /// </summary>
     /// <param name="reader"> Объект BookReader. </param>
     /// <returns> Id созданного читателя.</returns>
-    public int Create(BookReader reader)
+    public Task<int> Create(BookReader reader)
     {
         reader.Id = ++_maxId;
         _readers.Add(reader);
-        return reader.Id;
+        return Task.FromResult(reader.Id);
     }
 
     /// <summary>
@@ -59,9 +59,9 @@ public class BookReaderRepository : IRepository<BookReader, int>
     /// </summary>
     /// <param name="reader"> Обновленный объект BookReader </param>
     /// <returns> Обновленный объект, или null, если читатель не найден.</returns>
-    public BookReader? Update(BookReader reader)
+    public async Task<BookReader?> Update(BookReader reader)
     {
-        var update_reader = Read(reader.Id);
+        var update_reader =await Read(reader.Id);
         if (update_reader== null)
             return null;
 
@@ -77,9 +77,9 @@ public class BookReaderRepository : IRepository<BookReader, int>
     /// </summary>
     /// <param name="id"> Id читателя, которого нужно удалить. </param>
     /// <returns>Результат удаления.</returns>
-    public bool Delete(int id)
+    public async Task<bool> Delete(int id)
     {
-        var deleted_reader = Read(id);
+        var deleted_reader =await Read(id);
         if (deleted_reader == null)
             return false;
 

@@ -9,9 +9,9 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     /// Тест выводит информацию о выданных книгах, элементы отсортированы по названию.
     /// </summary>
     [Fact]
-    public void BooksOrderedByTitle()
+    public async Task BooksOrderedByTitle()
     {
-        var testDate = new DateOnly(2025, 10, 18);
+        var testDate = new DateOnly(2025, 11, 5);
         var expectedOrder = new List<string>
         {
             "Inferno",
@@ -19,8 +19,8 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
             "The Da Vinci Code",
         };
 
-        var actualOrder = fixture.CheckoutRepository.ReadAll()
-            .Where(c => c.LoanDate <= testDate && c.LoanDate.AddDays(c.LoanDays) >= testDate)
+        var actual = await fixture.CheckoutRepository.ReadAll();
+        var actualOrder= actual.Where(c => c.LoanDate <= testDate && c.LoanDate.AddDays(c.LoanDays) >= testDate)
             .Select(c => c.Book)
             .Distinct()
             .OrderBy(b => b.Title)
@@ -34,7 +34,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     /// Тест выводит информацию о топ-5 читателях, прочитавших наибольшее количество книг за период.
     /// </summary>
     [Fact]
-    public void TopReadersByNumberOfBooks()
+    public async Task TopReadersByNumberOfBooks()
     {
         var start = new DateOnly(2025, 1, 1);
         var end = new DateOnly(2025, 12, 31);
@@ -47,8 +47,8 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
             "Angela Merkel"
         };
 
-        var top5Readers = fixture.CheckoutRepository.ReadAll()
-            .Where(c => c.LoanDate >= start && c.LoanDate.AddDays(c.LoanDays) <= end)
+        var readers = await fixture.CheckoutRepository.ReadAll();
+        var top5Readers=readers.Where(c => c.LoanDate >= start && c.LoanDate.AddDays(c.LoanDays) <= end)
             .GroupBy(c=> c.Reader)
             .Select(g => new
             {
@@ -68,7 +68,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     /// Тест выводит информацию о читателях, бравших книги на наибольший период времени, отсортированных по ФИО.
     /// </summary>
     [Fact]
-    public void TopReadersByTotalLoanDays()
+    public async Task TopReadersByTotalLoanDays()
     {
         var expected = new List<(string Name, int Days)>
         {
@@ -79,8 +79,8 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
             ("Angela Merkel", 30)
         };
 
-        var topReaders = fixture.CheckoutRepository.ReadAll()
-            .GroupBy(c => c.Reader)
+        var readers = await fixture.CheckoutRepository.ReadAll();
+        var topReaders =readers.GroupBy(c => c.Reader)
             .Select(g => new
             {
                 g.Key.FullName,
@@ -99,7 +99,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     /// Тест выводит топ-5 наиболее популярных издательств за последний год.
     /// </summary>
     [Fact]
-    public void TopPopularPublishersLastYear()
+    public async Task TopPopularPublishersLastYear()
     {
         var oneYearAgo = new DateOnly(2024, 9, 30);
         var expected = new List<string>
@@ -111,8 +111,8 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
             "DMKPress"
         };
 
-        var topPublishers = fixture.CheckoutRepository.ReadAll()
-            .Where(c => c.LoanDate >= oneYearAgo)
+        var publishers = await fixture.CheckoutRepository.ReadAll();
+        var topPublishers=publishers.Where(c => c.LoanDate >= oneYearAgo)
             .GroupBy(c => c.Book.Publisher)
             .Select(g => new 
             { 
@@ -131,7 +131,7 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
     /// Тест выводит топ-5 наименее популярных книг за последний год.
     /// </summary>
     [Fact]
-    public void TopLeastPopularBooksLastYear()
+    public async Task TopLeastPopularBooksLastYear()
     {
         var oneYearAgo = new DateOnly(2024, 9, 30);
         var expectedBooks = new List<string>
@@ -143,8 +143,9 @@ public class LibraryTests(LibraryFixture fixture) : IClassFixture<LibraryFixture
             "Roadside Picnic"
         };
 
-        var recentLoans = fixture.CheckoutRepository.ReadAll()
-            .Where(с=> с.LoanDate >= oneYearAgo)
+        var loans = await fixture.CheckoutRepository.ReadAll();
+
+        var recentLoans = loans.Where(с=> с.LoanDate >= oneYearAgo)
             .ToList();
 
         var actualBooks = recentLoans

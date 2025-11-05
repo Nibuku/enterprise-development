@@ -8,7 +8,7 @@ namespace Library.Infrastructure.InMemory.Repositories;
 /// Репозиторий с CRUD-операциями для Book.
 /// Использует данные из DataSeed.
 /// </summary>
-public class BookRepository: IRepository<Book, int>
+public class BookRepository: IRepositoryAsync<Book, int>
 {
     private readonly List<Book> _books;
     private int _maxId;
@@ -29,11 +29,11 @@ public class BookRepository: IRepository<Book, int>
     /// </summary>
     /// <param name="book"> Объект Book. </param>
     /// <returns> Id созданной книги.</returns>
-    public int Create(Book book)
+    public Task<int> Create(Book book)
     {
         book.Id = ++_maxId;
         _books.Add(book);
-        return book.Id;
+        return Task.FromResult(book.Id);
     }
 
     /// <summary>
@@ -41,9 +41,9 @@ public class BookRepository: IRepository<Book, int>
     /// </summary>
     /// <param name="book"> Обновленный объект Book </param>
     /// <returns> Обновлённая книга или null, если не найдена. </returns>
-    public Book? Update(Book book)
+    public async Task<Book?> Update(Book book)
     {
-        var update_book = Read(book.Id);
+        var update_book =await Read(book.Id);
         if (update_book == null) 
             return null;
 
@@ -61,18 +61,18 @@ public class BookRepository: IRepository<Book, int>
     /// Метод возвращает книгу по заданному Id.
     /// </summary>
     /// <returns>Объект Book.</returns>
-    public Book? Read(int id)
+    public Task<Book?> Read(int id)
     {
-        return _books.FirstOrDefault(a => a.Id == id);
+        return Task.FromResult(_books.FirstOrDefault(a => a.Id == id));
     }
 
     /// <summary>
     /// Метод возвращает все книги.
     /// </summary>
     /// <returns> Список всех объектов Book.</returns>
-    public List<Book> ReadAll() 
+    public Task<List<Book>> ReadAll() 
     { 
-        return [.. _books];
+        return Task.FromResult<List<Book>>([.. _books]);
     }
 
     /// <summary>
@@ -80,9 +80,9 @@ public class BookRepository: IRepository<Book, int>
     /// </summary>
     /// <param name="id"> Id книги, которую нужно удалить. </param>
     /// <returns>Результат удаления.</returns>
-    public bool Delete(int id)
+    public async Task<bool> Delete(int id)
     {
-        var deleted_book = Read(id);
+        var deleted_book =await Read(id);
         if (deleted_book == null) 
             return false;
 

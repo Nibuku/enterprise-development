@@ -8,7 +8,7 @@ namespace Library.Infrastructure.InMemory.Repositories;
 /// Репозиторий с CRUD-операциями для BookCheckout.
 /// Использует данные из DataSeed.
 /// </summary>
-public class BookCheckoutRepository : IRepository<BookCheckout, int>
+public class BookCheckoutRepository : IRepositoryAsync<BookCheckout, int>
 {
     private readonly List<BookCheckout> _bookCheckouts;
     private int _maxId;
@@ -27,18 +27,18 @@ public class BookCheckoutRepository : IRepository<BookCheckout, int>
     /// Метод возвращает все записи о выдаче книг.
     /// </summary>
     /// <returns> Список всех объектов BookCheckout. </returns>
-    public List<BookCheckout> ReadAll()
+    public Task<List<BookCheckout>> ReadAll()
     {
-        return [.. _bookCheckouts];
+        return Task.FromResult<List<BookCheckout>>([.. _bookCheckouts]);
     }
 
     /// <summary>
     /// Метод возвращает запись о выдаче по заданному Id.
     /// </summary>
     /// <returns>Объект BookCheckout. </returns>
-    public BookCheckout? Read(int id)
+    public Task<BookCheckout?> Read(int id)
     {
-        return _bookCheckouts.FirstOrDefault(r => r.Id == id);
+        return Task.FromResult(_bookCheckouts.FirstOrDefault(r => r.Id == id));
     }
 
     /// <summary>
@@ -47,11 +47,11 @@ public class BookCheckoutRepository : IRepository<BookCheckout, int>
     /// </summary>
     /// <param name="bookCheckout"> Объект BookCheckout. </param>
     /// <returns> Id созданной записи о выдаче.</returns>
-    public int Create(BookCheckout bookCheckout)
+    public Task<int> Create(BookCheckout bookCheckout)
     {
         bookCheckout.Id = ++_maxId;
         _bookCheckouts.Add(bookCheckout);
-        return bookCheckout.Id;
+        return Task.FromResult(bookCheckout.Id);
     }
 
     /// <summary>
@@ -59,9 +59,9 @@ public class BookCheckoutRepository : IRepository<BookCheckout, int>
     /// </summary>
     /// <param name="bookCheckout"> Обновленный объект BookCheckout </param>
     /// <returns> Обновленный объект, или null, если запись о выдаче не найдена.</returns>
-    public BookCheckout? Update(BookCheckout bookCheckout)
+    public async Task<BookCheckout?> Update(BookCheckout bookCheckout)
     {
-        var update_check = Read(bookCheckout.Id); 
+        var update_check = await Read(bookCheckout.Id); 
 
         if (update_check == null) 
             return null; 
@@ -78,8 +78,8 @@ public class BookCheckoutRepository : IRepository<BookCheckout, int>
     /// </summary>
     /// <param name="id"> Id записи, которую нужно удалить. </param>
     /// <returns>Результат удаления.</returns>
-    public bool Delete(int id) {
-        var deleted_check = Read(id);
+    public async Task<bool> Delete(int id) {
+        var deleted_check =await Read(id);
         if (deleted_check == null)
             return false;
 

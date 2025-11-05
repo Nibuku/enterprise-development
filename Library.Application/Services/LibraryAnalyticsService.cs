@@ -112,12 +112,12 @@ public class LibraryAnalyticsService(
             .Where(r => r.LoanDate >= start)
 
             .Select(r => books.First(b => b.Id == r.Book.Id).Publisher)
-            .GroupBy(p => p)
+            .GroupBy(p => p.Id)
             .OrderByDescending(g => g.Count())
             .Take(5)
             .Select(g => new PublisherCountDto
             {
-                Name = g.Key.Name,
+                Name = g.First().Name,
                 Count = g.Count()
             })
             .ToList();

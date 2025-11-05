@@ -4,11 +4,16 @@ using Microsoft.Extensions.Hosting;
 
 namespace Library.Application.Services;
 
-
+/// <summary>
+/// Сервис для заполнения базы данных начальными данными.
+/// </summary>
 public class DbService(IServiceProvider serviceProvider) : IHostedService
 {
     private readonly IServiceProvider _serviceProvider = serviceProvider;
 
+    /// <summary>
+    /// Запускает инициализацию базы данных при старте приложения.
+    /// </summary>
     public async Task StartAsync(CancellationToken cancellationToken)
     {
 
@@ -17,5 +22,8 @@ public class DbService(IServiceProvider serviceProvider) : IHostedService
         await dbSeed.Seed(cancellationToken);
     }
 
+    /// <summary>
+    /// Метод выполняется при остановке приложения.
+    /// </summary>
     public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 }
