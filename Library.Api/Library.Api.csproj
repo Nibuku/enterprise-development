@@ -15,7 +15,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Library.Application\Library.Application.csproj" />
-    <ProjectReference Include="..\Library.Infrastructure.EfCore\Library.Infrastructure.Mongo.csproj" />
+    <ProjectReference Include="..\Library.Infrastructure.Mongo\Library.Infrastructure.Mongo.csproj" />
     <ProjectReference Include="..\Library.ServiceDefaults\Library.ServiceDefaults.csproj" />
   </ItemGroup>
 

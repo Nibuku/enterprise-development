@@ -27,13 +27,24 @@
 
 [LibraryFixture](https://github.com/Nibuku/enterprise-development/Library.Tests/LibraryFixture.cs) - фикстура, использующая для заполнения репозитории.
 
-### Library.Infrastructure - Слой для доступа к данным
+### Library.Infrastructure.InMemory - Слой для доступа к данным, которые храняться в памяти
 - **Repositories** - Реализации репозиториев:
   - [BookRepository.cs](./Library.Infrastructure/Repositories/BookRepository.cs)
   - [BookReaderRepository.cs](./Library.Infrastructure/Repositories/BookReaderRepository.cs) 
   - [BookCheckoutRepository.cs](./Library.Infrastructure/Repositories/BookCheckoutRepository.cs)
   - [PublisherRepository.cs](./Library.Infrastructure/Repositories/PublisherRepository.cs)
   - [PublicationTypeRepository.cs](./Library.Infrastructure/Repositories/PublicationTypeRepository.cs)
+
+### Library.Infrastructure.Mongo - Слой для доступа к данным, используется база данных MongoDB
+- **Repositories** - Реализации репозиториев:
+  - [BookMongoRepository.cs](./Library.Infrastructure.Mongo/Repositories/BookMongoRepository.cs)
+  - [BookReaderMongoRepository.cs](./Library.Infrastructure.Mongo/Repositories/BookReaderMongoRepository.cs) 
+  - [BookCheckoutMongoRepository.cs](./Library.Infrastructure.Mongo/Repositories/BookCheckoutMongoRepository.cs)
+  - [PublisherMongoRepository.cs](./Library.Infrastructure.Mongo/Repositories/PublisherMongoRepository.cs)
+  - [TypeMongoRepository.cs](./Library.Infrastructure.Mongo/Repositories/TypeMongoRepository.cs)
+	
+- [MongoDbContext.cs](./Library.Infrastructure.Mongo/MongoDbContext.cs) - контекст базы данных MongoDB
+
 
 ### Library.Application - Сервисный слой
 #### Dtos
@@ -62,7 +73,7 @@
 - [PublicationTypeService.cs](./Library.Application/Services/PublicationTypeService.cs) - Для типов публикаций.
 - [PublisherService.cs](./Library.Application/Services/PublisherService.cs) - Для издательств.
 - [LibraryAnalyticsService.cs](./Library.Application/Services/LibraryAnalyticsService.cs) - Сервис аналитических запросов.
-
+- [DbService.cs](./Library.Application/Services/DbService.cs) - сервис для заполнения базы данных начальными значениями
 - [MappingProfile.cs](./Library.Application/MappingProfile.cs) - Настройки AutoMapper для преобразования между DTO и доменной областью.
 
 
