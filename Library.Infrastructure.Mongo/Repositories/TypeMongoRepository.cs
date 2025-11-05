@@ -43,7 +43,6 @@ public class TypeMongoRepository: IRepositoryAsync<PublicationType, int>
         return type.Id;
     }
 
-
     /// <summary>
     /// Метод возвращает тип публикации по заданному Id.
     /// </summary>
