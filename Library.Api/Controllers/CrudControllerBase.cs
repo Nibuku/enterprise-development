@@ -1,54 +1,26 @@
-using Library.Application.Contracts.Interfaces;
+п»їusing Library.Application.Contracts.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Library.Api.Controllers;
 
 /// <summary>
-/// Базовый контроллер для CRUD-операций над сущностями
+/// Р‘Р°Р·РѕРІС‹Р№ РєРѕРЅС‚СЂРѕР»Р»РµСЂ РґР»СЏ CRUD-РѕРїРµСЂР°С†РёР№ РЅР°Рґ СЃСѓС‰РЅРѕСЃС‚СЏРјРё
 /// </summary>
-/// <typeparam name="TGetDto">DTO для Get-запросов</typeparam>
-/// <typeparam name="TCreateDto">DTO для Post/Put-запросов</typeparam>
-/// <typeparam name="TKey">Тип Id DTO</typeparam>
-/// <param name="appService">Служба для работы с DTO</param>
-/// <param name="logger">Логгер</param>
+/// <typeparam name="TGetDto">DTO РґР»СЏ Get-Р·Р°РїСЂРѕСЃРѕРІ</typeparam>
+/// <typeparam name="TCreateDto">DTO РґР»СЏ Post/Put-Р·Р°РїСЂРѕСЃРѕРІ</typeparam>
+/// <typeparam name="TKey">РўРёРї Id DTO</typeparam>
+/// <param name="appService">РЎР»СѓР¶Р±Р° РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ DTO</param>
+/// <param name="logger">Р›РѕРіРіРµСЂ</param>
 [Route("api/[controller]")]
 [ApiController]
 public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplicationService<TGetDto, TCreateDto, TKey> appService,
-    ILogger<CrudControllerBase<TGetDto, TCreateDto, TKey>> logger) : ControllerBase
+    ILogger<CrudControllerBase<TGetDto, TCreateDto, TKey>> logger): LoggerController<CrudControllerBase<TGetDto, TCreateDto, TKey>>(logger)
 {
     /// <summary>
-    /// Вспомогательный метод для логирования.
+    /// Р”РѕР±Р°РІР»РµРЅРёРµ РЅРѕРІРѕР№ Р·Р°РїРёСЃРё
     /// </summary>
-    protected async Task<ActionResult> Logging(string method, Func<Task<ActionResult>> action)
-    {
-        logger.LogInformation("START: {Method}", method);
-        try
-        {
-            var result =await action();
-            var count = 0;
-            if (result is OkObjectResult okResult && okResult.Value != null)
-            {
-                if (okResult.Value is System.Collections.IEnumerable collection)
-                {
-                    count = collection.Cast<object>().Count();
-                }
-                else count = 1;
-            }
-            logger.LogInformation("SUCCESS: {Method}. Found {Count} records.", method, count);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "ERROR: {Method} failed.", method);
-            return StatusCode(500, $"Server error: {ex.Message}");
-        }
-    }
-
-    /// <summary>
-    /// Добавление новой записи
-    /// </summary>
-    /// <param name="newDto">Новые данные</param>
-    /// <returns>Добавленные данные</returns> 
+    /// <param name="newDto">РќРѕРІС‹Рµ РґР°РЅРЅС‹Рµ</param>
+    /// <returns>Р”РѕР±Р°РІР»РµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ</returns> 
     [HttpPost]
     [ProducesResponseType(201)]
     [ProducesResponseType(500)]
@@ -56,17 +28,17 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     {
         return await Logging(nameof(Create), async () =>
         {
-            var result =await appService.Create(newDto);
+            var result = await appService.Create(newDto);
             return CreatedAtAction(nameof(this.Create), result);
         });
     }
 
     /// <summary>
-    /// Изменение данных по Id
+    /// РР·РјРµРЅРµРЅРёРµ РґР°РЅРЅС‹С… РїРѕ Id
     /// </summary>
-    /// <param name="id">Идентификатор</param>
-    /// <param name="newDto">Измененные данные</param>
-    /// <returns>Обновленные данные</returns>
+    /// <param name="id">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ</param>
+    /// <param name="newDto">РР·РјРµРЅРµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ</param>
+    /// <returns>РћР±РЅРѕРІР»РµРЅРЅС‹Рµ РґР°РЅРЅС‹Рµ</returns>
     [HttpPut("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -76,7 +48,7 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
         { 
             try
             {
-                var result =await  appService.Update(newDto, id);
+                var result = await appService.Update(newDto, id);
                 return Ok(result);
             }
             catch (KeyNotFoundException)
@@ -87,9 +59,9 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     }
 
     /// <summary>
-    /// Удаление данных по Id
+    /// РЈРґР°Р»РµРЅРёРµ РґР°РЅРЅС‹С… РїРѕ Id
     /// </summary>
-    /// <param name="id">Идентификатор</param>
+    /// <param name="id">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ</param>
     [HttpDelete("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -110,9 +82,9 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     }
 
     /// <summary>
-    /// Получение списка всех данных
+    /// РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РІСЃРµС… РґР°РЅРЅС‹С…
     /// </summary>
-    /// <returns>Список всех данных</returns>
+    /// <returns>РЎРїРёСЃРѕРє РІСЃРµС… РґР°РЅРЅС‹С…</returns>
     [HttpGet]
     [ProducesResponseType(200)]
     [ProducesResponseType(500)]
@@ -126,10 +98,10 @@ public abstract class CrudControllerBase<TGetDto, TCreateDto, TKey>(IApplication
     }
 
     /// <summary>
-    /// Получение данных по Id
+    /// РџРѕР»СѓС‡РµРЅРёРµ РґР°РЅРЅС‹С… РїРѕ Id
     /// </summary>
-    /// <param name="id">Идентификатор</param>
-    /// <returns>Данные</returns>
+    /// <param name="id">РРґРµРЅС‚РёС„РёРєР°С‚РѕСЂ</param>
+    /// <returns>Р”Р°РЅРЅС‹Рµ</returns>
     [HttpGet("{id}")]
     [ProducesResponseType(200)]
     [ProducesResponseType(204)]

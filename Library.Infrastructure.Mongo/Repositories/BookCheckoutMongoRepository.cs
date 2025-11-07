@@ -21,8 +21,8 @@ public class BookCheckoutMongoRepository: IRepositoryAsync<BookCheckout, int>
     {
         _checks = context.GetCollection<BookCheckout>("checkouts");
         var lastTask = _checks.Find(_ => true)         
-                      .SortByDescending(x => x.Id)  
-                      .FirstOrDefaultAsync();    
+            .SortByDescending(x => x.Id)  
+            .FirstOrDefaultAsync();    
 
         var last = lastTask.GetAwaiter().GetResult(); 
         if (last != null)

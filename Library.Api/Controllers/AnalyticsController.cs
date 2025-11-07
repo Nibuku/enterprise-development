@@ -13,36 +13,8 @@ namespace Library.Api.Controllers;
 [Route("api/analytics")]
 public class AnalyticsController(
     ILibraryAnalyticsService analyticsService,
-    ILogger<AnalyticsController> logger) : ControllerBase
+    ILogger<AnalyticsController> logger): LoggerController<AnalyticsController>(logger)
 {
-    /// <summary>
-    /// Вспомогательный метод для логирования.
-    /// </summary>
-    private async Task<ActionResult> Logging(string method, Func<Task<ActionResult>> action)
-    {
-        logger.LogInformation("START: {Method}", method);
-        try
-        {
-            var result =await action();
-            var count = 0;
-            if (result is OkObjectResult okResult && okResult.Value != null)
-            {
-                if (okResult.Value is System.Collections.IEnumerable collection)
-                {
-                    count = collection.Cast<object>().Count();
-                }
-                else count = 1;
-            }
-            logger.LogInformation("SUCCESS: {Method}. Found {Count} records.", method, count);
-            return result;
-        }
-        catch (Exception ex)
-        {
-            logger.LogError(ex, "ERROR: {Method} failed.", method);
-            return StatusCode(500, $"Server error: {ex.Message}");
-        }
-    }
-
     /// <summary>
     /// Возвращает все книги, которые находятся на руках у читателей на текущую дату.
     /// </summary>
