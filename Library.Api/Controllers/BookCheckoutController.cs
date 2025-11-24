@@ -8,5 +8,5 @@ namespace Library.Api.Controllers;
 /// </summary>
 /// <param name="checkoutService">Сервис, работающий с записями о выдаче.</param>
 /// <param name="logger">Логгер для записи информации.</param>
-public class BookCheckoutController(IApplicationService<CheckoutGetDto, CheckoutCreateDto, int> checkoutService, ILogger<BookCheckoutController> logger)
+public class BookCheckoutController(IBookCheckoutService checkoutService, ILogger<BookCheckoutController> logger)
     : CrudControllerBase<CheckoutGetDto, CheckoutCreateDto, int>(checkoutService, logger);

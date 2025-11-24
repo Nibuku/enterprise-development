@@ -3,16 +3,23 @@ using Library.Application.Contracts.Dtos;
 
 namespace Library.Generator.Kafka.Services;
 
+/// <summary>
+/// Сервис для отправки сообщений о выдачах книг.
+/// /// </summary>
 public class GeneratorService(IConfiguration configuration,IProducer<Guid, IList<CheckoutCreateDto>> producer,ILogger<GeneratorService> logger) : IProducerService
 {
     private readonly string _topicName = configuration.GetSection("Kafka")["Topic"]
         ?? throw new KeyNotFoundException("TopicName section of Kafka is missing");
 
-
+    /// <summary>
+    /// Отправляет пакет DTO с информацией о выдачах книг.
+    /// </summary>
+    /// <param name="batch">Список DTO для отправки.</param>
+    /// <exception cref="Exception">Выбрасывается при ошибке отправки сообщения в Kafka.</exception>
     public async Task SendAsync(IList<CheckoutCreateDto> batch)
     {
         var topic = configuration.GetSection("Kafka")["TopicName"];
-        logger.LogInformation("Kafka TopicName from config: {Topic}", topic);
+        logger.LogInformation("Kafka Topic: {Topic}", topic);
 
         try
         {

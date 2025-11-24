@@ -4,7 +4,6 @@ using Library.Generator.Kafka.Serializers;
 using Library.Generator.Kafka.Services;
 using Library.ServiceDefaults;
 
-// Не добавляем AddControllers()
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.AddServiceDefaults();

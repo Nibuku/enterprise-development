@@ -2,40 +2,54 @@
 using Library.Application.Contracts.Dtos;
 using Library.Application.Contracts.Interfaces;
 using Library.Infrastructure.Kafka.Deserializers;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
+namespace Library.Infrastructure.Kafka;
+
+/// <summary>
+/// Сервис для чтения сообщений из Kafka и обработки данных о выдаче книг.
+/// Сервис подписывается на указанный топик Kafka и получает сообщения типа <see cref="IList{CheckoutCreateDto}"/>.
+/// </summary>
 public class KafkaConsumer : BackgroundService
 {
     private readonly IConsumer<Guid, IList<CheckoutCreateDto>> _consumer;
     private readonly ILogger<KafkaConsumer> _logger;
+    private readonly IServiceScopeFactory _scopeFactory;
 
+    /// <summary>
+    /// Создает экземпляр KafkaConsumer и настраивает подключение к Kafka.
+    /// </summary>
+    /// <param name="configuration">Конфигурация с настройками Kafka.</param>
+    /// <param name="logger">Логгер</param>
+    /// <param name="keyDeserializer">Десериализатор ключей сообщений Kafka.</param>
+    /// <param name="valueDeserializer">Десериализатор значений сообщений Kafka.</param>
+    /// <param name="scopeFactory">Фабрика областей внедрения зависимостей для сервисов.</param>
     public KafkaConsumer(
         IConfiguration configuration,
         ILogger<KafkaConsumer> logger,
         KeyDeserializer keyDeserializer,
-        ValueDeserializer valueDeserializer)
+        ValueDeserializer valueDeserializer,
+        IServiceScopeFactory scopeFactory)
     {
         _logger = logger;
+        _scopeFactory = scopeFactory;
 
         var kafkaConfig = configuration.GetSection("Kafka");
 
-        var topicName = kafkaConfig["Topic"]
-                        ?? throw new KeyNotFoundException("Kafka:Topic is missing");
+        var topicName = kafkaConfig["Topic"] 
+            ?? throw new KeyNotFoundException("Topic is missing");
 
-        var bootstrapServers = configuration.GetConnectionString("library-kafka")
-                           ?? throw new KeyNotFoundException("Aspire ConnectionString 'library-kafka' is missing");
+        var bootstrapServers = configuration.GetConnectionString("library-kafka") 
+            ?? throw new KeyNotFoundException("ConnectionString 'library-kafka' is missing");
 
-        var groupId = kafkaConfig["GroupId"]
-                      ?? throw new KeyNotFoundException("Kafka:GroupId is missing");
+        var groupId = kafkaConfig["GroupId"] 
+            ?? throw new KeyNotFoundException("GroupId is missing");
 
         var consumerConfig = new ConsumerConfig
         {
             BootstrapServers = bootstrapServers,
             GroupId = groupId,
             AutoOffsetReset = AutoOffsetReset.Earliest,
-            EnableAutoCommit = true, 
+            EnableAutoCommit = true,
             AllowAutoCreateTopics = true
         };
 
@@ -49,9 +63,13 @@ public class KafkaConsumer : BackgroundService
         _logger.LogInformation("Subscribed to Kafka topic: {Topic}", topicName);
     }
 
+    /// <summary>
+    /// Метод, выполняющий бесконечный цикл чтения сообщений из Kafka.
+    /// </summary>
+    /// Метод считывает сообщения из Kafka и передает на обработку через ProcessMessageAsync.
+    /// <param name="stoppingToken">Токен отмены.</param>
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _logger.LogInformation("Kafka consumer started");
 
         while (!stoppingToken.IsCancellationRequested)
         {
@@ -65,13 +83,12 @@ public class KafkaConsumer : BackgroundService
                 _logger.LogInformation(
                     "Received message {Key} with {Count} checkouts (Partition: {Partition}, Offset: {Offset})",
                     result.Message.Key,
-                    result.Message.Value?.Count ?? 0,
+                    result.Message.Value.Count,
                     result.Partition,
                     result.Offset
                 );
 
                 await ProcessMessageAsync(result.Message.Key, result.Message.Value);
-
             }
             catch (ConsumeException ex)
             {
@@ -88,42 +105,33 @@ public class KafkaConsumer : BackgroundService
                 await Task.Delay(2000, stoppingToken);
             }
         }
-
-        _logger.LogInformation("Kafka consumer stopped");
+        _logger.LogInformation("Kafka consumer stop");
     }
 
-    private Task ProcessMessageAsync(Guid key, IList<CheckoutCreateDto> checkouts)
+    /// <summary>
+    /// Обрабатывает полученное сообщение из Kafka и сохраняет данные о выдаче книг.
+    /// </summary>
+    /// <param name="key">ID сообщения.</param>
+    /// <param name="checkouts">Список DTO с данными о выдачах книг</param>
+    private async Task ProcessMessageAsync(Guid key, IList<CheckoutCreateDto>? checkouts)
     {
         if (checkouts == null || checkouts.Count == 0)
         {
             _logger.LogWarning("Empty checkouts list for message {Key}", key);
-            return Task.CompletedTask;
+            return;
         }
-
-        var count = 0;
-        foreach (var dto in checkouts)
-        {
-            _logger.LogInformation("Stub process checkout: BookId={BookId}, ReaderId={ReaderId}",
-                dto.BookId, dto.ReaderId);
-            count++;
-        }
-
-        _logger.LogInformation("Processed message {Key}: {Count} checkouts logged", key, count);
-        return Task.CompletedTask;
-    }
-
-    public override void Dispose()
-    {
         try
         {
-            _consumer?.Close();
-            _consumer?.Dispose();
+            using var scope = _scopeFactory.CreateScope();
+            var checkoutService = scope.ServiceProvider.GetRequiredService<IBookCheckoutService>();
+
+            await checkoutService.ReceiveContract(checkouts);
+
+            _logger.LogInformation("Processed message {Key}: {Count} checkouts saved", key, checkouts.Count);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error disposing Kafka consumer");
+            _logger.LogError(ex, "Error processing message {Key}", key);
         }
-
-        base.Dispose();
     }
 }

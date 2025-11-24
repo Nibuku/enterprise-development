@@ -11,6 +11,7 @@ using Library.Infrastructure.Mongo.Repositories;
 using Library.ServiceDefaults;
 using MongoDB.Driver;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();
@@ -46,9 +47,9 @@ builder.Services.AddScoped<IRepositoryAsync<PublicationType, int>, TypeMongoRepo
 builder.Services.AddScoped<IApplicationService<BookGetDto, BookCreateDto, int>, BookService>();
 builder.Services.AddScoped<IApplicationService<BookReaderGetDto, BookReaderCreateDto, int>, BookReaderService>();
 builder.Services.AddScoped<IApplicationService<PublisherGetDto, PublisherCreateDto, int>, PublisherService>();
-builder.Services.AddScoped<IApplicationService<CheckoutGetDto, CheckoutCreateDto, int>, BookCheckoutService>();
 builder.Services.AddScoped<IApplicationService<PublicationTypeGetDto, PublicationTypeCreateDto, int>, PublicationTypeService>(); 
 builder.Services.AddScoped<ILibraryAnalyticsService, LibraryAnalyticsService>();
+builder.Services.AddScoped<IBookCheckoutService, BookCheckoutService>();
 
 builder.Services.AddScoped<DbSeed>();
 builder.Services.AddHostedService<DbService>();

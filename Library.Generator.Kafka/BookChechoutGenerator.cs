@@ -3,8 +3,17 @@ using Library.Application.Contracts.Dtos;
 
 namespace Library.Generator.Kafka;
 
+/// <summary>
+/// Генератор случайных данных для DTO выдачи книг.
+/// </summary>
 public static class BookChechoutGenerator
 {
+    /// <summary>
+    /// Генерирует список случайных DTO выдач книг.
+    /// </summary>
+    /// <param name="count">Количество DTO для генерации.</param>
+    /// <returns>Список сгенерированных DTO 
+    /// </returns>
     public static List<CheckoutCreateDto> GenerateLinks(int count) =>
         new Faker<CheckoutCreateDto>()
             .RuleFor(x => x.BookId, f => f.Random.Int(1, 11))

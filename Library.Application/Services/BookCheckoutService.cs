@@ -12,7 +12,7 @@ namespace Library.Application.Services;
 public class BookCheckoutService(
     IRepositoryAsync<BookCheckout, int> bookCheckoutRepository,
     IRepositoryAsync<Book, int> bookRepository, IRepositoryAsync<BookReader, int> readerRepository,
-    IMapper mapper) : IApplicationService<CheckoutGetDto, CheckoutCreateDto, int>
+    IMapper mapper) : IBookCheckoutService
 {
     /// <summary>
     /// Создает новую запись о выдаче.
@@ -22,8 +22,8 @@ public class BookCheckoutService(
     /// <exception cref="InvalidOperationException">Вызывается, если книга или читатель с указанным Id не найдены.</exception>
     public async Task<CheckoutGetDto> Create(CheckoutCreateDto dto)
     {
-        var book =await bookRepository.Read(dto.BookId)?? throw new InvalidOperationException($"Книга с ID {dto.BookId} не найдена.");
-        var reader =await readerRepository.Read(dto.ReaderId)?? throw new InvalidOperationException($"Читатель с ID {dto.ReaderId} не найден.");
+        var book = await bookRepository.Read(dto.BookId) ?? throw new InvalidOperationException($"Книга с ID {dto.BookId} не найдена.");
+        var reader = await readerRepository.Read(dto.ReaderId) ?? throw new InvalidOperationException($"Читатель с ID {dto.ReaderId} не найден.");
         var newCheckout = new BookCheckout
         {
             Id = 0,
@@ -45,7 +45,7 @@ public class BookCheckoutService(
     /// <exception cref="InvalidOperationException">Вызывается, если запись с указанным Id не найдена.</exception>
     public async Task<CheckoutGetDto> Get(int dtoId)
     {
-        var bookCheckout =await bookCheckoutRepository.Read(dtoId)
+        var bookCheckout = await bookCheckoutRepository.Read(dtoId)
             ?? throw new InvalidOperationException($"Выдача с ID {dtoId} не найдена.");
 
         return mapper.Map<CheckoutGetDto>(bookCheckout);
@@ -76,7 +76,7 @@ public class BookCheckoutService(
 
         var reader = await readerRepository.Read(dto.ReaderId)
                      ?? throw new InvalidOperationException($"Читатель с ID {dto.ReaderId} не найден.");
-        checkoutToUpdate.Reader =reader;
+        checkoutToUpdate.Reader = reader;
         checkoutToUpdate.Book = book;
         mapper.Map(dto, checkoutToUpdate);
         await bookCheckoutRepository.Update(checkoutToUpdate);
@@ -93,4 +93,28 @@ public class BookCheckoutService(
         if (!await bookCheckoutRepository.Delete(dtoId))
             throw new InvalidOperationException($"Выдача с ID {dtoId} не найдена.");
     }
+
+    /// <summary>
+    /// Обрабатывает список  выдач (DTO), создаёт соответствующие записи в базе данных.
+    /// </summary>
+    /// <param name="dtos">Список DTO с информацией о выдачах книг.</param>
+    /// <exception cref="InvalidOperationException">Выбрасывается, если книга или читатель с указанным Id не найдены.</exception>
+    public async Task ReceiveContract(IList<CheckoutCreateDto> dtos)
+    {
+        foreach (var dto in dtos)
+        {
+            var book = await bookRepository.Read(dto.BookId)
+                ?? throw new InvalidOperationException($"Книга с ID {dto.BookId} не найдена.");
+
+            var reader = await readerRepository.Read(dto.ReaderId)
+                ?? throw new InvalidOperationException($"Читатель с ID {dto.ReaderId} не найден.");
+
+            var checkout = mapper.Map<BookCheckout>(dto);
+            checkout.Book = book;
+            checkout.Reader = reader;
+
+            await bookCheckoutRepository.Create(checkout);
+        }
+    }
+
 }
