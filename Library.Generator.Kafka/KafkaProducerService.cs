@@ -1,5 +1,4 @@
-﻿
-using Library.Generator.Kafka.Services;
+﻿using Library.Generator.Kafka.Services;
 
 namespace Library.Generator.Kafka;
 
@@ -11,9 +10,12 @@ namespace Library.Generator.Kafka;
 /// <param name="logger">Логгер</param>
 public class KafkaProducerService(IConfiguration configuration, IServiceScopeFactory scopeFactory, ILogger<KafkaProducerService> logger) : BackgroundService
 {
-    private readonly string _batchSize = configuration.GetSection("Generator")["BatchSize"] ?? throw new KeyNotFoundException("BatchSize section of Generator is missing");
-    private readonly string _payloadLimit = configuration.GetSection("Generator")["PayloadLimit"] ?? throw new KeyNotFoundException("PayloadLimit section of Generator is missing");
-    private readonly string _waitTime = configuration.GetSection("Generator")["WaitTime"] ?? throw new KeyNotFoundException("WaitTime section of Generator is missing");
+    private readonly string _batchSize = configuration.GetSection("Generator")["BatchSize"] 
+        ?? throw new KeyNotFoundException("BatchSize section of Generator is missing");
+    private readonly string _payloadLimit = configuration.GetSection("Generator")["PayloadLimit"] 
+        ?? throw new KeyNotFoundException("PayloadLimit section of Generator is missing");
+    private readonly string _waitTime = configuration.GetSection("Generator")["WaitTime"] 
+        ?? throw new KeyNotFoundException("WaitTime section of Generator is missing");
 
     /// <summary>
     /// Метод, который генерирует и отправляет партии DTO выдач книг через заданные интервалы до достижения лимита.
@@ -42,5 +44,4 @@ public class KafkaProducerService(IConfiguration configuration, IServiceScopeFac
         }
         logger.LogInformation("Finished sending {total} messages with {time}s interval with {batch} messages in batch", _payloadLimit, _waitTime, _batchSize);
     }
-
 }

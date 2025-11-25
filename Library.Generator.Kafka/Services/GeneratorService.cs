@@ -40,5 +40,4 @@ public class GeneratorService(IConfiguration configuration,IProducer<Guid, IList
             logger.LogError(ex, "Exception occurred during sending a batch of {count} checkouts to {topic}", batch.Count, _topicName);
         }
     }
-
 }
