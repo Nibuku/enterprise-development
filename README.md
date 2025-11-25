@@ -86,3 +86,28 @@
 - [PublicationTypeController.cs](./Library.Api/Controllers/PublicationTypeController.cs) - Управление типами публикаций.
 - [PublisherController.cs](./Library.Api/Controllers/PublisherController.cs) - Управление издательствами.
 - [CrudControllerBase.cs](./Library.Api/Controllers/CrudControllerBase.cs) - Базовый класс для CRUD операций.
+
+### Library.Generator.Kafka - Генератор тестовых данных для Kafka. Создает и отправляет в Kafka-топик сообщения с данными о книжных выдачах (checkouts).
+
+-[KafkaProducerService](.\Library.Generator.Kafka\KafkaProducerService.cs) -  продюсер Kafkи
+-[BookCheckoutGenerator](.\Library.Generator.Kafka\BookChechoutGenerator.cs) - генератор данных о книжных выдачах
+
+#### Services
+-[GeneratorService](.\Library.Generator.Kafka\Services\GeneratorService.cs) - сервис генерации тестовых данных
+-[IProducerService](.\Library.Generator.Kafka\Services\IProducerService.cs) - интерфейс для отправки сообщений в Kafka
+
+#### Serializers:
+-[KeySerializer.cs](.\Library.Generator.Kafka\Serializers\KeySerializer.cs) - сериализатор ключей сообщений (Guid)
+-[ValueSerializer.cs](.\Library.Generator.Kafka\Serializers\ValueSerializer.cs) - сериализатор значений (списки CheckoutCreateDto)
+
+- [Program.cs](.\Library.Generator.Kafka\Program.cs) - точка входа, регистрация сервисов
+
+### Library.Infrastructure.Kafka - Потребитель для Kafka-сообщений
+
+- [KafkaConsumer](.\Library.Infrastructure.Kafka\KafkaConsumer.cs)** - фоновый сервис для потребления сообщений из Kafka.
+- 
+#### Deserializers:
+- [KeyDeserializer.cs](.\Library.Infrastructure.Kafka\Deserializers\KeyDeserializer.cs) - десериализатор ключей сообщений (Guid)
+- [ValueDeserializer.cs](.\Library.Infrastructure.Kafka\Deserializers\ValueDeserializer.cs) - десериализатор значений (списки CheckoutCreateDto)
+
+- [Program.cs](.\Library.Infrastructure.Kafka\Program.cs) - точка входа приложения. Регистрирует Kafka consumer как hosted service и настраивает зависимости.
