@@ -11,7 +11,6 @@ using Library.Infrastructure.Mongo.Repositories;
 using Library.ServiceDefaults;
 using MongoDB.Driver;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 builder.AddServiceDefaults();

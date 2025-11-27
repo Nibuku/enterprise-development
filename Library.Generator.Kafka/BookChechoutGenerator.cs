@@ -6,7 +6,7 @@ namespace Library.Generator.Kafka;
 /// <summary>
 /// Генератор случайных данных для DTO выдачи книг.
 /// </summary>
-public static class BookChechoutGenerator
+public static class BookCheckoutGenerator
 {
     /// <summary>
     /// Генерирует список случайных DTO выдач книг.

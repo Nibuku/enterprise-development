@@ -1,4 +1,3 @@
-using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
 
 var builder = DistributedApplication.CreateBuilder(args);
@@ -18,9 +17,9 @@ var groupId = kafkaSettings["GroupId"];
 var topic = kafkaSettings["Topic"];
 
 var generatorSettings = builder.Configuration.GetSection("Generator");
-var batchSize = generatorSettings.GetValue<int?>("BatchSize");
-var payloadLimit = generatorSettings.GetValue<int?>("PayloadLimit");
-var waitTime = generatorSettings.GetValue<int?>("WaitTime");
+var batchSize = generatorSettings.GetValue("BatchSize", 100);
+var payloadLimit = generatorSettings.GetValue("PayloadLimit", 1000);
+var waitTime = generatorSettings.GetValue("WaitTime", 5);
 
 var producer = builder.AddProject<Projects.Library_Generator_Kafka>("generator")
     .WithReference(kafka)

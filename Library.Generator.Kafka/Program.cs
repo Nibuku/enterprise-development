@@ -14,7 +14,7 @@ builder.AddKafkaProducer<Guid, IList<CheckoutCreateDto>>("library-kafka",
         kafkaBuilder.SetValueSerializer(new ValueSerializer());
     });
 
-builder.Services.AddScoped<IProducerService, GeneratorService>();
+builder.Services.AddSingleton<IProducerService, GeneratorService>();
 builder.Services.AddHostedService<KafkaProducerService>();
 
 var host = builder.Build();
