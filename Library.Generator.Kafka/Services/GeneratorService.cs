@@ -25,13 +25,14 @@ public class GeneratorService : IProducerService
         _logger = logger;
 
         _retryPolicy = Policy
-            .Handle<Exception>()
+            .Handle<ProduceException<Guid, IList<CheckoutCreateDto>>>()
+            .Or<KafkaException>()
             .WaitAndRetryAsync(
                 retryCount: 3,
-                sleepDurationProvider: _ => TimeSpan.FromSeconds(2),
-                onRetry: (ex, ts, attempt, ctx) =>
+                sleepDurationProvider: retry => TimeSpan.FromSeconds(2),
+                onRetry: (ex, delay, retry, ctx) =>
                 {
-                    _logger.LogWarning(ex, "Retry {Attempt} after {Delay}s due to error sending batch to Kafka", attempt, ts.TotalSeconds);
+                    _logger.LogWarning(ex, "Error: send to Kafka fail. Attempt to {Retry} after {Delay}", retry, delay.TotalSeconds);
                 });
     }
     /// <summary>
@@ -51,6 +52,7 @@ public class GeneratorService : IProducerService
                     Key = Guid.NewGuid(),
                     Value = batch
                 };
+
                 await _producer.ProduceAsync(_topicName, message);
 
                 _logger.LogInformation("Batch of {count} checkouts sent successfully", batch.Count);

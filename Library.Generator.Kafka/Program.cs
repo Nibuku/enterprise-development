@@ -12,6 +12,7 @@ builder.AddKafkaProducer<Guid, IList<CheckoutCreateDto>>("library-kafka",
     {
         kafkaBuilder.SetKeySerializer(new KeySerializer());
         kafkaBuilder.SetValueSerializer(new ValueSerializer());
+
     });
 
 builder.Services.AddSingleton<IProducerService, GeneratorService>();

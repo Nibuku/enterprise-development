@@ -15,6 +15,14 @@ public class KafkaProducerService: BackgroundService
     private readonly IProducerService _producer;
     private readonly ILogger<KafkaProducerService> _logger;
 
+    /// <summary>
+    /// Конструктор сервиса KafkaProducerService.
+    /// Заполняет параметры генерации сообщений
+    /// </summary>
+    /// <param name="configuration">IConfiguration для получения параметров генератора</param>
+    /// <param name="producer">Сервис продюсера Kafka.</param>
+    /// <param name="logger">Логгер</param>
+    /// <exception cref="ArgumentException">Выбрасывается при некоррекных параметрах генератора их appsetting.json</exception>
     public KafkaProducerService(IConfiguration configuration, IProducerService producer, ILogger<KafkaProducerService> logger)
     {
         _batchSize = configuration.GetValue<int>("Generator:BatchSize");

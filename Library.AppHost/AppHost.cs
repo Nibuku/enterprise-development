@@ -24,6 +24,7 @@ var waitTime = generatorSettings.GetValue("WaitTime", 5);
 var producer = builder.AddProject<Projects.Library_Generator_Kafka>("generator")
     .WithReference(kafka)
     .WaitFor(kafka)
+    .WaitFor(mongoDb)
     .WithEnvironment("Kafka:Topic", topic)
     .WithEnvironment("Generator:BatchSize", batchSize.ToString())
     .WithEnvironment("Generator:PayloadLimit", payloadLimit.ToString())
