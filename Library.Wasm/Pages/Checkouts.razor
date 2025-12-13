@@ -1,0 +1,239 @@
+﻿@page "/checkouts"
+@using Blazorise
+@inject LibraryApiWrapper LibraryApi
+@inject IJSRuntime JsRuntime
+
+<h3>Список выдач книг</h3>
+
+<Modal @ref="validationModalRef">
+    <ModalContent>
+        <ModalHeader>
+            <ModalTitle>
+                <Icon Name="IconName.ExclamationTriangle" Color="Color.Danger" Class="me-2" />
+                Ошибка заполнения формы
+            </ModalTitle>
+            <CloseButton @onclick="CloseValidationModal" />
+        </ModalHeader>
+        <ModalBody>
+            <Alert Color="Color.Danger" Icon="IconName.InfoCircle">
+                <AlertMessage>@errorMessage</AlertMessage>
+            </Alert>
+            <div class="mt-2">
+                <p>Пожалуйста, заполните все поля.</p>
+            </div>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" @onclick="CloseValidationModal">Закрыть</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<Button Color="Color.Success" Class="mb-3" @onclick="StartCreate">+ Добавить выдачу</Button>
+
+@if (selectedCheckout != null)
+{
+    <Card Class="mb-4">
+        <CardBody>
+            <h5>@(selectedCheckout.Id == 0 ? "Добавить выдачу" : $"Редактировать выдачу: {selectedCheckout.Id}")</h5>
+
+            <Field>
+                <FieldLabel>Дата взятия книги</FieldLabel>
+                <DateEdit @bind-Date="formCheckout.LoanDate" />
+            </Field>
+
+            <Field>
+                <FieldLabel>Количество дней</FieldLabel>
+                <NumericEdit TValue="int" @bind-Value="formCheckout.LoanDays" />
+            </Field>
+
+            <Field>
+                <FieldLabel>Книга</FieldLabel>
+                <Select TValue="int" @bind-SelectedValue="formCheckout.BookId">
+                    <SelectItem Value="0">Выберите книгу...</SelectItem>
+                    @foreach (var book in books)
+                    {
+                        <SelectItem Value="@book.Id">@book.Title</SelectItem>
+                    }
+                </Select>
+            </Field>
+
+            <Field>
+                <FieldLabel>Читатель</FieldLabel>
+                <Select TValue="int" @bind-SelectedValue="formCheckout.ReaderId">
+                    <SelectItem Value="0">Выберите читателя...</SelectItem>
+                    @foreach (var reader in readers)
+                    {
+                        <SelectItem Value="@reader.Id">@reader.FullName</SelectItem>
+                    }
+                </Select>
+            </Field>
+
+            <div class="mt-3">
+                <Button Color="Color.Primary" @onclick="SaveAsync">Сохранить</Button>
+                <Button Color="Color.Secondary" @onclick="CancelForm">Отмена</Button>
+            </div>
+        </CardBody>
+    </Card>
+}
+
+@if (isLoading)
+{
+    <p>Загрузка...</p>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <Alert Color="Color.Danger">@errorMessage</Alert>
+}
+else if (checkouts.Count == 0)
+{
+    <Alert Color="Color.Warning">Выдачи не найдены</Alert>
+}
+else
+{
+    <Table Striped Hover>
+        <TableHeader>
+            <TableRow>
+                <TableHeaderCell>Дата взятия</TableHeaderCell>
+                <TableHeaderCell>Количество дней</TableHeaderCell>
+                <TableHeaderCell>Книга</TableHeaderCell>
+                <TableHeaderCell>Читатель</TableHeaderCell>
+                <TableHeaderCell>Дата возврата</TableHeaderCell>
+                <TableHeaderCell>Действия</TableHeaderCell>
+            </TableRow>
+        </TableHeader>
+        <TableBody>
+            @foreach (var co in checkouts)
+            {
+                <TableRow>
+                    <td>@co.LoanDate</td>
+                    <td>@co.LoanDays</td>
+                    <td>@bookById.GetValueOrDefault(co.BookId, "—")</td>
+                    <td>@readerById.GetValueOrDefault(co.ReaderId, "—")</td>
+                    <td>@co.DueDate</td>
+                    <td>
+                        <Buttons>
+                            <Button Color="Color.Info" Size="Size.Small" @onclick="() => StartEdit(co)">Редактировать</Button>
+                            <Button Color="Color.Danger" Size="Size.Small" @onclick="() => DeleteCheckoutAsync(co.Id)">Удалить</Button>
+                        </Buttons>
+                    </td>
+                </TableRow>
+            }
+        </TableBody>
+    </Table>
+}
+
+@code {
+    private List<CheckoutGetDto> checkouts = new();
+    private List<BookGetDto> books = new();
+    private List<BookReaderGetDto> readers = new();
+    private Dictionary<int, string> bookById = new();
+    private Dictionary<int, string> readerById = new();
+
+    private bool isLoading;
+    private string errorMessage = "";
+    private CheckoutGetDto? selectedCheckout = null;
+    private CheckoutCreateDto formCheckout = new();
+    private Modal? validationModalRef;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAllDataAsync();
+    }
+
+    private async Task LoadAllDataAsync()
+    {
+        try
+        {
+            isLoading = true;
+
+            var checkoutsTask = LibraryApi.GetAllCheckouts();
+            var booksTask = LibraryApi.GetAllBooks();
+            var readersTask = LibraryApi.GetAllReaders();
+
+            await Task.WhenAll(checkoutsTask, booksTask, readersTask);
+
+            checkouts = (await checkoutsTask)?.ToList() ?? new();
+            books = (await booksTask)?.ToList() ?? new();
+            readers = (await readersTask)?.ToList() ?? new();
+
+            bookById = books.ToDictionary(b => b.Id, b => b.Title);
+            readerById = readers.ToDictionary(r => r.Id, r => r.FullName);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка загрузки: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void StartCreate()
+    {
+        selectedCheckout = new();
+        formCheckout.LoanDate=DateTime.Today;
+    }
+
+    private void StartEdit(CheckoutGetDto co)
+    {
+        selectedCheckout = co;
+
+        formCheckout.LoanDate = co.LoanDate;
+        formCheckout.LoanDays = co.LoanDays;
+        formCheckout.BookId = co.BookId;
+        formCheckout.ReaderId = co.ReaderId;
+    }
+
+    private void CancelForm()
+    {
+        selectedCheckout = null;
+        formCheckout = new();
+    }
+
+    private bool IsFormValid()
+    {
+        return
+            formCheckout.LoanDate != default &&
+            formCheckout.LoanDays > 0 &&
+            formCheckout.BookId > 0 &&
+            formCheckout.ReaderId > 0;
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = "";
+
+        if (!IsFormValid())
+        {
+            validationModalRef?.Show();
+            return;
+        }
+
+        try
+        {
+            if (selectedCheckout?.Id == 0)
+                await LibraryApi.CreateCheckout(formCheckout);
+            else if (selectedCheckout != null)
+                await LibraryApi.UpdateCheckout(selectedCheckout.Id, formCheckout);
+
+            await LoadAllDataAsync();
+            CancelForm();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка сохранения: {ex.Message}";
+        }
+    }
+
+    private void CloseValidationModal()
+    {
+        validationModalRef?.Hide();
+    }
+
+    private async Task DeleteCheckoutAsync(int id)
+    {
+        await LibraryApi.DeleteCheckout(id);
+        await LoadAllDataAsync();
+    }
+}

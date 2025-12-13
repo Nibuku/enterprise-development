@@ -25,6 +25,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Infrastructure.Kafk
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Generator.Kafka", "Library.Generator.Kafka\Library.Generator.Kafka.csproj", "{35F3E1CE-A372-CCF5-AF87-03BF2BFD526E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Library.Wasm", "Library.Wasm\Library.Wasm.csproj", "{AF48E55E-3FAE-168C-914E-1DDDEE4BFA9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +77,10 @@ Global
 		{35F3E1CE-A372-CCF5-AF87-03BF2BFD526E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{35F3E1CE-A372-CCF5-AF87-03BF2BFD526E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{35F3E1CE-A372-CCF5-AF87-03BF2BFD526E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF48E55E-3FAE-168C-914E-1DDDEE4BFA9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF48E55E-3FAE-168C-914E-1DDDEE4BFA9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF48E55E-3FAE-168C-914E-1DDDEE4BFA9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF48E55E-3FAE-168C-914E-1DDDEE4BFA9D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

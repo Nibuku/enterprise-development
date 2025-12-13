@@ -47,7 +47,6 @@ public class KafkaProducerService: BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Starting to send {total} messages with {time}s interval with {batch} messages in batch", _payloadLimit, _waitTime, _batchSize);
-
         var counter = 0;
         while (counter < _payloadLimit && !stoppingToken.IsCancellationRequested)
         {

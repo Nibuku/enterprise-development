@@ -1,0 +1,293 @@
+﻿@page "/books"
+@using Blazorise
+@inject LibraryApiWrapper LibraryApi
+@inject IJSRuntime JsRuntime
+
+<h3>Список книг</h3>
+
+<Modal @ref="validationModalRef">
+    <ModalContent>
+        <ModalHeader>
+            <ModalTitle>
+                <Icon Name="IconName.ExclamationTriangle" Color="Color.Danger" Class="me-2" />
+                Ошибка заполнения формы
+            </ModalTitle>
+            <CloseButton @onclick="CloseValidationModal" />
+        </ModalHeader>
+        <ModalBody>
+            <Alert Color="Color.Danger" Icon="IconName.InfoCircle">
+                <AlertMessage>
+                    @errorMessage
+                </AlertMessage>
+            </Alert>
+            <div class="mt-2">
+                <p>Пожалуйста, заполните все поля.</p>
+            </div>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" @onclick="CloseValidationModal">
+                Закрыть
+            </Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+<Button Color="Color.Success" Class="mb-3"
+        @onclick="StartCreate">
+    + Добавить книгу
+</Button>
+
+@if (selectedBook != null)
+{
+    <Card Class="mb-4">
+        <CardBody>
+            <h5>
+                @(selectedBook.Id == 0
+                            ? "Добавить книгу"
+                            : $"Редактировать книгу: {selectedBook.Title}")
+        </h5>
+        @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <Alert Color="Color.Danger" Class="mt-2">
+                    @errorMessage
+                </Alert>
+            }
+
+            <Field>
+                <FieldLabel>Название</FieldLabel>
+                <TextEdit @bind-Text="formBook.Title" />
+            </Field>
+
+            <Field>
+                <FieldLabel>Инв. номер</FieldLabel>
+                <TextEdit @bind-Text="formBook.InventoryNumber" />
+            </Field>
+
+            <Field>
+                <FieldLabel>Год</FieldLabel>
+                <NumericEdit TValue="int"
+                             @bind-Value="formBook.PublicationYear" />
+            </Field>
+
+            <Field>
+                <FieldLabel>Авторы</FieldLabel>
+                <TextEdit @bind-Text="authorsString" />
+            </Field>
+
+            <Field>
+                <FieldLabel>Код каталога</FieldLabel>
+                <TextEdit @bind-Text="formBook.CatalogCode" />
+            </Field>
+
+            <Field>
+                <FieldLabel>Тип публикации</FieldLabel>
+                <Select TValue="int" @bind-SelectedValue="formBook.PublicationTypeId">
+                    <SelectItem Value="0">Выберите тип...</SelectItem>
+                    @foreach (var type in PublicationTypes)
+                    {
+                        <SelectItem Value="@type.Id">@type.Type</SelectItem>
+                    }
+                </Select>
+            </Field>
+
+            <Field>
+                <FieldLabel>Издательство</FieldLabel>
+                <Select TValue="int" @bind-SelectedValue="formBook.PublisherId">
+                    <SelectItem Value="0">Выберите издательство...</SelectItem>
+                    @foreach (var publisher in Publishers)
+                    {
+                        <SelectItem Value="@publisher.Id">@publisher.Name</SelectItem>
+                    }
+                </Select>
+            </Field>
+
+            <div class="mt-3">
+                <Button Color="Color.Primary" @onclick="SaveAsync">
+                    Сохранить
+                </Button>
+                <Button Color="Color.Secondary" @onclick="CancelForm">
+                    Отмена
+                </Button>
+            </div>
+        </CardBody>
+    </Card>
+}
+
+@if (isLoading)
+{
+    <p>Загрузка...</p>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <Alert Color="Color.Danger">@errorMessage</Alert>
+}
+else if (books.Count == 0)
+{
+    <Alert Color="Color.Warning">Книги не найдены</Alert>
+}
+else
+{
+    <Table Striped Hover>
+        <TableHeader>
+            <TableRow>
+                <TableHeaderCell>Название</TableHeaderCell>
+                <TableHeaderCell>Год</TableHeaderCell>
+                <TableHeaderCell>Авторы</TableHeaderCell>
+                <TableHeaderCell>Тип публикации</TableHeaderCell>
+                <TableHeaderCell>Действия</TableHeaderCell>
+            </TableRow>
+        </TableHeader>
+
+        <TableBody>
+            @foreach (var book in books)
+            {
+                <TableRow>
+                    <td>@book.Title</td>
+                    <td>@book.PublicationYear</td>
+                    <td>@string.Join(", ", book.Authors)</td>
+                    <td>@(publicationTypeById.GetValueOrDefault(book.PublicationTypeId) ?? "—")</td>
+                    <td>
+                        <Buttons>
+                            <Button Color="Color.Info" Size="Size.Small"
+                                    @onclick="() => StartEdit(book)">
+                                Редактировать
+                            </Button>
+                            <Button Color="Color.Danger" Size="Size.Small"
+                                    @onclick="() => DeleteBookAsync(book.Id)">
+                                Удалить
+                            </Button>
+                        </Buttons>
+                    </td>
+                </TableRow>
+            }
+        </TableBody>
+    </Table>
+}
+
+@code {
+    private List<BookGetDto> books = new();
+    private List<PublisherGetDto> Publishers = new();
+    private List<PublicationTypeGetDto> PublicationTypes = new();
+    private Dictionary<int, string> publicationTypeById = new();
+
+    private bool isLoading;
+    private string errorMessage = "";
+    private BookGetDto? selectedBook = null;
+    private BookCreateDto formBook = new();
+    private string authorsString = "";
+    private Modal? validationModalRef;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAllDataAsync();
+    }
+
+    private async Task LoadAllDataAsync()
+    {
+        try
+        {
+            isLoading = true;
+
+            var booksTask = LibraryApi.GetAllBooks();
+            var publishersTask = LibraryApi.GetAllPublishers();
+            var typesTask = LibraryApi.GetAllPublicationTypes();
+
+            await Task.WhenAll(booksTask, publishersTask, typesTask);
+
+            books = (await booksTask)?.ToList() ?? new();
+            Publishers = (await publishersTask)?.ToList() ?? new();
+            PublicationTypes = (await typesTask)?.ToList() ?? new();
+            publicationTypeById = PublicationTypes.ToDictionary(t => t.Id, t => t.Type);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка загрузки: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void StartCreate()
+    {
+        selectedBook = new();
+    }
+
+    private void StartEdit(BookGetDto book)
+    {
+        selectedBook = book;
+
+        formBook.Title = book.Title;
+        formBook.InventoryNumber = book.InventoryNumber;
+        formBook.PublicationYear = book.PublicationYear;
+        formBook.CatalogCode = book.CatalogCode;
+        formBook.PublisherId = book.PublisherId;
+        formBook.PublicationTypeId = book.PublicationTypeId;
+        formBook.Authors = book.Authors;
+
+        authorsString = string.Join(", ", book.Authors);
+    }
+
+    private void CancelForm()
+    {
+        selectedBook = null;
+        formBook = new();
+        authorsString = "";
+    }
+
+    private bool IsFormValid()
+    {
+        return
+            !string.IsNullOrWhiteSpace(formBook.Title) &&
+            !string.IsNullOrWhiteSpace(formBook.InventoryNumber) &&
+            formBook.PublicationYear > 0 &&
+            !string.IsNullOrWhiteSpace(authorsString) &&
+            !string.IsNullOrWhiteSpace(formBook.CatalogCode) &&
+            formBook.PublicationTypeId > 0 &&
+            formBook.PublisherId > 0;
+    }
+
+    private async Task SaveAsync()
+    {
+        errorMessage = "";
+
+        if (!IsFormValid())
+        {
+            validationModalRef?.Show();
+            return;
+        }
+
+        try
+        {
+            formBook.Authors = authorsString
+                .Split(',', StringSplitOptions.RemoveEmptyEntries)
+                .Select(a => a.Trim())
+                .ToList();
+
+            if (selectedBook?.Id == 0)
+                await LibraryApi.CreateBook(formBook);
+            else if (selectedBook != null)
+                await LibraryApi.UpdateBook(selectedBook.Id, formBook);
+
+            await LoadAllDataAsync();
+            CancelForm();
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Ошибка сохранения: {ex.Message}";
+        }
+    }
+
+    private void CloseValidationModal()
+    {
+        validationModalRef?.Hide();
+    }
+
+    private async Task DeleteBookAsync(int id)
+    {
+        await LibraryApi.DeleteBook(id);
+        await LoadAllDataAsync();
+        
+    }
+}

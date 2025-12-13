@@ -1,10 +1,11 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 var builder = DistributedApplication.CreateBuilder(args);
 
 var mongoDb = builder.AddMongoDB("mongo").AddDatabase("library");
 
-builder.AddProject<Projects.Library_Api>("api")
+var api=builder.AddProject<Projects.Library_Api>("api")
     .WithReference(mongoDb)
     .WaitFor(mongoDb);
 
@@ -20,6 +21,10 @@ var generatorSettings = builder.Configuration.GetSection("Generator");
 var batchSize = generatorSettings.GetValue("BatchSize", 100);
 var payloadLimit = generatorSettings.GetValue("PayloadLimit", 1000);
 var waitTime = generatorSettings.GetValue("WaitTime", 5);
+
+var client = builder.AddProject<Projects.Library_Wasm>("client")
+    .WithReference(api)
+    .WaitFor(api);
 
 var producer = builder.AddProject<Projects.Library_Generator_Kafka>("generator")
     .WithReference(kafka)
