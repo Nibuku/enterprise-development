@@ -5,28 +5,9 @@
 
 <h3>Список выдач книг</h3>
 
-<Modal @ref="validationModalRef">
-    <ModalContent>
-        <ModalHeader>
-            <ModalTitle>
-                <Icon Name="IconName.ExclamationTriangle" Color="Color.Danger" Class="me-2" />
-                Ошибка заполнения формы
-            </ModalTitle>
-            <CloseButton @onclick="CloseValidationModal" />
-        </ModalHeader>
-        <ModalBody>
-            <Alert Color="Color.Danger" Icon="IconName.InfoCircle">
-                <AlertMessage>@errorMessage</AlertMessage>
-            </Alert>
-            <div class="mt-2">
-                <p>Пожалуйста, заполните все поля.</p>
-            </div>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Secondary" @onclick="CloseValidationModal">Закрыть</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+<ModalWin @ref="validationModalRef"
+          Title="Не все обязательные поля заполнены" />
+
 
 <Button Color="Color.Success" Class="mb-3" @onclick="StartCreate">+ Добавить выдачу</Button>
 
@@ -133,7 +114,7 @@ else
     private string errorMessage = "";
     private CheckoutGetDto? selectedCheckout = null;
     private CheckoutCreateDto formCheckout = new();
-    private Modal? validationModalRef;
+    private ModalWin? validationModalRef;
 
     protected override async Task OnInitializedAsync()
     {

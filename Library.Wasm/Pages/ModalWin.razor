@@ -1,0 +1,30 @@
+﻿@using Blazorise
+
+<Modal @ref="_modalRef">
+    <ModalContent>
+        <ModalHeader>
+            <ModalTitle>
+                <Icon Name="IconName.ExclamationTriangle"
+                      Color="Color.Danger"
+                      Class="me-2" />
+                @Title
+            </ModalTitle>
+            <CloseButton @onclick="Hide" />
+        </ModalHeader>
+        <ModalFooter>
+            <Button Color="Color.Secondary" @onclick="Hide">
+                Закрыть
+            </Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>
+
+@code {
+    private Modal? _modalRef;
+
+    [Parameter]
+    public string Title { get; set; } = "Ошибка";
+
+    public Task Show() => _modalRef?.Show() ?? Task.CompletedTask;
+    public Task Hide() => _modalRef?.Hide() ?? Task.CompletedTask;
+}

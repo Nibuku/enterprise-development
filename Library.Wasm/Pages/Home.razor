@@ -4,170 +4,150 @@
 
 <h3>Аналитика библиотеки</h3>
 
-@if (!string.IsNullOrEmpty(errorMessage))
+@if (!string.IsNullOrEmpty(error))
 {
-    <Alert Color="Color.Danger">@errorMessage</Alert>
+    <Alert Color="Color.Danger">@error</Alert>
 }
 
-<div class="mb-4">
-    <Field>
-        <FieldLabel>Начальная дата</FieldLabel>
-        <DateEdit @bind-Date="startDate" />
-    </Field>
+<Field>
+    <FieldLabel>Начальная дата</FieldLabel>
+    <DateEdit @bind-Date="startDate" />
+</Field>
 
-    <Field>
-        <FieldLabel>Конечная дата</FieldLabel>
-        <DateEdit @bind-Date="endDate" />
-    </Field>
+<Field>
+    <FieldLabel>Конечная дата</FieldLabel>
+    <DateEdit @bind-Date="endDate" />
+</Field>
 
-    <Buttons Class="mt-3">
-        <Button Color="Color.Primary" @onclick="LoadIssuedBooksAsync">
-            Выданные книги
-        </Button>
-        <Button Color="Color.Primary" @onclick="LoadTopReadersByCountAsync">
-            ТОП читателей (по количеству)
-        </Button>
-        <Button Color="Color.Primary" @onclick="LoadTopReadersByDaysAsync">
-            ТОП читателей (по дням)
-        </Button>
-        <Button Color="Color.Primary" @onclick="LoadTopPublishersAsync">
-            ТОП издательств
-        </Button>
-        <Button Color="Color.Primary" @onclick="LoadLeastPopularBooksAsync">
-            Наименее популярные книги
-        </Button>
-    </Buttons>
-</div>
+<Buttons Class="mt-3 mb-3">
+    <Button Color="Color.Primary" @onclick="LoadIssuedBooks">Выданные книги</Button>
+    <Button Color="Color.Primary" @onclick="LoadTopReadersByCount">ТОП читателей (кол-во)</Button>
+    <Button Color="Color.Primary" @onclick="LoadTopReadersByDays">ТОП читателей (дни)</Button>
+    <Button Color="Color.Primary" @onclick="LoadTopPublishers">ТОП издательств</Button>
+    <Button Color="Color.Primary" @onclick="LoadLeastPopularBooks">Непопулярные книги</Button>
+</Buttons>
 
 @if (isLoading)
 {
     <p>Загрузка...</p>
 }
 
-@if (issuedBooks.Count > 0)
+@if (issuedBooks.Any())
 {
     <h5>Выданные книги</h5>
     <Table Striped Hover>
-        <TableHeader>
-            <TableRow>
-                <TableHeaderCell>Книга</TableHeaderCell>
-                <TableHeaderCell>Количество выдач</TableHeaderCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
+        <thead>
+            <tr><th>Книга</th><th>Количество</th></tr>
+        </thead>
+        <tbody>
             @foreach (var b in issuedBooks)
             {
-                <TableRow>
-                    <td>@b.Title</td>
-                    <td>@b.Count</td>
-                </TableRow>
+                <tr><td>@b.Title</td><td>@b.Count</td></tr>
             }
-        </TableBody>
+        </tbody>
     </Table>
 }
 
-@if (topReadersByCount.Count > 0)
+@if (topReadersByCount.Any())
 {
-    <h5>ТОП читателей по количеству книг</h5>
+    <h5>ТОП читателей по количеству</h5>
     <Table Striped Hover>
-        <TableHeader>
-            <TableRow>
-                <TableHeaderCell>Читатель</TableHeaderCell>
-                <TableHeaderCell>Количество книг</TableHeaderCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
+        <thead>
+            <tr><th>Читатель</th><th>Книг</th></tr>
+        </thead>
+        <tbody>
             @foreach (var r in topReadersByCount)
             {
-                <TableRow>
-                    <td>@r.FullName</td>
-                    <td>@r.Count</td>
-                </TableRow>
+                <tr><td>@r.FullName</td><td>@r.Count</td></tr>
             }
-        </TableBody>
+        </tbody>
     </Table>
 }
 
-@if (topReadersByDays.Count > 0)
+@if (topReadersByDays.Any())
 {
-    <h5>ТОП читателей по количеству дней</h5>
+    <h5>ТОП читателей по дням</h5>
     <Table Striped Hover>
-        <TableHeader>
-            <TableRow>
-                <TableHeaderCell>Читатель</TableHeaderCell>
-                <TableHeaderCell>Дней</TableHeaderCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
+        <thead>
+            <tr><th>Читатель</th><th>Дней</th></tr>
+        </thead>
+        <tbody>
             @foreach (var r in topReadersByDays)
             {
-                <TableRow>
-                    <td>@r.FullName</td>
-                    <td>@r.TotalDays</td>
-                </TableRow>
+                <tr><td>@r.FullName</td><td>@r.TotalDays</td></tr>
             }
-        </TableBody>
+        </tbody>
     </Table>
 }
 
-@if (topPublishers.Count > 0)
+@if (topPublishers.Any())
 {
     <h5>ТОП издательств</h5>
     <Table Striped Hover>
-        <TableHeader>
-            <TableRow>
-                <TableHeaderCell>Издательство</TableHeaderCell>
-                <TableHeaderCell>Количество книг</TableHeaderCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
+        <thead>
+            <tr><th>Издательство</th><th>Книг</th></tr>
+        </thead>
+        <tbody>
             @foreach (var p in topPublishers)
             {
-                <TableRow>
-                    <td>@p.Name</td>
-                    <td>@p.Count</td>
-                </TableRow>
+                <tr><td>@p.Name</td><td>@p.Count</td></tr>
             }
-        </TableBody>
+        </tbody>
     </Table>
 }
 
-@if (leastPopularBooks.Count > 0)
+@if (leastPopularBooks.Any())
 {
     <h5>Наименее популярные книги</h5>
     <Table Striped Hover>
-        <TableHeader>
-            <TableRow>
-                <TableHeaderCell>Книга</TableHeaderCell>
-                <TableHeaderCell>Количество выдач</TableHeaderCell>
-            </TableRow>
-        </TableHeader>
-        <TableBody>
+        <thead>
+            <tr><th>Книга</th><th>Выдач</th></tr>
+        </thead>
+        <tbody>
             @foreach (var b in leastPopularBooks)
             {
-                <TableRow>
-                    <td>@b.Title</td>
-                    <td>@b.Count</td>
-                </TableRow>
+                <tr><td>@b.Title</td><td>@b.Count</td></tr>
             }
-        </TableBody>
+        </tbody>
     </Table>
 }
 
 @code {
-    private bool isLoading;
-    private string errorMessage = "";
+    bool isLoading;
+    string error = "";
 
-    private DateOnly? startDate;
-    private DateOnly? endDate;
+    DateOnly? startDate;
+    DateOnly? endDate;
 
-    private List<BookWithCountDto> issuedBooks = new();
-    private List<BookReaderWithCountDto> topReadersByCount = new();
-    private List<BookReaderWithDaysDto> topReadersByDays = new();
-    private List<PublisherCountDto> topPublishers = new();
-    private List<BookWithCountDto> leastPopularBooks = new();
+    List<BookWithCountDto> issuedBooks = new();
+    List<BookReaderWithCountDto> topReadersByCount = new();
+    List<BookReaderWithDaysDto> topReadersByDays = new();
+    List<PublisherCountDto> topPublishers = new();
+    List<BookWithCountDto> leastPopularBooks = new();
 
-    private void ClearAll()
+    DateTimeOffset? ToOffset(DateOnly? d) =>
+        d == null ? null : new DateTimeOffset(d.Value.ToDateTime(TimeOnly.MinValue));
+
+    async Task Load(Func<Task> action)
+    {
+        try
+        {
+            isLoading = true;
+            error = "";
+            Clear();
+            await action();
+        }
+        catch (Exception ex)
+        {
+            error = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    void Clear()
     {
         issuedBooks.Clear();
         topReadersByCount.Clear();
@@ -176,75 +156,22 @@
         leastPopularBooks.Clear();
     }
 
-    private DateTimeOffset? ToOffset(DateOnly? date) =>
-        date.HasValue ? new DateTimeOffset(date.Value.ToDateTime(TimeOnly.MinValue)) : null;
+    Task LoadIssuedBooks() =>
+        Load(async () => issuedBooks = (await LibraryApi.GetIssuedBooks()).ToList());
 
-    private async Task LoadIssuedBooksAsync()
-    {
-        await LoadAsync(async () =>
-        {
-            ClearAll();
-            issuedBooks = (await LibraryApi.GetIssuedBooks())?.ToList() ?? new();
-        });
-    }
+    Task LoadTopReadersByCount() =>
+        Load(async () => topReadersByCount =
+            (await LibraryApi.GetTopReadersByCountAsync(ToOffset(startDate), ToOffset(endDate))).ToList());
 
-    private async Task LoadTopReadersByCountAsync()
-    {
-        await LoadAsync(async () =>
-        {
-            ClearAll();
-            topReadersByCount =
-                (await LibraryApi.GetTopReadersByCountAsync(
-                    ToOffset(startDate),
-                    ToOffset(endDate)))?.ToList() ?? new();
-        });
-    }
+    Task LoadTopReadersByDays() =>
+        Load(async () => topReadersByDays =
+            (await LibraryApi.GetTopReadersByDays()).ToList());
 
-    private async Task LoadTopReadersByDaysAsync()
-    {
-        await LoadAsync(async () =>
-        {
-            ClearAll();
-            topReadersByDays =
-                (await LibraryApi.GetTopReadersByDays())?.ToList() ?? new();
-        });
-    }
+    Task LoadTopPublishers() =>
+        Load(async () => topPublishers =
+            (await LibraryApi.GetTopPublishers(ToOffset(startDate))).ToList());
 
-    private async Task LoadTopPublishersAsync()
-    {
-        await LoadAsync(async () =>
-        {
-            ClearAll();
-            topPublishers =
-                (await LibraryApi.GetTopPublishers(ToOffset(startDate)))?.ToList() ?? new();
-        });
-    }
-
-    private async Task LoadLeastPopularBooksAsync()
-    {
-        await LoadAsync(async () =>
-        {
-            ClearAll();
-            leastPopularBooks =
-                (await LibraryApi.GetLeastPopularBooks(ToOffset(startDate)))?.ToList() ?? new();
-        });
-    }
-
-    private async Task LoadAsync(Func<Task> action)
-    {
-        try
-        {
-            isLoading = true;
-            errorMessage = "";
-            await action();
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"Ошибка: {ex.Message}";
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
+    Task LoadLeastPopularBooks() =>
+        Load(async () => leastPopularBooks =
+            (await LibraryApi.GetLeastPopularBooks(ToOffset(startDate))).ToList());
 }

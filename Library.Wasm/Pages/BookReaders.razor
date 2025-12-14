@@ -5,26 +5,8 @@
 
 <h3>Список читателей</h3>
 
-<Modal @ref="validationModalRef">
-    <ModalContent>
-        <ModalHeader>
-            <ModalTitle>
-                <Icon Name="IconName.ExclamationTriangle" Color="Color.Danger" Class="me-2" />
-                Ошибка заполнения формы
-            </ModalTitle>
-            <CloseButton @onclick="CloseValidationModal" />
-        </ModalHeader>
-        <ModalBody>
-            <Alert Color="Color.Danger" Icon="IconName.InfoCircle">@errorMessage</Alert>
-            <div class="mt-2">
-                <p>Пожалуйста, заполните все поля, отмеченные звездочкой (*).</p>
-            </div>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Secondary" @onclick="CloseValidationModal">Закрыть</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+<ModalWin @ref="validationModalRef"
+          Title="Не все обязательные поля заполнены" />
 
 <Button Color="Color.Success" Class="mb-3" @onclick="StartCreate">+ Добавить читателя</Button>
 
@@ -118,7 +100,7 @@ else
     private string errorMessage = "";
     private BookReaderGetDto? selectedReader = null;
     private BookReaderCreateDto formReader=new();
-    private Modal? validationModalRef;
+    private ModalWin? validationModalRef;
 
     protected override async Task OnInitializedAsync() => await LoadAllDataAsync();
 
@@ -169,7 +151,6 @@ else
 
         if (!IsFormValid())
         {
-            errorMessage = "Пожалуйста, заполните все обязательные поля";
             validationModalRef?.Show();
             return;
         }
