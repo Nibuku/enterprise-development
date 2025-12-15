@@ -1,5 +1,4 @@
 ﻿@page "/books"
-@using Blazorise
 @inject LibraryApiWrapper LibraryApi
 @inject IJSRuntime JsRuntime
 
@@ -8,19 +7,14 @@
 <ModalWin @ref="validationModalRef"
           Title="Не все обязательные поля заполнены" />
 
-<Button Color="Color.Success" Class="mb-3"
-        @onclick="StartCreate">
-    + Добавить книгу
-</Button>
+<Button Color="Color.Success" Class="mb-3" @onclick="StartCreate"> Добавить книгу </Button>
 
 @if (selectedBook != null)
 {
     <Card Class="mb-4">
         <CardBody>
             <h5>
-                @(selectedBook.Id == 0
-                            ? "Добавить книгу"
-                            : $"Редактировать книгу: {selectedBook.Title}")
+                @(selectedBook.Id == 0 ? "Добавить книгу" : $"Редактировать книгу: {selectedBook.Title}")
         </h5>
         @if (!string.IsNullOrEmpty(errorMessage))
             {
@@ -124,14 +118,8 @@ else
                     <td>@(publicationTypeById.GetValueOrDefault(book.PublicationTypeId) ?? "—")</td>
                     <td>
                         <Buttons>
-                            <Button Color="Color.Info" Size="Size.Small"
-                                    @onclick="() => StartEdit(book)">
-                                Редактировать
-                            </Button>
-                            <Button Color="Color.Danger" Size="Size.Small"
-                                    @onclick="() => DeleteBookAsync(book.Id)">
-                                Удалить
-                            </Button>
+                            <Button Color="Color.Info" Size="Size.Small" @onclick="() => StartEdit(book)"> Редактировать </Button>
+                            <Button Color="Color.Danger" Size="Size.Small" @onclick="() => DeleteBookAsync(book.Id)"> Удалить </Button>
                         </Buttons>
                     </td>
                 </TableRow>
@@ -153,10 +141,7 @@ else
     private string authorsString = "";
     private ModalWin? validationModalRef;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadAllDataAsync();
-    }
+    protected override async Task OnInitializedAsync()=> await LoadAllDataAsync();
 
     private async Task LoadAllDataAsync()
     {
@@ -185,22 +170,22 @@ else
         }
     }
 
-    private void StartCreate()
-    {
-        selectedBook = new();
-    }
+    private void StartCreate()=> selectedBook = new();
 
     private void StartEdit(BookGetDto book)
     {
         selectedBook = book;
 
-        formBook.Title = book.Title;
-        formBook.InventoryNumber = book.InventoryNumber;
-        formBook.PublicationYear = book.PublicationYear;
-        formBook.CatalogCode = book.CatalogCode;
-        formBook.PublisherId = book.PublisherId;
-        formBook.PublicationTypeId = book.PublicationTypeId;
-        formBook.Authors = book.Authors;
+        formBook = new BookCreateDto
+        {
+            Title = book.Title,
+            InventoryNumber = book.InventoryNumber,
+            PublicationYear = book.PublicationYear,
+            CatalogCode = book.CatalogCode,
+            PublisherId = book.PublisherId,
+            PublicationTypeId = book.PublicationTypeId,
+            Authors = book.Authors.ToList()
+        };
 
         authorsString = string.Join(", ", book.Authors);
     }
@@ -255,15 +240,9 @@ else
         }
     }
 
-    private void CloseValidationModal()
-    {
-        validationModalRef?.Hide();
-    }
-
     private async Task DeleteBookAsync(int id)
     {
         await LibraryApi.DeleteBook(id);
         await LoadAllDataAsync();
-        
     }
 }

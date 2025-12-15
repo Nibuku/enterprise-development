@@ -111,3 +111,24 @@
 - [ValueDeserializer.cs](.\Library.Infrastructure.Kafka\Deserializers\ValueDeserializer.cs) - десериализатор значений (списки CheckoutCreateDto)
 
 - [Program.cs](.\Library.Infrastructure.Kafka\Program.cs) - точка входа приложения. Регистрирует Kafka consumer как hosted service и настраивает зависимости.
+
+### Library.Wasm — клиентское приложение (Blazor WebAssembly)
+
+приложение, реализованное на Blazor WebAssembly, предназначенное для взаимодействия с REST API библиотеки.
+
+Приложение предоставляет интерфейс для:
+- управления книгами, читателями, издательствами и типами публикаций (CRUD-операции);
+- оформления и редактирования выдач книг читателям;
+- просмотра аналитических данных (выданные книги, топ читателей, издательств и наименее популярных книг);
+
+Взаимодействие с серверной частью осуществляется через [LibraryApiWrapper](.\Library.Wasm\OpenAPIs\LibraryApiWrapper.cs).
+
+#### Pages - страницы приложения
+
+- [BookReaders.razor](.\Library.Wasm\Pages\BookReaders.razor) - страницы для операций с читателями
+- [Books.razor](.\Library.Wasm\Pages\Books.razor) - страница для операций с книгами
+- [Checkouts.razor](.\Library.Wasm\Pages\Checkouts.razor) - страница для операций с выдачами
+- [Home.razor](.\Library.Wasm\Pages\Home.razor) - домашняя страница с аналитическими методами (на нее можно попасть кликнув по надписи "Библиотека" в левом верхнем углу)
+
+#### Components - компоненты
+- [ModalWin.razor](.\Library.Wasm\Components\ModalWin.razor) - модальное окно, всплывающее, если не все обязательные поля были заполнены

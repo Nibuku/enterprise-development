@@ -1,5 +1,4 @@
 ﻿@page "/"
-@using Blazorise
 @inject LibraryApiWrapper LibraryApi
 
 <h3>Аналитика библиотеки</h3>
@@ -20,8 +19,14 @@
 </Field>
 
 <Buttons Class="mt-3 mb-3">
-    <Button Color="Color.Primary" @onclick="LoadIssuedBooks">Выданные книги</Button>
-    <Button Color="Color.Primary" @onclick="LoadTopReadersByCount">ТОП читателей (кол-во)</Button>
+    <Button Color="Color.Primary" @onclick="LoadIssuedBooks">
+        <div>Выданные книги</div>
+        <small class="text-light">Укажите период</small>
+    </Button>
+    <Button Color="Color.Primary" @onclick="LoadTopReadersByCount">
+        <div>ТОП читателей (кол-во)</div>
+        <small class="text-light">Укажите период</small>
+    </Button>
     <Button Color="Color.Primary" @onclick="LoadTopReadersByDays">ТОП читателей (дни)</Button>
     <Button Color="Color.Primary" @onclick="LoadTopPublishers">ТОП издательств</Button>
     <Button Color="Color.Primary" @onclick="LoadLeastPopularBooks">Непопулярные книги</Button>
@@ -125,8 +130,7 @@
     List<PublisherCountDto> topPublishers = new();
     List<BookWithCountDto> leastPopularBooks = new();
 
-    DateTimeOffset? ToOffset(DateOnly? d) =>
-        d == null ? null : new DateTimeOffset(d.Value.ToDateTime(TimeOnly.MinValue));
+    DateTimeOffset? ToOffset(DateOnly? d) => d == null ? null : new DateTimeOffset(d.Value.ToDateTime(TimeOnly.MinValue));
 
     async Task Load(Func<Task> action)
     {
@@ -156,22 +160,17 @@
         leastPopularBooks.Clear();
     }
 
-    Task LoadIssuedBooks() =>
-        Load(async () => issuedBooks = (await LibraryApi.GetIssuedBooks()).ToList());
+    Task LoadIssuedBooks() => Load(async () => issuedBooks = (await LibraryApi.GetIssuedBooks()).ToList());
 
-    Task LoadTopReadersByCount() =>
-        Load(async () => topReadersByCount =
+    Task LoadTopReadersByCount() =>Load(async () => topReadersByCount =
             (await LibraryApi.GetTopReadersByCountAsync(ToOffset(startDate), ToOffset(endDate))).ToList());
 
-    Task LoadTopReadersByDays() =>
-        Load(async () => topReadersByDays =
+    Task LoadTopReadersByDays() =>Load(async () => topReadersByDays =
             (await LibraryApi.GetTopReadersByDays()).ToList());
 
-    Task LoadTopPublishers() =>
-        Load(async () => topPublishers =
+    Task LoadTopPublishers() =>Load(async () => topPublishers =
             (await LibraryApi.GetTopPublishers(ToOffset(startDate))).ToList());
 
-    Task LoadLeastPopularBooks() =>
-        Load(async () => leastPopularBooks =
+    Task LoadLeastPopularBooks() =>Load(async () => leastPopularBooks =
             (await LibraryApi.GetLeastPopularBooks(ToOffset(startDate))).ToList());
 }

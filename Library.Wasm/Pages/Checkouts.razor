@@ -1,5 +1,4 @@
 ﻿@page "/checkouts"
-@using Blazorise
 @inject LibraryApiWrapper LibraryApi
 @inject IJSRuntime JsRuntime
 
@@ -9,7 +8,7 @@
           Title="Не все обязательные поля заполнены" />
 
 
-<Button Color="Color.Success" Class="mb-3" @onclick="StartCreate">+ Добавить выдачу</Button>
+<Button Color="Color.Success" Class="mb-3" @onclick="StartCreate"> Добавить выдачу</Button>
 
 @if (selectedCheckout != null)
 {
@@ -83,18 +82,18 @@ else
             </TableRow>
         </TableHeader>
         <TableBody>
-            @foreach (var co in checkouts)
+            @foreach (var checkout in checkouts)
             {
                 <TableRow>
-                    <td>@co.LoanDate</td>
-                    <td>@co.LoanDays</td>
-                    <td>@bookById.GetValueOrDefault(co.BookId, "—")</td>
-                    <td>@readerById.GetValueOrDefault(co.ReaderId, "—")</td>
-                    <td>@co.DueDate</td>
+                    <td>@checkout.LoanDate</td>
+                    <td>@checkout.LoanDays</td>
+                    <td>@bookById.GetValueOrDefault(checkout.BookId)</td>
+                    <td>@readerById.GetValueOrDefault(checkout.ReaderId)</td>
+                    <td>@checkout.DueDate</td>
                     <td>
                         <Buttons>
-                            <Button Color="Color.Info" Size="Size.Small" @onclick="() => StartEdit(co)">Редактировать</Button>
-                            <Button Color="Color.Danger" Size="Size.Small" @onclick="() => DeleteCheckoutAsync(co.Id)">Удалить</Button>
+                            <Button Color="Color.Info" Size="Size.Small" @onclick="() => StartEdit(checkout)">Редактировать</Button>
+                            <Button Color="Color.Danger" Size="Size.Small" @onclick="() => DeleteCheckoutAsync(checkout.Id)">Удалить</Button>
                         </Buttons>
                     </td>
                 </TableRow>
@@ -116,10 +115,7 @@ else
     private CheckoutCreateDto formCheckout = new();
     private ModalWin? validationModalRef;
 
-    protected override async Task OnInitializedAsync()
-    {
-        await LoadAllDataAsync();
-    }
+    protected override async Task OnInitializedAsync() => await LoadAllDataAsync();
 
     private async Task LoadAllDataAsync()
     {
@@ -156,14 +152,17 @@ else
         formCheckout.LoanDate=DateTime.Today;
     }
 
-    private void StartEdit(CheckoutGetDto co)
+    private void StartEdit(CheckoutGetDto checkout)
     {
-        selectedCheckout = co;
+        selectedCheckout = checkout;
 
-        formCheckout.LoanDate = co.LoanDate;
-        formCheckout.LoanDays = co.LoanDays;
-        formCheckout.BookId = co.BookId;
-        formCheckout.ReaderId = co.ReaderId;
+        formCheckout = new CheckoutCreateDto
+        {
+            LoanDate = checkout.LoanDate,
+            LoanDays = checkout.LoanDays,
+            BookId = checkout.BookId,
+            ReaderId = checkout.ReaderId
+        };
     }
 
     private void CancelForm()
@@ -205,11 +204,6 @@ else
         {
             errorMessage = $"Ошибка сохранения: {ex.Message}";
         }
-    }
-
-    private void CloseValidationModal()
-    {
-        validationModalRef?.Hide();
     }
 
     private async Task DeleteCheckoutAsync(int id)

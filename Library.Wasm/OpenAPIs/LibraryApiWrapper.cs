@@ -1,12 +1,11 @@
-﻿using Microsoft.Extensions.Configuration;
-using System.Net.Http;
+﻿namespace Library.Wasm.OpenAPIs;
 
-namespace Library.Wasm.OpenAPIs;
-
+/// <summary>
+/// Обертка для доступа к API, предоставляющая CRUD-операции над основными сущностями и аналитические методы.
+/// </summary>
 public class LibraryApiWrapper(IConfiguration configuration)
 {
-
-    public readonly Client _client=new ("https://localhost:7037", new HttpClient());
+    public readonly Client _client=new(configuration["Api:Url"], new HttpClient());
 
     #region Books CRUD
     public Task<ICollection<BookGetDto>> GetAllBooks() => _client.BookAllAsync();
@@ -49,19 +48,10 @@ public class LibraryApiWrapper(IConfiguration configuration)
     #endregion
 
     #region Analytics
-    // Количество выданных книг
     public Task<ICollection<BookWithCountDto>> GetIssuedBooks()=> _client.IssuedBooksAsync();
-
-    // ТОП читателей по количеству за период
     public Task<ICollection<BookReaderWithCountDto>> GetTopReadersByCountAsync(DateTimeOffset? start, DateTimeOffset? end) => _client.TopReadersByCountAsync(start, end);
-
-    // ТОП читателей по количеству дней
     public Task<ICollection<BookReaderWithDaysDto>> GetTopReadersByDays() => _client.TopReadersByDaysAsync();
-
-    // ТОП издательств по числу книг с определённого года
     public Task<ICollection<PublisherCountDto>> GetTopPublishers(DateTimeOffset? start) => _client.TopPublishersAsync(start);
-
-    // Наименее популярные книги
     public Task<ICollection<BookWithCountDto>> GetLeastPopularBooks(DateTimeOffset? start) => _client.LeastPopularBooksAsync(start);
     #endregion
 }

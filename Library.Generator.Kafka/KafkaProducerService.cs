@@ -5,8 +5,6 @@ namespace Library.Generator.Kafka;
 /// <summary>
 /// Служба для генерации и отправки заданного числа контрактов через заданные интервалы
 /// </summary>
-/// <param name="configuration">Конфигурация</param>
-/// <param name="logger">Логгер</param>
 public class KafkaProducerService: BackgroundService
 {
     private readonly int _batchSize;

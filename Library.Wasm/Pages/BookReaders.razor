@@ -1,5 +1,4 @@
 ﻿@page "/readers"
-@using Blazorise
 @inject LibraryApiWrapper LibraryApi
 @inject IJSRuntime JsRuntime
 
@@ -8,7 +7,7 @@
 <ModalWin @ref="validationModalRef"
           Title="Не все обязательные поля заполнены" />
 
-<Button Color="Color.Success" Class="mb-3" @onclick="StartCreate">+ Добавить читателя</Button>
+<Button Color="Color.Success" Class="mb-3" @onclick="StartCreate"> Добавить читателя</Button>
 
 @if (selectedReader != null)
 {
@@ -109,7 +108,11 @@ else
         try
         {
             isLoading = true;
-            readers = (await LibraryApi.GetAllReaders())?.ToList() ?? new();
+            var result = await LibraryApi.GetAllReaders();
+            if (result != null)
+                readers = result.ToList();
+            else
+                readers = new List<BookReaderGetDto>();
         }
         catch (Exception ex)
         {
@@ -130,17 +133,19 @@ else
     private void StartEdit(BookReaderGetDto reader)
     {
         selectedReader = reader;
-        formReader.FullName = reader.FullName;
-        formReader.Address = reader.Address;
-        formReader.Phone = reader.Phone;
-        formReader.RegistrationDate = reader.RegistrationDate;
+        formReader = new BookReaderCreateDto
+        {
+            FullName = reader.FullName,
+            Address = reader.Address,
+            Phone = reader.Phone,
+            RegistrationDate = reader.RegistrationDate
+        };
     }
 
     private void CancelForm()
     {
         selectedReader = null;
         formReader = new();
-
     }
 
     private bool IsFormValid() => !string.IsNullOrWhiteSpace(formReader.FullName);
@@ -170,8 +175,6 @@ else
             errorMessage = $"Ошибка сохранения: {ex.Message}";
         }
     }
-
-    private void CloseValidationModal() => validationModalRef?.Hide();
 
     private async Task DeleteReaderAsync(int id)
     {
