@@ -36,8 +36,9 @@ builder.Services.AddSingleton(sp =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(policy =>
+    options.AddPolicy("ClientOnly", policy =>
     {
+        policy.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost");
         policy.AllowAnyOrigin()
             .AllowAnyHeader()
             .WithMethods("GET", "POST", "PUT", "DELETE");
@@ -81,7 +82,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseCors();
+app.UseCors("ClientOnly"); ;
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
