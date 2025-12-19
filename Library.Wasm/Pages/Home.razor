@@ -7,7 +7,7 @@
 {
     <Alert Color="Color.Danger">@error</Alert>
 }
-
+<div class="d-flex gap-4 mb-2">
 <Field>
     <FieldLabel>Начальная дата</FieldLabel>
     <DateEdit @bind-Date="startDate" />
@@ -17,8 +17,8 @@
     <FieldLabel>Конечная дата</FieldLabel>
     <DateEdit @bind-Date="endDate" />
 </Field>
-
-<Buttons Class="mt-3 mb-3">
+</div>
+<Buttons Class="d-flex flex-wrap gap-1 mt-3 mb-3">
     <Button Color="Color.Primary" @onclick="LoadIssuedBooks">
         <div>Выданные книги</div>
     </Button>

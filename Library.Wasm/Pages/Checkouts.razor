@@ -15,12 +15,12 @@
     <Card Class="mb-4">
         <CardBody>
             <h5>@(selectedCheckout.Id == 0 ? "Добавить выдачу" : $"Редактировать выдачу: {selectedCheckout.Id}")</h5>
-
+            <div class="d-flex gap-4 mb-2">
             <Field>
                 <FieldLabel>Дата взятия книги</FieldLabel>
                 <DateEdit @bind-Date="formCheckout.LoanDate" />
             </Field>
-
+            </div>
             <Field>
                 <FieldLabel>Количество дней</FieldLabel>
                 <NumericEdit TValue="int" @bind-Value="formCheckout.LoanDays" />
